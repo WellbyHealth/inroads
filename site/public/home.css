@@ -1,5 +1,5 @@
 /* Home page hero (full-width clay scene) and the panel under it. */
-.hero2{position:relative;margin-top:-68px;padding-top:86px;background:linear-gradient(#D9DDFB 0,#D9DDFB 96px,#FBCDB9 96px);overflow:hidden}
+.hero2{position:relative;margin-top:-68px;padding-top:86px;background:linear-gradient(#CEDDFC 0,#CEDDFC 96px,#D8E5BA 96px);overflow:hidden}
 .h2-art img{display:block;width:100%;height:clamp(500px,46vw,800px);object-fit:cover;object-position:50% 0}
 .h2-copy{position:relative;margin-top:calc(-1*clamp(80px,9.5vw,170px));padding-bottom:clamp(110px,9vw,150px);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(28px,5vw,80px);align-items:end}
 .hero2 h1{font-size:clamp(3.4rem,6.6vw,6.2rem);line-height:.92;letter-spacing:-.055em;font-weight:620;color:#1c1916;margin:0;text-wrap:balance}
