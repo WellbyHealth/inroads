@@ -1,0 +1,101 @@
+{
+  "cleanUrls": true,
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 60
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/oauth/callback",
+      "destination": "/api/connect?action=callback"
+    },
+    {
+      "source": "/img/:path*",
+      "destination": "https://wellbyinroads.com/img/:path*"
+    },
+    {
+      "source": "/apple-touch-icon.png",
+      "destination": "https://wellbyinroads.com/apple-touch-icon.png"
+    },
+    {
+      "source": "/brand/favicon.svg",
+      "destination": "https://wellbyinroads.com/favicon.svg"
+    },
+    {
+      "source": "/favicon-32.png",
+      "destination": "https://wellbyinroads.com/favicon-32.png"
+    },
+    {
+      "source": "/favicon.ico",
+      "destination": "https://wellbyinroads.com/favicon.ico"
+    },
+    {
+      "source": "/icon-512.png",
+      "destination": "https://wellbyinroads.com/icon-512.png"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "inroad-app.vercel.app"
+        }
+      ],
+      "destination": "https://app.wellbyinroads.com/",
+      "permanent": false
+    },
+    {
+      "source": "/login",
+      "has": [
+        {
+          "type": "host",
+          "value": "inroad-app.vercel.app"
+        }
+      ],
+      "destination": "https://app.wellbyinroads.com/login",
+      "permanent": false
+    },
+    {
+      "source": "/signup",
+      "has": [
+        {
+          "type": "host",
+          "value": "inroad-app.vercel.app"
+        }
+      ],
+      "destination": "https://app.wellbyinroads.com/signup",
+      "permanent": false
+    }
+  ]
+}

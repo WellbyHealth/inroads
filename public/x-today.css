@@ -1,0 +1,43 @@
+/* Today briefing */
+#app > .head.t-old { display: none; }
+#tBrief .thead { margin-bottom: 16px; }
+#tBrief .thead h1 { margin: 2px 0 4px; }
+.tsum { font-size: 17px; color: var(--body, #333); margin: 0; max-width: 760px; line-height: 1.45; }
+.ttiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.ttile { background: var(--surface, #fff); border-radius: 14px; padding: 14px 16px; box-shadow: 0 0 0 .5px var(--line), 0 1px 2px rgba(0,0,0,.03); cursor: pointer; transition: box-shadow .15s, transform .15s; min-width: 0; }
+.ttile:hover { box-shadow: 0 0 0 .5px var(--line), 0 6px 18px rgba(0,0,0,.08); transform: translateY(-1px); }
+.ttile.row2 { display: flex; gap: 14px; align-items: center; cursor: default; }
+.ttile.row2:hover { transform: none; box-shadow: 0 0 0 .5px var(--line), 0 1px 2px rgba(0,0,0,.03); }
+.tlab { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+.tbig { font-size: 32px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; margin: 4px 0 4px; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 8px; }
+.tof { font-size: 16px; font-weight: 500; color: var(--muted); }
+.tdelta { font-size: 13px; font-weight: 600; }
+.tsub { font-size: 12px; color: var(--muted); }
+.tspark { display: block; margin: 2px 0 4px; overflow: visible; }
+.tmini { display: flex; gap: 5px; margin-top: 10px; } .tmini i { width: 18px; height: 6px; border-radius: 3px; background: rgba(118,118,128,.25); }
+.tmini i.ok { background: #34C759; } .tmini i.sch { background: var(--tint); } .tmini i.miss { background: #FF9F0A; }
+.tstages { display: flex; gap: 6px; align-items: flex-end; height: 46px; margin: 2px 0 4px; }
+.tstages > div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; }
+.tstages i { width: 100%; max-width: 22px; border-radius: 4px 4px 0 0; background: rgba(0,113,227,.35); } .tstages i.won { background: #34C759; }
+.tstages span { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tgrid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; margin-top: 12px; align-items: start; }
+.tfocus { margin: 0; padding: 18px 20px; background: linear-gradient(180deg, rgba(0,113,227,.06), rgba(0,113,227,0) 60%), var(--surface, #fff); box-shadow: 0 0 0 .5px var(--line), 0 0 0 3px rgba(0,113,227,.08); }
+.tflab { font-size: 12px; font-weight: 700; color: var(--tint); text-transform: uppercase; letter-spacing: .04em; }
+.tfrow { display: flex; gap: 18px; align-items: flex-start; margin-top: 6px; }
+.tfmain { flex: 1; min-width: 0; }
+.tfocus h2 { margin: 0 0 2px; font-size: 22px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tfocus h2 .name { cursor: pointer; }
+.tfwhy { margin: 10px 0 8px; font-size: 15px; line-height: 1.45; }
+.tfmeta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.tfmeta b { color: var(--ink); font-weight: 600; }
+.tfchart { flex: none; width: 190px; padding: 10px 12px; border-radius: 12px; background: rgba(118,118,128,.06); }
+.tchanges { margin: 0; padding: 16px 18px; }
+.tsig { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-top: .5px solid var(--line); cursor: pointer; }
+.tsig:first-of-type { border-top: 0; margin-top: 6px; }
+.tsig:hover .tst > div:first-child { color: var(--tint); }
+.tsi { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 15px; font-weight: 700; }
+.tsi.down { background: rgba(192,38,45,.10); color: #C0262D; } .tsi.up { background: rgba(52,199,89,.14); color: #1E7B34; } .tsi.new { background: rgba(255,159,10,.15); color: #B7791F; }
+.tst { flex: 1; min-width: 0; font-size: 14px; }
+#tBrief + .notice, #tBrief ~ .notice { margin-top: 14px; }
+@media (max-width: 1100px) { .ttiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tgrid { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .tfrow { flex-direction: column; } .tfchart { width: 100%; } .tbig { font-size: 26px; } .tsum { font-size: 15px; } }

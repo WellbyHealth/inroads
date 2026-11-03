@@ -1,0 +1,5 @@
+.trialchip { font-size: 13px; font-weight: 650; background: var(--peach); color: var(--orange-ink); padding: 6px 12px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
+.trialchip.warn { background: var(--err-soft); color: var(--err); }
+.paywall { max-width: 620px; margin: 40px auto; text-align: center; padding: 34px 30px; }
+.paywall img { width: 130px; margin: 0 auto 12px; }
+.paywall .btn { max-width: 320px; margin: 16px auto 0; }

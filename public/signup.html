@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start your free trial · Wellby</title>
+<link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="https://wellbyinroads.com/fonts/figtree-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/auth.css">
+</head>
+<body class="auth">
+  <section class="auth-art" aria-label="About Wellby">
+    <span class="eyebrow">14 days free · cancel anytime</span>
+    <h2>Find &amp; win more referrals.</h2>
+    <p>Pick a plan, set up your agency, and add a card. You won't be charged until your trial ends.</p>
+    <ul>
+      <li>Every hospital, physician and facility around your offices, scored and mapped</li>
+      <li>Win flows and drafted outreach for your team to approve</li>
+      <li>A scorecard that proves which sources are sending</li>
+    </ul>
+    <img src="/img/g-art-how-win-1600.webp" alt="Clay illustration of a marketer's outreach plan for a referral source.">
+  </section>
+  <section class="auth-side"><main class="auth-card wide">
+    <a class="logo" href="https://wellbyinroads.com" title="Back to wellbyinroads.com"><svg class="mark" viewBox="11.3 1.3 17.4 17.4" aria-hidden="true"><defs><radialGradient id="wf" gradientUnits="userSpaceOnUse" cx="17.6" cy="7.2" r="9.5"><stop offset="0" stop-color="#ffd3e8"/><stop offset=".6" stop-color="#f08cbf"/><stop offset="1" stop-color="#d4589a"/></radialGradient></defs><circle cx="20" cy="6.3" r="3.7" fill="url(#wf)"/><circle cx="23.9" cy="9.13" r="3.7" fill="url(#wf)"/><circle cx="22.41" cy="13.72" r="3.7" fill="url(#wf)"/><circle cx="17.59" cy="13.72" r="3.7" fill="url(#wf)"/><circle cx="16.1" cy="9.13" r="3.7" fill="url(#wf)"/><circle cx="20" cy="10.4" r="3" fill="#fcd34d"/></svg><span>Wellby</span></a>
+    <ol class="steps" id="steps"><li data-s="1"><b>1</b>Plan</li><li data-s="2"><b>2</b>Your agency</li><li data-s="3"><b>3</b>Payment</li></ol>
+
+    <!-- Step 1: plan -->
+    <section id="s1">
+      <h1>Choose your plan</h1>
+      <p class="lede">Every plan starts with a 14-day free trial. Priced per user.</p>
+      <div class="seg" role="tablist" aria-label="Billing period"><button type="button" data-int="month" class="on">Monthly</button><button type="button" data-int="year">Annual <span class="save">2 months free</span></button></div>
+      <div class="plans" id="plans"></div>
+      <div class="seats">
+        <div><div class="small" style="font-weight:600;margin-bottom:6px">Users</div>
+          <div class="stepper"><button type="button" data-d="-1" aria-label="Fewer users">−</button><b id="seatN">1</b><button type="button" data-d="1" aria-label="More users">+</button></div>
+          <div class="small muted" id="seatHint" style="margin-top:6px">You can add teammates anytime</div></div>
+        <div class="total"><span class="small muted">After your free trial</span><b id="total"></b><span class="small muted" id="totalSub"></span></div>
+      </div>
+      <button class="btn cta wide" id="toS2" type="button">Continue</button>
+      <p class="fine">Today: $0. Your card is charged on <b class="chargeDate"></b> unless you cancel before then. Change plans or users anytime.</p>
+    </section>
+
+    <!-- Step 2: account -->
+    <section id="s2" hidden>
+      <h1>Set up your agency</h1>
+      <p class="lede">You'll be the admin. You can invite your team once you're in.</p>
+      <div class="summary"><span id="sum"></span><button type="button" id="backS1">Change</button></div>
+      <form id="f" novalidate>
+        <div class="grid2">
+          <label>Your name<input name="name" autocomplete="name" required></label>
+          <label>Agency name<input name="agency" autocomplete="organization" placeholder="e.g. Cambridge Caregivers" required></label>
+        </div>
+        <label>Type of care<select name="careType"><option value="home_care">Home care</option><option value="home_health">Home health</option><option value="hospice">Hospice</option><option value="snf">Skilled nursing</option><option value="rehab">Rehab</option><option value="assisted_living">Assisted living</option><option value="home_infusion">Home infusion</option><option value="other">Other post-acute care</option></select></label>
+        <label>Agency website <span class="hint">(optional)</span><input name="website" type="url" placeholder="https://"></label>
+        <label>Work email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Password <span class="hint">(10+ characters)</span><span class="pw"><input name="password" type="password" autocomplete="new-password" minlength="10" required><button type="button" id="show" aria-label="Show password">Show</button></span></label>
+        <input name="company_url" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="err" id="err" role="alert"></p>
+        <button class="btn cta wide" type="submit" id="go">Continue to payment</button>
+      </form>
+      <p class="fine">Next, you'll add a card on Stripe's secure checkout. Nothing is charged today. Wellby uses public data on hospitals, physicians and facilities; don't upload patient information during your trial.</p>
+    </section>
+
+    <!-- Step 3: handing off to Stripe -->
+    <section id="s3" hidden>
+      <h1>Opening secure checkout…</h1>
+      <p class="lede">Add your card on Stripe to start your 14-day free trial. You'll come back to Wellby to add your offices.</p>
+      <p class="err" id="err3" role="alert"></p>
+      <a class="btn ghost" href="/#plan" id="fallback" hidden>Continue in Wellby</a>
+    </section>
+
+    <div class="foot">
+      <span>Already have an account? <a href="/login">Sign in</a></span>
+      <span><a href="https://wellbyinroads.com">← Back to wellbyinroads.com</a></span>
+    </div>
+  </main></section>
+<script>
+// Mirrors PLANS in api/billing.js; the server re-checks plan, price and the user minimum.
+const PLANS = {
+  insight: { name: 'Insight', monthly: 99, annual: 990, min: 1, what: 'Market map and ranked targets, a scorecard for every referral source, share of referrals and results.' },
+  growth: { name: 'Growth', monthly: 199, annual: 1990, min: 1, tag: 'Recommended', what: 'Everything in Insight, plus win flows, drafted outreach, the queue, visit-day routing and the calendar.' },
+  network: { name: 'Network', monthly: 179, annual: 1790, min: 5, what: 'Everything in Growth, plus a multi-location rollup, CRM and EMR connections, and guided onboarding. 5-user minimum.' },
+};
+const q = new URLSearchParams(location.search);
+const S = { plan: PLANS[q.get('plan')] ? q.get('plan') : 'growth', interval: q.get('interval') === 'year' ? 'year' : 'month', seats: Math.max(1, +q.get('users') || 1) };
+const $ = id => document.getElementById(id);
+const money = n => '$' + Math.round(n).toLocaleString('en-US');
+const charge = new Date(Date.now() + 14 * 864e5).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+document.querySelectorAll('.chargeDate').forEach(e => e.textContent = charge);
+
+function step(n) {
+  [1, 2, 3].forEach(i => $('s' + i).hidden = i !== n);
+  document.querySelectorAll('#steps li').forEach(li => { const s = +li.dataset.s; li.className = s === n ? 'on' : s < n ? 'done' : ''; });
+  if (n === 2) setTimeout(() => document.querySelector('#f [name=name]').focus(), 0);
+  scrollTo(0, 0);
+}
+function render() {
+  const P = PLANS[S.plan]; S.seats = Math.max(P.min, Math.min(500, S.seats));
+  document.querySelectorAll('[data-int]').forEach(b => b.classList.toggle('on', b.dataset.int === S.interval));
+  $('plans').innerHTML = Object.entries(PLANS).map(([k, p]) => `<button type="button" class="plan ${k === S.plan ? 'on' : ''}" data-plan="${k}" aria-pressed="${k === S.plan}">
+    <span class="dot"></span><span><span class="name">${p.name}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</span>
+    <span class="price">${money(S.interval === 'year' ? p.annual / 12 : p.monthly)}<small>per user / month${S.interval === 'year' ? ', billed yearly' : ''}</small></span>
+    <span class="what">${p.what}</span></button>`).join('');
+  document.querySelectorAll('[data-plan]').forEach(b => b.onclick = () => { S.plan = b.dataset.plan; render(); });
+  const total = S.interval === 'year' ? P.annual * S.seats : P.monthly * S.seats;
+  $('seatN').textContent = S.seats;
+  $('seatHint').textContent = P.min > 1 ? `${P.name} starts at ${P.min} users` : 'You can add teammates anytime';
+  $('total').textContent = `${money(total)}/${S.interval === 'year' ? 'yr' : 'mo'}`;
+  $('totalSub').textContent = `${S.seats} user${S.seats === 1 ? '' : 's'} × ${money(S.interval === 'year' ? P.annual : P.monthly)}`;
+  $('sum').innerHTML = `<b>${P.name}</b> · ${S.seats} user${S.seats === 1 ? '' : 's'} · ${money(total)}/${S.interval === 'year' ? 'year' : 'month'} after your free trial`;
+}
+document.querySelectorAll('[data-int]').forEach(b => b.onclick = () => { S.interval = b.dataset.int; render(); });
+document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { S.seats += +b.dataset.d; render(); });
+$('toS2').onclick = () => step(2);
+$('backS1').onclick = () => step(1);
+$('show').onclick = e => { const pw = document.querySelector('#f [name=password]'), s = pw.type === 'password'; pw.type = s ? 'text' : 'password'; e.target.textContent = s ? 'Hide' : 'Show'; };
+
+$('f').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, err = $('err'), btn = $('go'), d = Object.fromEntries(new FormData(f));
+  err.textContent = '';
+  if (!d.name.trim() || !d.agency.trim()) { err.textContent = 'Add your name and your agency name.'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { err.textContent = 'Enter a valid work email.'; return; }
+  if ((d.password || '').length < 10) { err.textContent = 'Use a password of at least 10 characters.'; return; }
+  btn.disabled = true; btn.textContent = 'Creating your workspace…';
+  const r = await fetch('/api/auth?action=signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, plan: S.plan, interval: S.interval, seats: S.seats }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { err.innerHTML = (j.error || 'Sign up failed.').replace('Sign in instead.', '<a href="/login">Sign in instead.</a>'); btn.disabled = false; btn.textContent = 'Continue to payment'; return; }
+  if (j.next !== '/#plan') { location.href = j.next || '/#settings/setup'; return; } // billing switched off: straight to setup
+  step(3);
+  try {
+    const c = await fetch('/api/billing', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'checkout', plan: S.plan, interval: S.interval, seats: S.seats }) });
+    const cj = await c.json().catch(() => ({}));
+    if (!c.ok || !cj.url) throw new Error(cj.error || "We couldn't open checkout.");
+    location.href = cj.url;
+  } catch (x) { $('err3').textContent = x.message + ' Your workspace is saved; continue to pick your plan and add a card.'; $('fallback').hidden = false; }
+});
+render(); step(1);
+</script>
+</body>
+</html>

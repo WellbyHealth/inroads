@@ -1,0 +1,24 @@
+/* Plan picker */
+.plan-wrap { max-width: 1040px; margin: 0 auto; }
+.plan-head { text-align: center; margin: 8px 0 18px; }
+.plan-head h1 { margin: 4px 0 6px; }
+.plan-head p { margin: 0 auto 14px; max-width: 560px; }
+.plan-head .seg { display: inline-flex; }
+.plan-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.plan-card { position: relative; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 18px; border-radius: 18px; background: var(--surface, #fff); border: 0; box-shadow: 0 0 0 .5px var(--line); cursor: pointer; font: inherit; color: inherit; transition: box-shadow .15s, transform .15s; }
+.plan-card:hover { transform: translateY(-1px); box-shadow: 0 0 0 .5px var(--line), 0 6px 18px rgba(0,0,0,.08); }
+.plan-card.on { box-shadow: 0 0 0 2px var(--tint), 0 6px 18px rgba(0,113,227,.12); }
+.plan-tag { position: absolute; top: 14px; right: 14px; font-size: 11px; font-weight: 700; color: var(--tint); background: rgba(0,113,227,.1); padding: 3px 8px; border-radius: 999px; }
+.plan-name { font-size: 17px; }
+.plan-price { font-size: 30px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.plan-price small { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: 4px; }
+.plan-card ul { margin: 10px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.6; }
+.plan-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 14px; padding: 16px 18px; }
+.plan-bar > div { display: flex; flex-direction: column; gap: 4px; }
+.stepper { display: inline-flex; align-items: center; gap: 12px; }
+.stepper button { width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(118,118,128,.14); font-size: 18px; cursor: pointer; color: var(--ink); }
+.stepper b { font-size: 20px; min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+.plan-total b { font-size: 24px; font-variant-numeric: tabular-nums; }
+.plan-total b small { font-size: 13px; font-weight: 500; color: var(--muted); }
+.plan-fine { text-align: center; margin-top: 10px; }
+@media (max-width: 860px) { .plan-grid { grid-template-columns: 1fr; } .plan-bar { flex-direction: column; align-items: stretch; } .plan-bar .btn { width: 100%; } }

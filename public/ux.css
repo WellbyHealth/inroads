@@ -1,0 +1,25 @@
+/* Usability layer: global search, sidebar counts, undo in toasts */
+.gsw { position: relative; margin: 0 0 12px; }
+.gsw input { height: 32px; padding: 0 44px 0 30px; font-size: 13px; border-radius: 8px; background: rgba(118,118,128,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236E6E73' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='m16 16 4 4'/%3E%3C/svg%3E") 9px center / 15px no-repeat; border: 0; }
+.gsw input:focus { background-color: #fff; }
+.gsw input::-webkit-search-cancel-button { display: none; }
+.gsw kbd { position: absolute; right: 8px; top: 7px; font: 500 11px var(--sans); color: var(--tertiary); background: #fff; border-radius: 4px; padding: 1px 5px; box-shadow: 0 0 0 .5px var(--line); pointer-events: none; }
+.gsw input:focus + kbd { display: none; }
+.gsr { display: none; position: absolute; left: 0; top: 38px; width: 340px; max-height: 70vh; overflow-y: auto; background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); border-radius: 12px; box-shadow: 0 16px 48px rgba(0,0,0,.18), 0 0 0 .5px rgba(0,0,0,.08); padding: 6px; z-index: 1500; }
+.gsr.open { display: block; }
+.gsi { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.gsi.on, .gsi:hover { background: rgba(0,113,227,.10); }
+.nbadge { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #FF3B30; color: #fff; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+.nbadge[hidden] { display: none; }
+.toast { display: flex; align-items: center; gap: 14px; }
+.toast .tact { background: none; border: 0; color: #64B5FF; font: 600 14px var(--sans); cursor: pointer; padding: 0; }
+.btn:disabled { opacity: .6; cursor: progress; }
+@media (min-width: 721px) and (max-width: 1100px) {
+  .gsw { width: 44px; } .gsw input { padding: 0; width: 44px; color: transparent; background-position: center; cursor: pointer; } .gsw input:focus { width: 300px; padding: 0 10px 0 30px; color: var(--ink); background-position: 9px center; position: relative; z-index: 1600; } .gsw kbd { display: none; }
+  .nbadge { position: absolute; margin: -16px 0 0 18px; min-width: 16px; height: 16px; font-size: 10px; padding: 0 4px; }
+  .bar nav a { position: relative; }
+}
+@media (max-width: 720px) {
+  .gsw { flex: 1; margin: 0; } .gsw kbd { display: none; } .gsr { width: calc(100vw - 28px); position: fixed; left: 14px; top: 52px; }
+  .bar nav a { position: relative; } .nbadge { position: absolute; top: 0; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; font-size: 10px; padding: 0 4px; }
+}

@@ -1,0 +1,41 @@
+/* Navigation groups: Target, Win, Prove, Setup */
+.bar nav a[data-view="queue"] { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 13h4l1.5 3h5L16 13h4'/%3E%3Cpath d='M5.5 6.5 4 13v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5l-1.5-6.5A2 2 0 0 0 16.6 5H7.4a2 2 0 0 0-1.9 1.5z'/%3E%3C/svg%3E"); }
+.navsec { display: none; }
+@media (min-width: 1101px) {
+  .navsec { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 14px 10px 4px; }
+  .bar nav a[data-view="referrals"] { margin-top: 0; }
+}
+@media (min-width: 721px) and (max-width: 1100px) {
+  .navsec { display: block; height: 1px; background: var(--line); margin: 8px 6px; font-size: 0; }
+}
+@media (max-width: 720px) {
+  .bar nav a[data-view="contacts"], .bar nav a[data-view="results"], .bar nav a[data-view="connections"] { display: none; }
+}
+/* Today: briefing only */
+#app > .t-hide { display: none !important; }
+.tqueue { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 12px; padding: 14px 18px; text-decoration: none; color: inherit; }
+.tqueue > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tqueue:hover { box-shadow: 0 0 0 .5px var(--line), 0 6px 18px rgba(0,0,0,.08); }
+/* Queue */
+.qnav { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 14px; }
+.qnav a { background: var(--surface, #fff); border-radius: 999px; padding: 6px 12px; font-size: 13px; text-decoration: none; color: var(--ink); box-shadow: 0 0 0 .5px var(--line); }
+.qnav a b { font-variant-numeric: tabular-nums; }
+.qnav a:hover { box-shadow: 0 0 0 1px var(--tint); }
+#app #qApprove, #app #qThanks, #app #qVisits, #app .qbooked { margin-top: 14px; scroll-margin-top: 20px; }
+.qrow.qv { grid-template-columns: 22px 28px 1fr auto; cursor: pointer; }
+.qrow.qv input { width: 18px; height: 18px; margin: 5px 0 0; }
+.qplan { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(0,113,227,.06); }
+.qplan input, .qplan select { width: auto; padding: 6px 8px; }
+.qplan b { margin-right: 4px; }
+.qplan #qPickN { margin-right: auto; }
+.qrule { margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+.qrule select { width: auto; padding: 3px 6px; }
+.qbooked { background: linear-gradient(180deg, rgba(52,199,89,.08), rgba(52,199,89,0) 70%), var(--surface, #fff); }
+.qstops { margin: 10px 0 12px; padding-left: 22px; line-height: 1.9; }
+/* Drawer touch mix */
+.mixbar { display: flex; gap: 3px; height: 10px; border-radius: 5px; background: rgba(118,118,128,.14); overflow: hidden; margin: 6px 0; }
+.mixbar i { display: block; height: 100%; border-radius: 5px; }
+.mixbar .in, .mixl i.in { background: #eb6834; } .mixbar .dg, .mixl i.dg { background: #2a78d6; }
+.mixl { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--muted); }
+.mixl span { display: flex; align-items: center; gap: 6px; } .mixl i { width: 9px; height: 9px; border-radius: 3px; }
+@media (max-width: 720px) { .qrow.qv { grid-template-columns: 22px 28px 1fr; } .qrow.qv > .row { grid-column: 3; } .tqueue { flex-direction: column; align-items: flex-start; } }
