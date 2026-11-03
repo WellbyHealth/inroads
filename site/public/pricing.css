@@ -1,4 +1,4 @@
-/* Pricing page: billing toggle, three plan cards (Growth emphasized), pay strip. */
+/* Pricing page: billing toggle, three plan cards (Solo, Team emphasized, Enterprise), pay strip. */
 .pp-hero{padding-top:clamp(56px,7vw,96px)}
 .pp-hero h1{font-size:clamp(2.6rem,5.4vw,4.4rem);line-height:1.02;max-width:16ch;margin-inline:auto;text-wrap:balance}
 .pp-hero .sp-lede{margin:16px auto 0}
@@ -22,14 +22,16 @@
 .pp-per{font-size:14.5px;color:var(--muted);margin-top:6px}
 .pp-bill{font-size:14px;color:var(--muted);margin:2px 0 0}
 .pp-min{display:block;font-size:14px;font-weight:600;color:var(--body);margin-top:2px}
+.pp-custom{font-size:clamp(2.4rem,3.8vw,3.1rem)}
+.pp-demo{color:#4b3a8f!important;background:#ece6fb!important}
 .pp-trial{display:inline-flex;align-self:flex-start;margin:14px 0 0;font-size:13.5px;font-weight:650;color:#1F7A4D;background:#e6f4ea;padding:5px 10px;border-radius:8px}
-.pp-who{margin:16px 0 0;font-size:15.5px;line-height:1.45;color:var(--body)}
-.pp-list{list-style:none;margin:16px 0 0;padding:16px 0 0;border-top:1px solid var(--line-soft);display:grid;gap:10px}
+.pp-who{margin:10px 0 0;font-size:15.5px;line-height:1.45;color:var(--body);min-height:2.9em}
+.pp-feat{margin:20px 0 24px;padding-top:4px;border-top:1px solid var(--line-soft)}
+.pp-gh{margin:16px 0 10px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pp-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .pp-list li{display:flex;gap:10px;font-size:15.5px;line-height:1.4;color:#2e2d29}
 .pp-list svg{width:18px;height:18px;flex:none;margin-top:1px;color:#1F7A4D}
-.pp-list li:first-child span{font-weight:620}
 .pp-cta{margin-top:auto;display:inline-flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;padding:0 20px;border-radius:12px;font-size:16.5px;font-weight:620;text-decoration:none;background:#fff;color:#000;border:1.5px solid #000;transition:transform .16s var(--ease),background .15s}
-.pp-list{margin-bottom:24px}
 .pp-cta svg{width:17px;height:17px;transition:transform .2s var(--ease)}
 .pp-cta:hover{transform:translateY(-2px)}.pp-cta:hover svg{transform:translateX(3px)}
 .pp-card.pop .pp-cta{background:#000;color:#fff}
