@@ -29,17 +29,17 @@
     <!-- Step 1: plan -->
     <section id="s1">
       <h1>Choose your plan</h1>
-      <p class="lede">Every plan starts with a 14-day free trial. Priced per user.</p>
+      <p class="lede">Every plan starts with a 14-day free trial. $0 today, cancel anytime, no contracts.</p>
       <div class="seg" role="tablist" aria-label="Billing period"><button type="button" data-int="month" class="on">Monthly</button><button type="button" data-int="year">Annual <span class="save">2 months free</span></button></div>
       <div class="plans" id="plans"></div>
-      <div class="seats">
+      <div class="seats" id="seatBox">
         <div><div class="small" style="font-weight:600;margin-bottom:6px">Users</div>
           <div class="stepper"><button type="button" data-d="-1" aria-label="Fewer users">−</button><b id="seatN">1</b><button type="button" data-d="1" aria-label="More users">+</button></div>
-          <div class="small muted" id="seatHint" style="margin-top:6px">You can add teammates anytime</div></div>
+          <div class="small muted" id="seatHint" style="margin-top:6px">3 included · $79/mo per extra user · up to 10</div></div>
         <div class="total"><span class="small muted">After your free trial</span><b id="total"></b><span class="small muted" id="totalSub"></span></div>
       </div>
       <button class="btn cta wide" id="toS2" type="button">Continue</button>
-      <p class="fine">Today: $0. Your card is charged on <b class="chargeDate"></b> unless you cancel before then. Change plans or users anytime.</p>
+      <p class="fine">Today: $0. Your card is charged on <b class="chargeDate"></b> unless you cancel before then. We'll remind you before your trial ends. Change plans or users anytime.</p>
     </section>
 
     <!-- Step 2: account -->
@@ -77,18 +77,24 @@
     </div>
   </main></section>
 <script>
-// Mirrors PLANS in api/billing.js; the server re-checks plan, price and the user minimum.
+// Mirrors lib/plans.mjs; the server re-checks the plan, price and user limits.
 const PLANS = {
-  insight: { name: 'Insight', monthly: 99, annual: 990, min: 1, what: 'Market map and ranked targets, a scorecard for every referral source, share of referrals and results.' },
-  growth: { name: 'Growth', monthly: 199, annual: 1990, min: 1, tag: 'Recommended', what: 'Everything in Insight, plus win flows, drafted outreach, the queue, visit-day routing and the calendar.' },
-  network: { name: 'Network', monthly: 179, annual: 1790, min: 5, what: 'Everything in Growth, plus a multi-location rollup, CRM and EMR connections, and guided onboarding. 5-user minimum.' },
+  solo: { name: 'Solo', monthly: 149, annual: 1490, included: 1, max: 1, who: 'For the owner or one marketer doing it all.', what: '1 user. Market map, ranked targets and a weekly visit list, a scorecard for every referral source, drafted outreach you approve, and follow-up until they reply.' },
+  team: { name: 'Team', monthly: 249, annual: 2490, included: 3, max: 10, extraMonthly: 79, extraAnnual: 790, tag: 'Most popular', what: '3 users included, up to 10. Everything in Solo, plus shared sources and notes, territories for each marketer, a team view and one combined scorecard.' },
 };
+const LEGACY = { insight: 'solo', growth: 'team', network: 'team' };
 const q = new URLSearchParams(location.search);
-const S = { plan: PLANS[q.get('plan')] ? q.get('plan') : 'growth', interval: q.get('interval') === 'year' ? 'year' : 'month', seats: Math.max(1, +q.get('users') || 1) };
+const code = PLANS[q.get('plan')] ? q.get('plan') : LEGACY[q.get('plan')] || 'team';
+const S = { plan: code, interval: q.get('interval') === 'year' ? 'year' : 'month', seats: Math.max(3, Math.min(10, +q.get('users') || 3)) };
 const $ = id => document.getElementById(id);
 const money = n => '$' + Math.round(n).toLocaleString('en-US');
 const charge = new Date(Date.now() + 14 * 864e5).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
 document.querySelectorAll('.chargeDate').forEach(e => e.textContent = charge);
+const seatsOf = () => S.plan === 'solo' ? 1 : S.seats;
+function totalOf(k, seats) {
+  const p = PLANS[k], y = S.interval === 'year';
+  return (y ? p.annual : p.monthly) + (k === 'team' ? Math.max(0, seats - 3) * (y ? p.extraAnnual : p.extraMonthly) : 0);
+}
 
 function step(n) {
   [1, 2, 3].forEach(i => $('s' + i).hidden = i !== n);
@@ -97,22 +103,26 @@ function step(n) {
   scrollTo(0, 0);
 }
 function render() {
-  const P = PLANS[S.plan]; S.seats = Math.max(P.min, Math.min(500, S.seats));
+  const P = PLANS[S.plan], y = S.interval === 'year', n = seatsOf(), total = totalOf(S.plan, n);
+  S.seats = Math.max(3, Math.min(10, S.seats));
   document.querySelectorAll('[data-int]').forEach(b => b.classList.toggle('on', b.dataset.int === S.interval));
   $('plans').innerHTML = Object.entries(PLANS).map(([k, p]) => `<button type="button" class="plan ${k === S.plan ? 'on' : ''}" data-plan="${k}" aria-pressed="${k === S.plan}">
     <span class="dot"></span><span><span class="name">${p.name}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</span>
-    <span class="price">${money(S.interval === 'year' ? p.annual / 12 : p.monthly)}<small>per user / month${S.interval === 'year' ? ', billed yearly' : ''}</small></span>
-    <span class="what">${p.what}</span></button>`).join('');
+    <span class="price">${money(y ? Math.floor(p.annual / 12) : p.monthly)}<small>per month${k === 'team' ? ' · 3 users' : ' · 1 user'}${y ? ', billed yearly' : ''}</small></span>
+    <span class="what">${p.what}</span></button>`).join('') +
+    `<a class="plan ent" href="mailto:team@wellbyhealth.com?subject=Wellby%20Enterprise%20demo"><span class="dot"></span><span><span class="name">Enterprise</span></span>
+    <span class="price">Custom<small>from 10 users, billed yearly</small></span>
+    <span class="what">Per-rep scorecards, goals and quotas, rollups across locations, roles and permissions, SSO, a signed BAA, and CRM and EMR connections. <b>Book a demo →</b></span></a>`;
   document.querySelectorAll('[data-plan]').forEach(b => b.onclick = () => { S.plan = b.dataset.plan; render(); });
-  const total = S.interval === 'year' ? P.annual * S.seats : P.monthly * S.seats;
+  $('seatBox').querySelector('.stepper').hidden = S.plan === 'solo';
   $('seatN').textContent = S.seats;
-  $('seatHint').textContent = P.min > 1 ? `${P.name} starts at ${P.min} users` : 'You can add teammates anytime';
-  $('total').textContent = `${money(total)}/${S.interval === 'year' ? 'yr' : 'mo'}`;
-  $('totalSub').textContent = `${S.seats} user${S.seats === 1 ? '' : 's'} × ${money(S.interval === 'year' ? P.annual : P.monthly)}`;
-  $('sum').innerHTML = `<b>${P.name}</b> · ${S.seats} user${S.seats === 1 ? '' : 's'} · ${money(total)}/${S.interval === 'year' ? 'year' : 'month'} after your free trial`;
+  $('seatHint').textContent = S.plan === 'solo' ? '1 user, signed in on one device at a time. Need teammates? Pick Team.' : `3 included · ${money(y ? P.extraAnnual : P.extraMonthly)}/${y ? 'yr' : 'mo'} per extra user · up to 10`;
+  $('total').textContent = `${money(total)}/${y ? 'yr' : 'mo'}`;
+  $('totalSub').textContent = S.plan === 'solo' ? '1 user' : n > 3 ? `3 users included + ${n - 3} × ${money(y ? P.extraAnnual : P.extraMonthly)}` : '3 users included';
+  $('sum').innerHTML = `<b>${P.name}</b> · ${n} user${n === 1 ? '' : 's'} · ${money(total)}/${y ? 'year' : 'month'} after your free trial`;
 }
 document.querySelectorAll('[data-int]').forEach(b => b.onclick = () => { S.interval = b.dataset.int; render(); });
-document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { S.seats += +b.dataset.d; render(); });
+document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { S.seats = Math.max(3, Math.min(10, S.seats + +b.dataset.d)); render(); });
 $('toS2').onclick = () => step(2);
 $('backS1').onclick = () => step(1);
 $('show').onclick = e => { const pw = document.querySelector('#f [name=password]'), s = pw.type === 'password'; pw.type = s ? 'text' : 'password'; e.target.textContent = s ? 'Hide' : 'Show'; };
@@ -125,13 +135,13 @@ $('f').addEventListener('submit', async e => {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { err.textContent = 'Enter a valid work email.'; return; }
   if ((d.password || '').length < 10) { err.textContent = 'Use a password of at least 10 characters.'; return; }
   btn.disabled = true; btn.textContent = 'Creating your workspace…';
-  const r = await fetch('/api/auth?action=signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, plan: S.plan, interval: S.interval, seats: S.seats }) });
+  const r = await fetch('/api/auth?action=signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, plan: S.plan, interval: S.interval, seats: seatsOf() }) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { err.innerHTML = (j.error || 'Sign up failed.').replace('Sign in instead.', '<a href="/login">Sign in instead.</a>'); btn.disabled = false; btn.textContent = 'Continue to payment'; return; }
   if (j.next !== '/#plan') { location.href = j.next || '/#welcome'; return; } // billing switched off: straight to setup
   step(3);
   try {
-    const c = await fetch('/api/billing', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'checkout', plan: S.plan, interval: S.interval, seats: S.seats }) });
+    const c = await fetch('/api/billing', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'checkout', plan: S.plan, interval: S.interval, seats: seatsOf() }) });
     const cj = await c.json().catch(() => ({}));
     if (!c.ok || !cj.url) throw new Error(cj.error || "We couldn't open checkout.");
     location.href = cj.url;

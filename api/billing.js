@@ -1,13 +1,15 @@
-// Stripe billing: per-user plans (Insight, Growth, Network), monthly or annual, with a 14-day free trial
-// that collects a card at sign-up and charges nothing until the trial ends.
+// Stripe billing: Solo ($149/mo, 1 user) and Team ($249/mo with 3 users, +$79 per extra user, up to 10), monthly or
+// annual, with a 14-day free trial that collects a card at sign-up and charges nothing until the trial ends.
 //   POST {action:'checkout', plan, interval, seats}  → Stripe Checkout URL (subscription mode)
-//   POST {action:'portal'}                           → Stripe customer portal URL (cancel, change plan/seats, card, invoices)
+//   POST {action:'change', plan, interval, seats}    → switch plan, users or billing period on the live subscription
+//   POST {action:'portal'}                           → Stripe customer portal URL (card, invoices, cancel)
 //   GET                                              → access + billing summary for the workspace
 //   POST ?webhook=1                                  → signed Stripe webhook that keeps the workspace in sync
 // Env: STRIPE_SECRET_KEY (required to switch billing on), STRIPE_WEBHOOK_SECRET. Prices are found by lookup key
-// (wellby_<plan>_monthly | wellby_<plan>_annual), so no price IDs live in env. STRIPE_API_BASE is for local tests only.
+// (wellby_solo_*, wellby_team_*, wellby_team_extra_* with _monthly | _annual), so no price IDs live in env. STRIPE_API_BASE is for local tests only.
 import crypto from 'node:crypto';
 import { loadOrgs, loadUsers, orgAccess } from '../lib/auth.mjs';
+import { PLANS, DEFAULT_PLAN, ENTERPRISE_EMAIL, planCode, seatOrder } from '../lib/plans.mjs';
 import { writeDoc, GLOBAL } from '../lib/store.mjs';
 import { readBody, send, withUser } from '../lib/http.mjs';
 
@@ -16,12 +18,13 @@ const KEY = () => process.env.STRIPE_SECRET_KEY || '';
 export const BILLING_ON = () => !!KEY() && process.env.BILLING_ON === '1';
 // Local tests only: on Vercel the key is only ever sent to Stripe itself.
 const API = () => (!process.env.VERCEL && process.env.STRIPE_API_BASE) || 'https://api.stripe.com';
-export const PLANS = {
-  insight: { name: 'Insight', monthly: 99, annual: 990, min: 1 },
-  growth: { name: 'Growth', monthly: 199, annual: 1990, min: 1 },
-  network: { name: 'Network', monthly: 179, annual: 1790, min: 5 },
-};
-const lookupKey = (plan, interval) => `wellby_${plan}_${interval === 'year' ? 'annual' : 'monthly'}`;
+export { PLANS };
+const per = interval => interval === 'year' ? 'annual' : 'monthly';
+const LEGACY_NAMES = { insight: 'Insight', growth: 'Growth', network: 'Network' };
+const lk = item => item?.price?.lookup_key || '';
+const isExtra = item => /^wellby_team_extra_/.test(lk(item));
+// Team seats: 3 included, up to 10. Solo: always 1.
+const seatsFor = (plan, n) => plan === 'solo' ? 1 : Math.max(PLANS.team.included, Math.min(PLANS.team.max, Math.round(+n || PLANS.team.included)));
 
 function form(obj, prefix = '', out = []) {
   for (const [k, v] of Object.entries(obj)) {
@@ -41,8 +44,7 @@ async function stripe(path, params, method = 'POST') {
   return j;
 }
 const priceCache = new Map();
-async function priceFor(plan, interval) {
-  const k = lookupKey(plan, interval);
+async function priceFor(k) {
   if (priceCache.has(k)) return priceCache.get(k);
   const r = await stripe('prices', { lookup_keys: { 0: k }, active: 'true', limit: 1 }, 'GET');
   const p = r.data?.[0];
@@ -52,13 +54,18 @@ async function priceFor(plan, interval) {
 }
 
 // Copy a Stripe subscription onto the workspace record.
+// Seats are worked out from the items, never from a quantity a customer could edit: Solo is always 1 user and
+// Team is 3 plus the extra-user quantity, capped at 10.
 function applySub(o, sub) {
-  const item = sub.items?.data?.[0] || {}, price = item.price || {};
-  const plan = (price.lookup_key || '').replace(/^wellby_|_(monthly|annual)$/g, '') || price.metadata?.plan || o.billing?.planKey || '';
+  const items = sub.items?.data || [];
+  const item = items.find(i => !isExtra(i)) || items[0] || {}, price = item.price || {}, extra = items.find(isExtra);
+  const raw = lk(item).replace(/^wellby_|_(monthly|annual)$/g, '') || price.metadata?.plan || o.billing?.planKey || '';
+  const plan = PLANS[raw] ? raw : '';
   const ts = s => s ? new Date(s * 1000).toISOString() : null;
+  const seats = plan === 'solo' ? 1 : plan === 'team' ? Math.min(PLANS.team.max, PLANS.team.included + (extra?.quantity || 0)) : item.quantity || sub.quantity || null;
   o.billing = { ...(o.billing || {}), customerId: sub.customer, subscriptionId: sub.id, status: sub.status,
-    planKey: PLANS[plan] ? plan : '', plan: PLANS[plan]?.name || price.nickname || '', interval: price.recurring?.interval || '',
-    seats: item.quantity || sub.quantity || null, trialEnd: ts(sub.trial_end),
+    planKey: plan, legacyPlan: plan ? '' : raw, plan: PLANS[plan]?.name || LEGACY_NAMES[raw] || price.nickname || '', interval: price.recurring?.interval || '',
+    seats, trialEnd: ts(sub.trial_end),
     periodEnd: ts(sub.current_period_end || item.current_period_end) || o.billing?.periodEnd || null,
     cancelAtPeriodEnd: !!sub.cancel_at_period_end, updated: new Date().toISOString() };
 }
@@ -114,18 +121,20 @@ const handler = withUser(async (req, res, me) => {
   const o = orgs.find(x => x.id === me.org);
   if (!o) return send(res, 404, { error: 'No workspace' });
   const configured = BILLING_ON();
-  const users = (await loadUsers()).filter(u => u.org === o.id && !u.disabled && !u.super).length || 1;
+  const users = seatOrder(await loadUsers(), o.id).length || 1;
   if (req.method === 'GET') {
     if (configured && o.billing?.customerId) { try { await syncOrg(orgs, o); } catch (e) { console.error('sync', e.message); } }
-    return send(res, 200, { access: orgAccess(o), configured, billing: summary(o, users), plans: PLANS });
+    return send(res, 200, { access: orgAccess(o), configured, billing: summary(o, users), plans: PLANS, defaultPlan: DEFAULT_PLAN, enterpriseEmail: ENTERPRISE_EMAIL });
   }
   if (me.role !== 'admin') return send(res, 403, { error: 'Only an admin can manage billing.' });
   if (!configured) return send(res, 503, { error: "Online billing isn't switched on yet. Contact Wellby to subscribe." });
   const body = await readBody(req);
   const origin = `https://${req.headers['x-forwarded-host'] || req.headers.host}`;
   if (body.action === 'checkout') {
-    const plan = PLANS[body.plan] ? body.plan : 'growth', interval = body.interval === 'year' ? 'year' : 'month';
-    const seats = Math.max(PLANS[plan].min, Math.min(500, Math.round(+body.seats || users)));
+    if (['trialing', 'active', 'past_due'].includes(o.billing?.status) && o.billing?.subscriptionId) return send(res, 400, { error: 'You already have a plan. Change it in Settings → Plan and billing.' });
+    const plan = planCode(body.plan) || DEFAULT_PLAN, interval = body.interval === 'year' ? 'year' : 'month';
+    const seats = seatsFor(plan, body.seats);
+    if (plan === 'solo' && users > 1) return send(res, 400, { error: `Solo includes 1 user and this workspace has ${users}. Pick Team, or disable the other users first.` });
     if (!o.billing?.customerId) {
       const c = await stripe('customers', { email: me.email, name: o.name, metadata: { org: o.id } });
       o.billing = { ...(o.billing || {}), customerId: c.id }; await writeDoc(GLOBAL.orgs, orgs);
@@ -135,13 +144,33 @@ const handler = withUser(async (req, res, me) => {
     const trialDays = !o.billing?.subscriptionId && left >= 1 ? Math.min(14, left) : 0;
     const s = await stripe('checkout/sessions', {
       mode: 'subscription', customer: o.billing.customerId, client_reference_id: o.id, allow_promotion_codes: 'true',
-      line_items: { 0: { price: await priceFor(plan, interval), quantity: seats } },
+      line_items: { 0: { price: await priceFor(`wellby_${plan}_${per(interval)}`), quantity: 1 },
+        ...(seats > PLANS.team.included ? { 1: { price: await priceFor(`wellby_team_extra_${per(interval)}`), quantity: seats - PLANS.team.included } } : {}) },
       payment_method_collection: 'always',
       metadata: { org: o.id, plan },
       subscription_data: { metadata: { org: o.id, plan }, ...(trialDays ? { trial_period_days: trialDays, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {}) },
       success_url: `${origin}/#welcome/started`, cancel_url: `${origin}/#plan`,
     });
     return send(res, 200, { url: s.url, trialDays, seats, plan, interval });
+  }
+  if (body.action === 'change') {
+    const id = o.billing?.subscriptionId;
+    if (!id || !['trialing', 'active', 'past_due'].includes(o.billing?.status)) return send(res, 400, { error: 'Pick a plan first.' });
+    const plan = planCode(body.plan) || o.billing.planKey || DEFAULT_PLAN, interval = body.interval === 'year' ? 'year' : 'month';
+    const seats = seatsFor(plan, body.seats);
+    if (plan === 'solo' && users > 1) return send(res, 400, { error: `Solo includes 1 user. Disable the other ${users - 1} user${users === 2 ? '' : 's'} in Settings → Team first.` });
+    if (seats < users) return send(res, 400, { error: `${users} people use this workspace. Keep at least ${users} users, or disable someone in Settings → Team first.` });
+    const sub = await stripe(`subscriptions/${id}`, null, 'GET');
+    const all = sub.items?.data || [], base = all.find(i => !isExtra(i)) || all[0], extra = all.find(isExtra);
+    const items = {}; let n = 0;
+    items[n++] = { id: base.id, price: await priceFor(`wellby_${plan}_${per(interval)}`), quantity: 1 };
+    const extraQty = plan === 'team' ? seats - PLANS.team.included : 0;
+    if (extraQty > 0) items[n++] = { ...(extra ? { id: extra.id } : {}), price: await priceFor(`wellby_team_extra_${per(interval)}`), quantity: extraQty };
+    else if (extra) items[n++] = { id: extra.id, deleted: 'true' };
+    for (const i of all) if (i !== base && i !== extra) items[n++] = { id: i.id, deleted: 'true' };
+    const upd = await stripe(`subscriptions/${id}`, { items, proration_behavior: 'create_prorations', metadata: { org: o.id, plan } });
+    applySub(o, upd); await writeDoc(GLOBAL.orgs, orgs);
+    return send(res, 200, { ok: true, billing: summary(o, users), access: orgAccess(o) });
   }
   if (body.action === 'portal') {
     if (!o.billing?.customerId) return send(res, 400, { error: 'No billing account yet. Pick a plan first.' });

@@ -102,3 +102,7 @@ input:focus, select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgb
   .seats .total { width: 100%; text-align: left; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; padding-top: 12px; border-top: 1px solid var(--line-soft); }
   .seats .total b { order: 2; }
 }
+.plan.ent { text-decoration: none; border-style: dashed; }
+.plan.ent .dot { visibility: hidden; }
+.plan.ent .what b { color: var(--ink); }
+.stepper[hidden] { display: none; }

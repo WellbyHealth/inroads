@@ -1,4 +1,5 @@
-import { loadUsers, loadOrgs, checkPassword, hashPassword, sessionCookie, clearCookie, currentUser, slug, TRIAL_DAYS } from '../lib/auth.mjs';
+import { loadUsers, loadOrgs, checkPassword, hashPassword, startSession, clearCookie, kickedCookie, currentUser, slug, TRIAL_DAYS } from '../lib/auth.mjs';
+import { KICKED } from '../lib/http.mjs';
 import { writeDoc, GLOBAL, orgDocs } from '../lib/store.mjs';
 import { readBody, send } from '../lib/http.mjs';
 import { CARE, careOf } from '../lib/care.mjs';
@@ -9,8 +10,9 @@ export default async function handler(req, res) {
   try {
     const action = new URL(req.url, 'http://x').searchParams.get('action');
     if (req.method === 'GET' && action === 'me') {
-      const u = await currentUser(req);
-      return u ? send(res, 200, { user: u }) : send(res, 401, { error: 'Not signed in' });
+      const ctx = {}, u = await currentUser(req, ctx);
+      if (ctx.kicked) return send(res, 401, { error: KICKED, kicked: true }, { 'Set-Cookie': [clearCookie, kickedCookie] });
+      return u ? send(res, 200, { user: u }, ctx.setCookie ? { 'Set-Cookie': ctx.setCookie } : {}) : send(res, 401, { error: 'Not signed in' });
     }
     if (req.method !== 'POST') return send(res, 405, { error: 'Method not allowed' });
     const origin = req.headers.origin;
@@ -30,7 +32,7 @@ export default async function handler(req, res) {
         return send(res, 401, { error: 'Email or password is incorrect.' });
       }
       attempts.delete(key);
-      return send(res, 200, { ok: true, mustChange: !!u.mustChange }, { 'Set-Cookie': sessionCookie(u.email) });
+      return send(res, 200, { ok: true, mustChange: !!u.mustChange }, { 'Set-Cookie': [await startSession(users, u), 'wb_kicked=; Path=/; Secure; SameSite=Lax; Max-Age=0'] });
     }
     if (action === 'signup') {
       // Self-serve: create an agency workspace on a free trial, with the signer as its admin.
@@ -57,16 +59,18 @@ export default async function handler(req, res) {
       orgs.push({ id, name: agency, website, demo: false, selfServe: true, cardRequired, created: now.toISOString(), by: email, trialEndsAt: new Date(now.getTime() + TRIAL_DAYS * 864e5).toISOString(), billing: { status: 'trial' } });
       await writeDoc(GLOBAL.orgs, orgs);
       await writeDoc(orgDocs(id).settings, { agencyName: agency, senderName: name, website, careType, services: CARE[careType].services, offices: [] });
-      users.push({ email, name, role: 'admin', super: false, org: id, ...hashPassword(pw), mustChange: false, created: now.toISOString(), selfServe: true });
-      await writeDoc(GLOBAL.users, users);
+      const nu = { email, name, role: 'admin', super: false, org: id, ...hashPassword(pw), mustChange: false, created: now.toISOString(), selfServe: true };
+      users.push(nu);
+      const cookie = await startSession(users, nu);
       a.n++; attempts.set(ipKey, a);
-      return send(res, 200, { ok: true, next: cardRequired ? '/#plan' : '/#welcome' }, { 'Set-Cookie': sessionCookie(email) });
+      return send(res, 200, { ok: true, next: cardRequired ? '/#plan' : '/#welcome' }, { 'Set-Cookie': cookie });
     }
     if (action === 'logout') return send(res, 200, { ok: true }, { 'Set-Cookie': clearCookie });
 
     if (action === 'password') {
       const me = await currentUser(req);
       if (!me) return send(res, 401, { error: 'Not signed in' });
+      // (A password change keeps this device signed in and does not rotate the session.)
       const pw = String(body.newPassword || '');
       if (pw.length < 10) return send(res, 400, { error: 'Use at least 10 characters.' });
       const users = await loadUsers();

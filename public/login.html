@@ -21,6 +21,7 @@
     <a class="logo" href="https://wellbyinroads.com" title="Back to wellbyinroads.com"><svg class="mark" viewBox="11.3 1.3 17.4 17.4" aria-hidden="true"><defs><radialGradient id="wf" gradientUnits="userSpaceOnUse" cx="17.6" cy="7.2" r="9.5"><stop offset="0" stop-color="#ffd3e8"/><stop offset=".6" stop-color="#f08cbf"/><stop offset="1" stop-color="#d4589a"/></radialGradient></defs><circle cx="20" cy="6.3" r="3.7" fill="url(#wf)"/><circle cx="23.9" cy="9.13" r="3.7" fill="url(#wf)"/><circle cx="22.41" cy="13.72" r="3.7" fill="url(#wf)"/><circle cx="17.59" cy="13.72" r="3.7" fill="url(#wf)"/><circle cx="16.1" cy="9.13" r="3.7" fill="url(#wf)"/><circle cx="20" cy="10.4" r="3" fill="#fcd34d"/></svg><span>Wellby</span></a>
     <h1>Welcome back</h1>
     <p class="lede">Sign in to your agency's workspace.</p>
+    <p class="note" id="kicked" role="status" hidden>You were signed out because your account signed in on another device. Solo includes one user on one device at a time; to give teammates their own sign-in, switch to Team in Plan and billing.</p>
     <form id="f" novalidate>
       <label>Work email<input name="email" type="email" autocomplete="username" required autofocus></label>
       <label><span class="row-between"><span>Password</span><a href="#" id="forgot" class="small">Forgot password?</a></span>
@@ -37,6 +38,7 @@
   </main></section>
 <script>
 const f = document.getElementById('f'), err = document.getElementById('err'), pw = f.password;
+if (/(?:^|;\s*)wb_kicked=1/.test(document.cookie)) { document.getElementById('kicked').hidden = false; document.cookie = 'wb_kicked=; Path=/; Max-Age=0; Secure; SameSite=Lax'; }
 document.getElementById('show').onclick = e => { const s = pw.type === 'password'; pw.type = s ? 'text' : 'password'; e.target.textContent = s ? 'Hide' : 'Show'; e.target.setAttribute('aria-label', s ? 'Hide password' : 'Show password'); };
 document.getElementById('forgot').onclick = e => { e.preventDefault(); document.getElementById('forgotNote').hidden = false; };
 f.addEventListener('submit', async e => {
