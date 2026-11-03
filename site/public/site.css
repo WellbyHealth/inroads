@@ -41,3 +41,11 @@
 
 /* Closing CTA panels (pricing, specialties, compare) on the pastel background */
 .panel.navy.sp-cta p{color:var(--body)}.panel.navy .sp-cta-alt{color:var(--ink)}
+
+/* Compact page head (pricing-style): content visible on open */
+.sp-top.ph-top{padding-top:clamp(18px,2.4vw,32px)}
+.head.ph{text-align:left;margin:0;max-width:none}
+.head.ph h1{font-size:clamp(2rem,3.2vw,2.75rem);line-height:1.05;letter-spacing:-.035em;max-width:none;margin:0;text-wrap:balance}
+.head.ph .sp-lede{margin:8px 0 0;max-width:86ch;font-size:16.5px;line-height:1.5;text-align:left}
+.head.ph+.sp-layout,.head.ph+.cmp-pick{margin-top:22px}
+.cmp-pick+.cmp-art{margin-top:28px}
