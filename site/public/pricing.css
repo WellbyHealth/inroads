@@ -1,0 +1,53 @@
+/* Pricing page: billing toggle, three plan cards (Growth emphasized), pay strip. */
+.pp-hero{padding-top:clamp(56px,7vw,96px)}
+.pp-hero h1{font-size:clamp(2.6rem,5.4vw,4.4rem);line-height:1.02;max-width:16ch;margin-inline:auto;text-wrap:balance}
+.pp-hero .sp-lede{margin:16px auto 0}
+
+.pp-toggle{display:flex;width:max-content;margin:30px auto 0;padding:5px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.pp-toggle button{font:inherit;font-size:15.5px;font-weight:620;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border:0;border-radius:999px;background:none;color:#3b3a36;cursor:pointer;transition:background .2s,color .2s}
+.pp-toggle button[aria-pressed="true"]{background:#000;color:#fff}
+.pp-toggle button:focus-visible{outline:3px solid var(--orange-ink);outline-offset:2px}
+.pp-save{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:#F7DC6F;color:#3d3300}
+
+.pp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:34px;align-items:stretch}
+.pp-card{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:28px;padding:28px 26px 26px}
+.pp-card.pop{border:2px solid #000;box-shadow:0 30px 60px -36px rgba(13,39,71,.45);background:linear-gradient(180deg,#FFF6EE 0,#fff 46%)}
+@media(min-width:901px){.pp-card.pop{transform:translateY(-12px)}}
+.pp-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#000;color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border-radius:999px;white-space:nowrap}
+.pp-top{display:flex;align-items:center;gap:12px}
+.pp-art{width:52px;height:52px;border-radius:16px;background:var(--t);object-fit:contain;padding:4px;flex:none}
+.pp-card h2{font-size:1.5rem;letter-spacing:-.025em;margin:0}
+.pp-price{display:flex;flex-direction:column;margin:20px 0 0}
+.pp-amt{font-size:clamp(2.8rem,4.4vw,3.6rem);font-weight:650;letter-spacing:-.045em;line-height:1;color:#000}
+.pp-per{font-size:14.5px;color:var(--muted);margin-top:6px}
+.pp-bill{font-size:14px;color:var(--muted);margin:2px 0 0}
+.pp-min{display:block;font-size:14px;font-weight:600;color:var(--body);margin-top:2px}
+.pp-trial{display:inline-flex;align-self:flex-start;margin:14px 0 0;font-size:13.5px;font-weight:650;color:#1F7A4D;background:#e6f4ea;padding:5px 10px;border-radius:8px}
+.pp-who{margin:16px 0 0;font-size:15.5px;line-height:1.45;color:var(--body)}
+.pp-list{list-style:none;margin:16px 0 0;padding:16px 0 0;border-top:1px solid var(--line-soft);display:grid;gap:10px}
+.pp-list li{display:flex;gap:10px;font-size:15.5px;line-height:1.4;color:#2e2d29}
+.pp-list svg{width:18px;height:18px;flex:none;margin-top:1px;color:#1F7A4D}
+.pp-list li:first-child span{font-weight:620}
+.pp-cta{margin-top:auto;display:inline-flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;padding:0 20px;border-radius:12px;font-size:16.5px;font-weight:620;text-decoration:none;background:#fff;color:#000;border:1.5px solid #000;transition:transform .16s var(--ease),background .15s}
+.pp-list{margin-bottom:24px}
+.pp-cta svg{width:17px;height:17px;transition:transform .2s var(--ease)}
+.pp-cta:hover{transform:translateY(-2px)}.pp-cta:hover svg{transform:translateX(3px)}
+.pp-card.pop .pp-cta{background:#000;color:#fff}
+.pp-card.pop .pp-cta:hover{background:#222}
+.pp-cta:focus-visible{outline:3px solid var(--orange-ink);outline-offset:3px}
+
+.pp-strip{margin:30px auto 0;max-width:860px;text-align:center;background:#fff;border:1px solid var(--line-soft);border-radius:22px;padding:20px 24px}
+.pp-zero{margin:0;font-size:17px;color:#000;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
+.pp-zero span{color:var(--muted)}
+.pp-marks{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.pp-marks li{font-size:13px;font-weight:650;color:#3b3a36;border:1px solid var(--line);border-radius:8px;padding:5px 10px;background:#fbfbf9;display:inline-flex;align-items:center;gap:6px}
+.pp-marks .pp-stripe{border-color:transparent;background:none;color:var(--muted);font-weight:600}
+.pp-marks svg{width:14px;height:14px}
+.pp-remind{margin:12px 0 0;font-size:14px;color:var(--muted)}
+.pp-example{text-align:center;margin:18px 0 0;font-size:16px;color:var(--body)}
+
+@media(max-width:900px){
+.pp-grid{grid-template-columns:minmax(0,1fr);max-width:520px;margin-inline:auto}
+.pp-card.pop{order:-1}
+}
+@media(max-width:520px){.pp-toggle button{padding:0 14px;font-size:15px}.pp-card{padding:26px 20px 22px}}

@@ -5,7 +5,7 @@
 ## Pages
 - [Home](https://wellbyinroads.com/): what Wellby does and how it works
 - [Specialties](https://wellbyinroads.com/specialties): the 18 kinds of referral-driven care Wellby is built for
-- [Pricing](https://wellbyinroads.com/pricing): plans and the free trial
+- [Pricing](https://wellbyinroads.com/pricing): Insight $99, Growth $199, Network $179 (5-user minimum) per user per month; annual includes 2 months free; 14-day free trial
 - [Wellby vs Trella Health](https://wellbyinroads.com/compare/trella)
 - [Wellby vs Definitive Healthcare](https://wellbyinroads.com/compare/definitive-healthcare)
 
