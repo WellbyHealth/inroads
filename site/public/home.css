@@ -89,3 +89,15 @@
 @media(max-width:900px){.acct-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:480px){.acct-vs{grid-template-columns:1fr}.acct-stats{grid-template-columns:repeat(2,1fr)}.acct-card{padding:20px}}
 .acct-top .tag{background:#ecebe6;color:#3b3a36;border:0;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:650;letter-spacing:0;text-transform:none;margin:0}
+
+/* Phone hero (final): tighter 3:2 crop, side-by-side CTAs, primary CTA above the fold even on iPhone SE */
+@media(max-width:760px){
+.h2-art img{aspect-ratio:3/2;height:auto;object-position:50% 0;-webkit-mask-image:linear-gradient(#000 84%,transparent 100%);mask-image:linear-gradient(#000 84%,transparent 100%)}
+.h2-copy{gap:12px;padding-top:0;margin-top:-10px}
+.hero2 h1{font-size:clamp(2.6rem,12.6vw,3.9rem)}
+.h2-what{font-size:16.5px;line-height:1.45}
+.h2-ctas{flex-wrap:nowrap;gap:10px;margin-top:14px}
+.h2-btn{flex:1 1 0;min-width:0;height:50px;font-size:15.5px;padding:0 12px 0 14px;gap:8px;justify-content:space-between;white-space:nowrap}
+.h2-fine{font-size:13.5px;margin-top:10px}
+}
+@media(max-width:374px){.h2-btn{justify-content:center;font-size:15px;padding:0 10px}.h2-btn svg{display:none}.h2-what{font-size:15.5px}}
