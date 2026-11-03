@@ -3,7 +3,14 @@
 import { readRaw, readDoc, orgDocs } from '../lib/store.mjs';
 import { send, withUser } from '../lib/http.mjs';
 
-const V = 'market/v3';
+// The newest built market wins: v4 adds CMS volumes (discharges, Medicare patients) and Census seniors.
+const VERSIONS = ['market/v4', 'market/v3'];
+let V = null;
+async function version() {
+  if (V) return V;
+  for (const v of VERSIONS) if (await cached(`${v}/index.json`, false) != null) return (V = v);
+  return (V = VERSIONS.at(-1));
+}
 const cache = new Map(); // per-instance memo of parsed shards
 async function cached(path, parse) {
   const key = path + (parse ? '#json' : '');
@@ -23,7 +30,9 @@ function miles(a, b, c, d) {
 
 export default withUser(async (req, res, me) => {
   const q = new URL(req.url, 'http://x').searchParams;
+  await version();
   const part = q.get('part');
+  if (q.get('file') === 'seniors') { const t = await cached(`${V}/seniors.json`, false); return t == null ? send(res, 404, { error: 'Not built yet' }) : send(res, 200, t, { 'Cache-Control': 'private, max-age=86400' }); }
   if (part) {
     if (!/^\d{5}-\d{1,3}$/.test(part)) return send(res, 400, { error: 'Bad part' });
     const [index, rows] = await Promise.all([cached(`${V}/index.json`, true), cached(`${V}/c/${part}.json`, true)]);
