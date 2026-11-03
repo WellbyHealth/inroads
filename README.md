@@ -1,6 +1,10 @@
 # Wellby app (app.wellbyinroads.com)
 
-Referral intelligence and a system of action for post-acute care. The marketing site (wellbyinroads.com) is a separate Vercel project.
+Referral intelligence and a system of action for post-acute care. The marketing site (wellbyinroads.com) lives in `site/` and is owned by the site chat. Don't edit it from here.
+
+## Two Vercel projects, one repo
+- **inroad-app** (this folder, the repo root) skips any push that only changes `site/`. Its ignored build step is `git diff --quiet HEAD^ HEAD -- . ':(exclude)site'`, and `.vercelignore` keeps `site/` out of the app upload.
+- **inroad-site** has Root Directory `site/` and builds only from there.
 
 ## Layout
 - `public/`: static front end.
