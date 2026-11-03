@@ -49,3 +49,20 @@
 .head.ph .sp-lede{margin:8px 0 0;max-width:86ch;font-size:16.5px;line-height:1.5;text-align:left}
 .head.ph+.sp-layout,.head.ph+.cmp-pick{margin-top:22px}
 .cmp-pick+.cmp-art{margin-top:28px}
+.blog-head.ph-top{max-width:var(--max,1160px);padding-top:clamp(18px,2.4vw,32px);padding-bottom:22px}
+.blog-head.ph-top .head.ph h1{font-size:clamp(2rem,3.2vw,2.75rem)}
+/* Typography: no one-word last lines in headings, fewer orphans in copy */
+h1,h2,h3,h4,.stk-h{text-wrap:balance}
+p,li,dd,summary{text-wrap:pretty}
+.sp-cta-alt{display:inline-block;padding:10px 2px}
+@media (max-width:1024px) and (min-width:641px){.foot-grid{grid-template-columns:minmax(0,1fr) auto}.foot-links{grid-column:1/-1;grid-row:2}.foot-copy{grid-column:2;grid-row:1}}
+@media (max-width:640px){.foot-grid{grid-template-columns:minmax(0,1fr)}}
+/* Blog post "Keep reading": horizontal rows instead of three cramped columns */
+.related .blog-grid{grid-template-columns:minmax(0,1fr);gap:14px;padding:0}
+.related .post-card{margin:0}
+.related .post-card a{flex-direction:row;align-items:stretch}
+.related .post-card img{width:clamp(130px,32%,220px);height:auto;aspect-ratio:4/3;flex:none}
+.related .pc-b{padding:16px 20px}
+.related .post-card h2,.related .post-card h3{font-size:1.1rem;margin:6px 0}
+.related .pc-p{font-size:14.5px;line-height:1.45}
+@media (max-width:480px){.related .pc-p{display:none}.related .pc-b{padding:12px 14px}.related .pc-meta{padding-top:6px}}
