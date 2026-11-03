@@ -1,0 +1,108 @@
+/* Territory nav icon (a pin in a ring) */
+.bar nav a[data-view="territory"] { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21s-6.5-5.6-6.5-11A6.5 6.5 0 0 1 18.5 10c0 5.4-6.5 11-6.5 11z'/%3E%3Ccircle cx='12' cy='10' r='2.4'/%3E%3C/svg%3E"); }
+@media (max-width: 720px) { .bar nav a[data-view="territory"] { display: none; } }
+
+/* Opportunity headline (Today, Targets) */
+.oppBanner { display: flex; gap: 16px; align-items: center; margin: 14px 0; padding: 16px 18px; text-decoration: none; color: inherit; background: linear-gradient(120deg, #FFF6EE, #FDEBD9); box-shadow: 0 0 0 .5px rgba(168,74,20,.18); transition: transform .15s; }
+.oppBanner:hover { transform: translateY(-1px); }
+.oppBanner img { width: 64px; flex: none; }
+.oppEye { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #A84A14; margin-bottom: 4px; }
+.oppMain { font-size: 16px; line-height: 1.4; }
+.oppSub { margin-top: 4px; font-size: 14px; color: var(--muted); }
+.oppSub b { color: #1F7A4D; }
+
+/* Your territory */
+.terrHead { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 16px; }
+.terrHead h1 { margin: 4px 0 6px; }
+.terrHead p { margin: 0; max-width: 70ch; }
+.terrBig { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.terrBig .card { display: flex; flex-direction: column; gap: 4px; padding: 16px; }
+.terrBig .tnum { font-size: 34px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.terrBig .hl { background: #EAF6EF; box-shadow: 0 0 0 .5px rgba(31,122,77,.25); }
+.terrBig .hl .tnum { color: #1F7A4D; }
+.terrAssume { margin: 10px 2px 14px; }
+#tAssume .row { align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+#tAssume label { margin: 0; flex: 1 1 180px; }
+.tscroll { overflow-x: auto; margin-top: 10px; }
+.terrT { width: 100%; border-collapse: collapse; font-size: 14px; }
+.terrT th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); padding: 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.terrT td { padding: 10px 8px; border-bottom: 1px solid var(--line-soft, #eee); vertical-align: top; }
+.terrT tbody tr { cursor: pointer; }
+.terrT tbody tr:hover { background: rgba(0,113,227,.04); }
+.terrT .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.terrNext { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
+.printOnly { display: none; }
+@media (max-width: 900px) { .terrBig { grid-template-columns: repeat(2, minmax(0, 1fr)); } .terrBig .tnum { font-size: 28px; } }
+
+/* 60-second setup and demo builder */
+.wiz { max-width: 640px; margin: 8px auto 40px; }
+.wizTop { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.wizSteps { display: flex; gap: 6px; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.wizSteps li { display: flex; align-items: center; gap: 6px; }
+.wizSteps li + li::before { content: ""; width: 16px; height: 1px; background: var(--line); }
+.wizSteps b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(118,118,128,.14); font-size: 12px; }
+.wizSteps .on { color: var(--ink); } .wizSteps .on b { background: var(--tint); color: #fff; }
+.wizSteps .done b { background: #1F7A4D; color: #fff; }
+.wizCard { padding: 24px; }
+.wizCard h1 { margin: 0 0 6px; }
+.wizCard form { margin-top: 16px; display: grid; gap: 12px; }
+.wizCard .row { gap: 8px; }
+.wizNote { margin-bottom: 12px; }
+.wizOff { display: grid; grid-template-columns: 1fr 2fr 92px; gap: 8px; }
+.wizOff .err { grid-column: 1 / -1; margin: 0; }
+.wSrcs { display: grid; gap: 6px; }
+.wSrc { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: rgba(118,118,128,.06); margin: 0; font-weight: 500; }
+.wSrc > span { display: flex; flex-direction: column; min-width: 0; }
+.wSrc > span b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wSrc input { width: 84px; flex: none; text-align: center; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.chk { display: flex !important; gap: 8px; align-items: center; font-weight: 500; }
+.chk input { width: auto; }
+@media (max-width: 640px) { .wizOff, .grid2 { grid-template-columns: 1fr; } .wizCard { padding: 18px; } }
+
+/* Account menu */
+.meBtnWrap { position: relative; }
+.meBtn { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 10px 0 4px; border: 0; border-radius: 999px; background: rgba(118,118,128,.1); font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
+.meAv { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--tint); color: #fff; font-size: 13px; }
+.meMenu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 2500; min-width: 220px; padding: 6px; border-radius: 14px; background: var(--surface, #fff); box-shadow: 0 12px 32px rgba(0,0,0,.16), 0 0 0 .5px var(--line); display: grid; }
+.meMenu[hidden] { display: none; }
+.meMenu a, .meMenu button { display: block; text-align: left; padding: 9px 12px; border: 0; background: none; border-radius: 9px; font: inherit; font-size: 14px; color: var(--ink); text-decoration: none; cursor: pointer; }
+.meMenu a:hover, .meMenu button:hover { background: rgba(0,113,227,.08); }
+.meMenu hr { border: 0; border-top: 1px solid var(--line); margin: 4px 6px; }
+@media (max-width: 720px) { .meNm { display: none; } }
+
+/* Guided tour */
+#tourCard { position: fixed; right: 20px; bottom: 20px; z-index: 2800; width: min(360px, calc(100vw - 32px)); padding: 18px; border-radius: 18px; background: #0D2747; color: #DCE6F3; box-shadow: 0 20px 50px rgba(0,0,0,.3); animation: tourIn .2s ease-out; }
+@keyframes tourIn { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+#tourCard h3 { color: #fff; margin: 4px 0 6px; font-size: 19px; }
+#tourCard p { margin: 0 0 12px; font-size: 14px; line-height: 1.5; }
+.tourEye { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #F0A36F; }
+.tourDots { display: flex; gap: 6px; margin-bottom: 12px; }
+.tourDots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.3); }
+.tourDots i.on { background: #fff; }
+.tourBtns { display: flex; gap: 8px; justify-content: flex-end; }
+.tourBtns .ghost { color: #DCE6F3; margin-right: auto; }
+#nav a.tourOn { box-shadow: 0 0 0 2px #EE8B4B; border-radius: 10px; animation: tourPulse 1.6s ease-in-out infinite; }
+@keyframes tourPulse { 50% { box-shadow: 0 0 0 5px rgba(238,139,75,.35); } }
+@media (max-width: 720px) { #tourCard { right: 16px; left: 16px; width: auto; bottom: calc(76px + env(safe-area-inset-bottom)); } }
+
+/* Print: the Territory snapshot (one page) */
+@page { size: letter; margin: 14mm; }
+@media print {
+  .hdr, #drawer, #toast, #tourCard, .noprint, .oppBanner, #moreSheet { display: none !important; }
+  html, body { background: #fff !important; width: auto !important; }
+  body { display: block !important; padding: 0 !important; margin: 0 !important; grid-template-columns: none !important; }
+  #app { padding: 0 !important; margin: 0 !important; max-width: none !important; width: auto !important; }
+  .card { box-shadow: none !important; border: 1px solid #ddd; }
+  .terr > .card { break-inside: auto !important; }
+  .terrHead h1 { font-size: 26px; }
+  .terrBig { grid-template-columns: repeat(4, 1fr) !important; gap: 8px; }
+  .terrBig .card { padding: 10px; break-inside: avoid; }
+  .terrBig .tnum { font-size: 24px; }
+  .terrT { font-size: 11.5px; }
+  .terrT td, .terrT th { padding: 5px 6px; }
+  .terrT tbody tr { break-inside: avoid; }
+  .terrT tbody tr:nth-child(n+11) { display: none; }
+  .printOnly { display: block; margin-top: 10px; }
+  .tscroll { overflow: visible; }
+}

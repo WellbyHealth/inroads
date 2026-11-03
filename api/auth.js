@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       users.push({ email, name, role: 'admin', super: false, org: id, ...hashPassword(pw), mustChange: false, created: now.toISOString(), selfServe: true });
       await writeDoc(GLOBAL.users, users);
       a.n++; attempts.set(ipKey, a);
-      return send(res, 200, { ok: true, next: cardRequired ? '/#plan' : '/#settings/setup' }, { 'Set-Cookie': sessionCookie(email) });
+      return send(res, 200, { ok: true, next: cardRequired ? '/#plan' : '/#welcome' }, { 'Set-Cookie': sessionCookie(email) });
     }
     if (action === 'logout') return send(res, 200, { ok: true }, { 'Set-Cookie': clearCookie });
 

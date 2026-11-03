@@ -41,7 +41,7 @@ function pickTarget() {
   return free.sort((a, b) => score(b) - score(a))[0];
 }
 
-async function createSample() {
+async function createSample({ quiet = false } = {}) {
   const { S, post, addDays, today, toast, refreshView, openSource } = W();
   const s = pickTarget();
   if (!s) return toast('No open targets left to use for a sample. Add referral sources first.');
@@ -50,6 +50,7 @@ async function createSample() {
   const p = s.p;
   const r = await post('saveFlow', { sourceId: p.id, flow: { startedAt: start, sample: true, steps, p: { name: p.name, type: p.type, tx: p.tx, city: p.city, address: p.address, zip: p.zip, phone: p.phone, lat: p.lat, lng: p.lng, size: p.size, beds: p.beds } } });
   S.flows = r.flows;
+  if (quiet) return p;
   location.hash = '#flows'; refreshView(); openSource(p.id);
   toast(`Sample win flow started for ${p.name}. Drafting the next step…`);
   // Step 1 (the intro email) is marked done 9 days ago, so the visit is now due: draft it.
@@ -91,3 +92,4 @@ X._drawer = (id, d) => {
   box.insertAdjacentHTML('afterbegin', `<div id="fsNote" class="notice small" style="margin-bottom:10px;display:flex;gap:10px;align-items:center;justify-content:space-between"><span><b>Sample flow.</b> The intro email is marked done 9 days ago so you can see a step come due. Nothing is sent until you approve it.</span><button class="btn sm ghost" id="fsRemove">Remove sample</button></div>`);
   box.querySelector('#fsRemove').onclick = () => removeSample(id).catch(e => W().toast(e.message));
 };
+X.createSampleFlow = createSample;

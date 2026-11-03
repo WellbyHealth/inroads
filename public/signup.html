@@ -128,7 +128,7 @@ $('f').addEventListener('submit', async e => {
   const r = await fetch('/api/auth?action=signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, plan: S.plan, interval: S.interval, seats: S.seats }) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { err.innerHTML = (j.error || 'Sign up failed.').replace('Sign in instead.', '<a href="/login">Sign in instead.</a>'); btn.disabled = false; btn.textContent = 'Continue to payment'; return; }
-  if (j.next !== '/#plan') { location.href = j.next || '/#settings/setup'; return; } // billing switched off: straight to setup
+  if (j.next !== '/#plan') { location.href = j.next || '/#welcome'; return; } // billing switched off: straight to setup
   step(3);
   try {
     const c = await fetch('/api/billing', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'checkout', plan: S.plan, interval: S.interval, seats: S.seats }) });

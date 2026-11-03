@@ -139,7 +139,7 @@ const handler = withUser(async (req, res, me) => {
       payment_method_collection: 'always',
       metadata: { org: o.id, plan },
       subscription_data: { metadata: { org: o.id, plan }, ...(trialDays ? { trial_period_days: trialDays, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {}) },
-      success_url: `${origin}/#settings/billing?started=1`, cancel_url: `${origin}/#plan`,
+      success_url: `${origin}/#welcome/started`, cancel_url: `${origin}/#plan`,
     });
     return send(res, 200, { url: s.url, trialDays, seats, plan, interval });
   }

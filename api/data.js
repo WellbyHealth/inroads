@@ -5,7 +5,7 @@ import { CARE } from '../lib/care.mjs';
 
 const DEFAULT_SETTINGS = {
   agencyName: '', senderName: '', services: 'Non-medical in-home care: personal care, companionship, respite, overnight and 24-hour care, transitions home from hospital or rehab.',
-  pitch: '', mailClient: 'gmail', website: '', offices: [], careType: 'home_care', weeklyGoal: 10, clientValue: 0, outbound: {}, visitEvery: 30,
+  pitch: '', mailClient: 'gmail', website: '', offices: [], careType: 'home_care', weeklyGoal: 10, clientValue: 0, outbound: {}, visitEvery: 30, admitRate: 0, targetShare: 0,
 };
 const id = () => crypto.randomBytes(6).toString('base64url');
 const clip = (s, n = 4000) => String(s ?? '').slice(0, n);
@@ -50,6 +50,8 @@ export default withUser(async (req, res, me) => {
           // Scorecard inputs: average revenue per new client, and each source's estimated outbound referrals per quarter.
           visitEvery: Math.max(7, Math.min(180, Math.round(+(s.visitEvery ?? base.visitEvery) || 30))),
           clientValue: Math.max(0, Math.min(1e7, Math.round(+(s.clientValue ?? base.clientValue) || 0))),
+          // Opportunity assumptions: share of referrals that become clients, and the share of each source to aim for (0 = default).
+          admitRate: Math.max(0, Math.min(1, +(s.admitRate ?? base.admitRate) || 0)), targetShare: Math.max(0, Math.min(.5, +(s.targetShare ?? base.targetShare) || 0)),
           outbound: s.outbound && typeof s.outbound === 'object' ? Object.fromEntries(Object.entries(s.outbound).slice(0, 3000).map(([k, v]) => [clip(k, 80), Math.max(0, Math.min(1e5, Math.round(+v || 0)))]).filter(([, v]) => v > 0)) : (base.outbound || {}) };
         if (Array.isArray(s.offices)) {
           const prev = cur.offices || [];

@@ -26,6 +26,10 @@ function open() {
     a.onclick = () => close();
     list.appendChild(a);
   }
+  // Setup pages live under the account menu on desktop; on phones they close out the sheet.
+  const links = X.setupLinks ? X.setupLinks() : [];
+  if (links.length) { const h = document.createElement('div'); h.className = 'msSec'; h.textContent = 'Setup'; list.appendChild(h); }
+  for (const [label, href] of links) { const a = document.createElement('a'); a.href = href; a.className = 'msItem'; a.textContent = label; a.onclick = () => close(); list.appendChild(a); }
   s.hidden = false; document.body.classList.add('msOpen');
 }
 function ensure() {
