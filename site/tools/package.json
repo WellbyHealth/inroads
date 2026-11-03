@@ -1,0 +1,8 @@
+{
+  "name": "inroad-site",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node build.mjs" },
+  "dependencies": { "sharp": "^0.34.0", "@fontsource-variable/figtree": "^5.2.0" },
+  "engines": { "node": ">=20" }
+}

@@ -1,0 +1,17 @@
+# Wellby
+
+> Wellby is referral intelligence plus a system of action for post-acute care (home health, hospice, skilled nursing, home care and more). It is built to map every referral source around a provider's offices, show the provider's share of each source's referrals, and draft the outreach and follow-up for the business development, sales and marketing team to approve. Wellby is in development with self-serve sign-up and a 14-day free trial.
+
+## Pages
+- [Home](https://wellbyinroads.com/): what Wellby does and how it works
+- [Specialties](https://wellbyinroads.com/specialties): the 18 kinds of referral-driven care Wellby is built for
+- [Pricing](https://wellbyinroads.com/pricing): plans and the free trial
+- [Wellby vs Trella Health](https://wellbyinroads.com/compare/trella)
+- [Wellby vs Definitive Healthcare](https://wellbyinroads.com/compare/definitive-healthcare)
+
+## Guides
+- [How to find every referral source in your territory](https://wellbyinroads.com/blog/find-every-referral-source-with-public-data): Why stale referral lists cost you, where public information about hospitals, physicians and facilities lives, and how to keep your territory list honest.
+- [Referral share: the one number post-acute marketers should track](https://wellbyinroads.com/blog/referral-share-the-metric-to-track): Visit counts tell you how busy your team is. Referral share tells you whether it is working. What it means and why it changes how you plan outreach.
+- [How to spot a referral partner going quiet before you lose them](https://wellbyinroads.com/blog/spot-referral-partners-going-quiet): Partners rarely announce that they have switched agencies. Why drops are easy to miss, what to check first, and how to run a win-back that works.
+- [A weekly plan for home health and hospice marketers](https://wellbyinroads.com/blog/weekly-plan-for-referral-marketers): A simple, repeatable week for community liaisons and business development reps: where to spend time, how to prioritize visits, and what to log.
+- [What to say to referral partners: thank-you, check-in and update templates](https://wellbyinroads.com/blog/referral-partner-check-in-templates): Short templates for thanking referral sources, checking in with quiet partners and sharing updates, plus tips on keeping them personal and HIPAA-aware.
