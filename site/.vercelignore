@@ -1,0 +1,5 @@
+# The site project (Root Directory: site) uses this file instead of the repo-root
+# .vercelignore, which is written for the app and strips site/.
+# Only the generator scripts are left out of the upload; public/ is the site.
+tools/
+README.md
