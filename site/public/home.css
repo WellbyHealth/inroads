@@ -1,5 +1,5 @@
 /* Home page hero (full-width clay scene) and the panel under it. */
-.hero2{position:relative;margin-top:-68px;padding-top:44px;background:linear-gradient(#D9DDFB 0,#D9DDFB 80px,#FBCDB9 80px);overflow:hidden}
+.hero2{position:relative;margin-top:-68px;padding-top:86px;background:linear-gradient(#D9DDFB 0,#D9DDFB 96px,#FBCDB9 96px);overflow:hidden}
 .h2-art img{display:block;width:100%;height:clamp(500px,46vw,800px);object-fit:cover;object-position:50% 0}
 .h2-copy{position:relative;margin-top:calc(-1*clamp(80px,9.5vw,170px));padding-bottom:clamp(110px,9vw,150px);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(28px,5vw,80px);align-items:end}
 .hero2 h1{font-size:clamp(3.4rem,6.6vw,6.2rem);line-height:.92;letter-spacing:-.055em;font-weight:620;color:#1c1916;margin:0;text-wrap:balance}
@@ -36,7 +36,7 @@
 }
 
 /* Hero sizing: fit the first screen on every device */
-.h2-art img{height:clamp(380px,min(46vw,calc(100svh - 320px)),800px);object-position:50% 18%;-webkit-mask-image:linear-gradient(#000 68%,transparent 100%);mask-image:linear-gradient(#000 68%,transparent 100%)}
+.h2-art img{height:clamp(380px,min(46vw,calc(100svh - 320px)),800px);object-position:50% 0;-webkit-mask-image:linear-gradient(#000 68%,transparent 100%);mask-image:linear-gradient(#000 68%,transparent 100%)}
 .h2-copy{margin-top:calc(-1*clamp(24px,4svh,90px));padding-bottom:clamp(104px,9vw,150px);grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:end}
 .hero2 h1{font-size:clamp(3.2rem,min(6.6vw,11.5svh),6.2rem)}
 .h2-what{font-size:clamp(17px,min(1.6vw,2.7svh),23px);max-width:26em}
