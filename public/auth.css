@@ -106,3 +106,7 @@ input:focus, select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgb
 .plan.ent .dot { visibility: hidden; }
 .plan.ent .what b { color: var(--ink); }
 .stepper[hidden] { display: none; }
+.plan .nm { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.plan .nm .tag { margin-left: 0; }
+.tier { width: 40px; height: 40px; border-radius: 12px; background: var(--t); object-fit: contain; padding: 4px; flex: none; }
+.plan .dot { margin-top: 10px; }

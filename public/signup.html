@@ -79,8 +79,8 @@
 <script>
 // Mirrors lib/plans.mjs; the server re-checks the plan, price and user limits.
 const PLANS = {
-  solo: { name: 'Solo', monthly: 149, annual: 1490, included: 1, max: 1, who: 'For the owner or one marketer doing it all.', what: '1 user. Market map, ranked targets and a weekly visit list, a scorecard for every referral source, drafted outreach you approve, and follow-up until they reply.' },
-  team: { name: 'Team', monthly: 249, annual: 2490, included: 3, max: 10, extraMonthly: 79, extraAnnual: 790, tag: 'Most popular', what: '3 users included, up to 10. Everything in Solo, plus shared sources and notes, territories for each marketer, a team view and one combined scorecard.' },
+  solo: { art: 'seed', tint: '#e4f0fd', name: 'Solo', monthly: 149, annual: 1490, included: 1, max: 1, who: 'For the owner or one marketer doing it all.', what: '1 user. Market map, ranked targets and a weekly visit list, a scorecard for every referral source, drafted outreach you approve, and follow-up until they reply.' },
+  team: { art: 'bloom', tint: '#fde7d6', name: 'Team', monthly: 249, annual: 2490, included: 3, max: 10, extraMonthly: 79, extraAnnual: 790, tag: 'Most popular', what: '3 users included, up to 10. Everything in Solo, plus shared sources and notes, territories for each marketer, a team view and one combined scorecard.' },
 };
 const LEGACY = { insight: 'solo', growth: 'team', network: 'team' };
 const q = new URLSearchParams(location.search);
@@ -107,10 +107,10 @@ function render() {
   S.seats = Math.max(3, Math.min(10, S.seats));
   document.querySelectorAll('[data-int]').forEach(b => b.classList.toggle('on', b.dataset.int === S.interval));
   $('plans').innerHTML = Object.entries(PLANS).map(([k, p]) => `<button type="button" class="plan ${k === S.plan ? 'on' : ''}" data-plan="${k}" aria-pressed="${k === S.plan}">
-    <span class="dot"></span><span><span class="name">${p.name}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</span>
+    <span class="dot"></span><span class="nm"><img class="tier" src="/img/g-tier-${p.art}-cut.webp" alt="" width="40" height="40" style="--t:${p.tint}"><span class="name">${p.name}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</span>
     <span class="price">${money(y ? Math.floor(p.annual / 12) : p.monthly)}<small>per month${k === 'team' ? ' · 3 users' : ' · 1 user'}${y ? ', billed yearly' : ''}</small></span>
     <span class="what">${p.what}</span></button>`).join('') +
-    `<a class="plan ent" href="mailto:team@wellbyhealth.com?subject=Wellby%20Enterprise%20demo"><span class="dot"></span><span><span class="name">Enterprise</span></span>
+    `<a class="plan ent" href="mailto:team@wellbyhealth.com?subject=Wellby%20Enterprise%20demo"><span class="dot"></span><span class="nm"><img class="tier" src="/img/g-tier-house-cut.webp" alt="" width="40" height="40" style="--t:#ece6fb"><span class="name">Enterprise</span></span>
     <span class="price">Custom<small>from 10 users, billed yearly</small></span>
     <span class="what">Per-rep scorecards, goals and quotas, rollups across locations, roles and permissions, SSO, a signed BAA, and CRM and EMR connections. <b>Book a demo →</b></span></a>`;
   document.querySelectorAll('[data-plan]').forEach(b => b.onclick = () => { S.plan = b.dataset.plan; render(); });

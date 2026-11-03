@@ -3,6 +3,8 @@
 const X = (window.WellbyExt = window.WellbyExt || {});
 const W = () => window.Wellby;
 const B = { data: null, plan: null, interval: 'month', seats: null, busy: false, mode: 'new' };
+const ART = { solo: ['seed', '#e4f0fd'], team: ['bloom', '#fde7d6'], enterprise: ['house', '#ece6fb'] };
+const tier = k => `<img class="plan-art" src="/img/g-tier-${ART[k][0]}-cut.webp" alt="" width="48" height="48" style="--t:${ART[k][1]}">`;
 const FEAT = {
   solo: ['1 user, one device at a time', 'Market map, ranked targets and a weekly visit list', 'A scorecard for every referral source', 'Drafted outreach you approve, follow-up until they reply'],
   team: ['3 users included, up to 10', 'Everything in Solo', 'Shared sources and notes, territories for each marketer', 'A team view and one combined scorecard'],
@@ -29,11 +31,11 @@ function picker(host, { heading, sub } = {}) {
       <p class="muted">${sub || (change ? 'Changes apply right away. Stripe prorates the difference on your next invoice.' : `14 days free. Add a card now; you won't be charged until <b>${day(ends)}</b>. Cancel before then and you pay nothing.`)}</p>
       <div class="seg" role="tablist"><button data-int="month" class="${!y ? 'on' : ''}">Monthly</button><button data-int="year" class="${y ? 'on' : ''}">Annual · 2 months free</button></div></div>
     <div class="plan-grid">${Object.entries(P).map(([k, p]) => `<button class="plan-card ${B.plan === k ? 'on' : ''}" data-plan="${k}">
-        ${k === 'team' ? '<span class="plan-tag">Most popular</span>' : ''}<b class="plan-name">${p.name}</b>
+        ${k === 'team' ? '<span class="plan-tag">Most popular</span>' : ''}${tier(k)}<b class="plan-name">${p.name}</b>
         <span class="plan-price">${money(y ? Math.floor(p.annual / 12) : p.monthly)}<small>/month</small></span>
         <span class="muted small">${k === 'team' ? `3 users included · ${money(y ? p.extraAnnual : p.extraMonthly)}/${y ? 'yr' : 'mo'} per extra user` : '1 user'}${y ? ` · ${money(p.annual)} billed yearly` : ''}</span>
         <ul>${FEAT[k].map(f => `<li>${f}</li>`).join('')}</ul></button>`).join('')}
-      <a class="plan-card" href="mailto:${d.enterpriseEmail || 'team@wellbyhealth.com'}?subject=Wellby%20Enterprise%20demo"><b class="plan-name">Enterprise</b><span class="plan-price">Custom</span>
+      <a class="plan-card" href="mailto:${d.enterpriseEmail || 'team@wellbyhealth.com'}?subject=Wellby%20Enterprise%20demo">${tier('enterprise')}<b class="plan-name">Enterprise</b><span class="plan-price">Custom</span>
         <span class="muted small">From 10 users, billed yearly</span><ul><li>Per-rep scorecards, goals and quotas</li><li>Rollups across locations</li><li>Roles, SSO and a signed BAA</li><li>CRM and EMR connections</li></ul><span class="small"><b>Book a demo →</b></span></a></div>
     <div class="card plan-bar">
       <div><span class="muted small">Users</span>${B.plan === 'team' ? `<div class="stepper"><button data-s="-1" aria-label="Fewer users">−</button><b>${B.seats}</b><button data-s="1" aria-label="More users">+</button></div>` : '<div class="stepper"><b>1</b></div>'}
@@ -78,7 +80,7 @@ new MutationObserver(async () => {
   B.mode = 'new';
   if (st === 'over_seats') {
     const lim = B.data.access.limit || W().S.me.access?.limit;
-    host.innerHTML = `<div class="card plan-wrap" style="max-width:560px;margin:40px auto;text-align:center"><span class="eyebrow">No seat on this plan</span>
+    host.innerHTML = `<div class="card plan-wrap" style="max-width:560px;margin:40px auto;text-align:center">${tier(lim === 1 ? 'solo' : 'team')}<br><span class="eyebrow">No seat on this plan</span>
       <h1>${lim === 1 ? 'This workspace is on Solo' : `This plan covers ${lim} users`}</h1>
       <p class="muted">${lim === 1 ? 'Solo includes one user. Ask your admin to switch to Team (3 users included) to give you your own sign-in.' : 'Every seat is taken. Ask your admin to add a user in Settings → Plan and billing ($79/mo each, up to 10).'}</p></div>`;
     return;

@@ -22,3 +22,5 @@
 .plan-total b small { font-size: 13px; font-weight: 500; color: var(--muted); }
 .plan-fine { text-align: center; margin-top: 10px; }
 @media (max-width: 860px) { .plan-grid { grid-template-columns: 1fr; } .plan-bar { flex-direction: column; align-items: stretch; } .plan-bar .btn { width: 100%; } }
+.plan-art { width: 48px; height: 48px; border-radius: 14px; background: var(--t); object-fit: contain; padding: 5px; margin-bottom: 6px; display: inline-block; }
+a.plan-card { text-decoration: none; }
