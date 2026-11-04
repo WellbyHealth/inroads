@@ -150,3 +150,5 @@
 .acct-why p{margin:6px 0 0;font-size:14.5px;color:var(--body)}
 .acct-why b{color:#000;font-size:16px;margin-right:4px}
 .acct-why i{font-style:normal;color:var(--muted)}
+@media(min-width:901px){.h2-copy{align-items:center}}
+@media(min-width:901px){.h2-side{transform:translateY(18px)}.hero2 h1{transform:translateY(18px)}}
