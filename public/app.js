@@ -386,12 +386,15 @@ async function loadProspects(progress) {
   const states = (S.settings.sales?.states || []).filter(st => pidx?.states?.[st]);
   const files = states.length ? states.flatMap(st => Array.from({ length: pidx.states[st].parts }, (_, k) => `pp=${st}-${k}`)) : ['file=top'];
   const F = pidx?.fields || [], providers = [], counts = {}, seen = new Set();
+  // Researched business contacts (website, BD people) for the first sales list, keyed by NPI.
+  const cr = await fetch('/api/market?file=contacts'); const research = cr.ok ? await cr.json() : {};
   let done = 0;
   await Promise.all(files.map(async f => {
     const r = await fetch(`/api/market?${f}`);
     if (r.ok) for (const row of await r.json()) {
       const p = Object.fromEntries(F.map((k, j) => [k, row[j]]));
       if (seen.has(p.id)) continue; seen.add(p.id);
+      if (research[p.id]) p.research = research[p.id];
       providers.push(p); counts[p.type] = (counts[p.type] || 0) + 1;
     }
     progress?.(++done, files.length);
@@ -405,7 +408,9 @@ async function loadProspects(progress) {
 const icpType = p => /home care|personal care|private duty|companion/i.test(`${p.tx || ''} ${p.name}`) ? .95
   : p.type === 'Home health agency' || p.type === 'Hospice' ? 1 : p.type === 'Skilled nursing' ? .75 : p.type === 'Rehab hospital' ? .7 : p.type === 'Assisted living' ? .6 : .5;
 const icpSites = n => n >= 6 ? 1 : n >= 2 ? .85 : .5;
-function icp(p) { return Math.round(100 * (.45 * icpType(p) + .25 * icpSites(p.sites || 1) + .2 * ((p.size ?? 30) / 100) + .1 * (p.official ? 1 : 0))); }
+// Not first customers: government, hospital systems and the national chains (they buy enterprise software top-down).
+const ICP_OUT = /department|county|state of|hospital|health system|healthcare system|medical center|university|amedisys|bayada|maxim healthcare|centerwell|kindred|enhabit|lhc group|aveanna|encompass|vitas|gentiva|interim|brookdale|accentcare|elara|addus/i;
+function icp(p) { const base = 100 * (.45 * icpType(p) + .25 * icpSites(p.sites || 1) + .2 * ((p.size ?? 30) / 100) + .1 * (p.official ? 1 : 0)) + (p.research?.people?.length ? 3 : 0); return Math.min(100, Math.round(ICP_OUT.test(p.name) || p.research?.status === 'acquired' ? base * .6 : base)); }
 async function loadMarket(progress) {
   if (S.me?.orgSales) return loadProspects(progress);
   S.offices = (S.settings.offices || []).filter(o => o.lat);

@@ -29,3 +29,7 @@ table.sp td a[data-open]:hover { text-decoration: underline; }
 .sp-tools .seg { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
 .sp-tools .seg button { white-space: nowrap; }
 .dSales { flex-wrap: wrap; gap: 6px; align-items: center; }
+
+.sp-bd { font-size: 10px; padding: 1px 6px; background: #FFF1E6; color: #A0451A; vertical-align: 1px; }
+.sp-res { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 0 0 12px; display: grid; gap: 6px; }
+.sp-res ul { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }

@@ -33,7 +33,7 @@ export default withUser(async (req, res, me) => {
   await version();
   const part = q.get('part');
   // Wellby sales workspace: the national prospect list (agencies that might buy Wellby), by state or the top ranked.
-  const pf = q.get('file') === 'prospects' ? 'index' : q.get('file') === 'top' ? 'top' : /^[A-Z]{2}-\d{1,2}$/.test(q.get('pp') || '') ? q.get('pp') : null;
+  const pf = q.get('file') === 'prospects' ? 'index' : q.get('file') === 'top' ? 'top' : q.get('file') === 'contacts' ? 'contacts' : /^[A-Z]{2}-\d{1,2}$/.test(q.get('pp') || '') ? q.get('pp') : null;
   if (pf) {
     if (!me.orgSales && !me.super) return send(res, 403, { error: 'Prospects are for the Wellby sales workspace.' });
     const t = await cached(`market/v3/p/${pf}.json`, false);
