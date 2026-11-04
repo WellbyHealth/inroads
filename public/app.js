@@ -399,6 +399,12 @@ async function loadProspects(progress) {
     }
     progress?.(++done, files.length);
   }));
+  // Researched agencies outside the loaded list (the top list, or chosen states) still show, with their contacts.
+  for (const [id, rec] of Object.entries(research)) {
+    const q = rec.prospect; if (!q || seen.has(q.id) || (states.length && !states.includes(q.st))) continue;
+    seen.add(q.id); const p = { ...q, research: rec }; delete p.research.prospect;
+    providers.push(p); counts[p.type] = (counts[p.type] || 0) + 1;
+  }
   const label = states.length ? states.join(' · ') : 'Top agencies nationwide';
   S.market = { territory: { label, center: [39.5, -98.35] }, builtAt: pidx?.builtAt || '', sources: pidx?.sources || {}, counts, providers, sales: { states, total: pidx ? Object.values(pidx.states).reduce((a, c) => a + c.n, 0) : 0, stateCounts: pidx?.states || {} } };
   S.byId = new Map(providers.map(p => [p.id, p]));

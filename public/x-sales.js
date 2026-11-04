@@ -18,7 +18,10 @@ async function lfStatus() {
   try { Object.assign(LF, await W().api('/api/connect', { action: 'lightfield', op: 'status' }), { loaded: true }); } catch { LF.loaded = true; }
   return LF;
 }
+// Already in Lightfield: copied from the app, or added directly with the researched contacts.
+const lfOf = p => LF.ids[p.id] || (p.research?.lf?.account ? { id: p.research.lf.account, link: p.research.lf.link } : null);
 async function lfPush(list) {
+  list = list.filter(s => !lfOf(s.p));
   const items = list.map(s => ({ id: s.p.id, name: s.p.name, type: s.p.type, address: s.p.address, city: s.p.city, st: s.p.st, zip: s.p.zip, lat: s.p.lat, lng: s.p.lng, phone: s.p.phone, official: s.p.official, officialTitle: s.p.officialTitle, sites: s.p.sites, score: s.potential, why: s.why.join('; '), website: s.p.research?.website || '', people: (s.p.research?.people || []).slice(0, 5).map(x => ({ name: x.name, title: x.title, email: x.email || '', source: x.source || '' })), notes: s.p.research?.notes || '' }));
   let pushed = 0;
   for (let i = 0; i < items.length; i += 25) { const r = await W().api('/api/connect', { action: 'lightfield', op: 'push', items: items.slice(i, i + 25) }); Object.assign(LF.ids, r.ids || {}); pushed += r.pushed || 0; }
@@ -45,7 +48,7 @@ function filtered() {
     if (F.type && p.type !== F.type) return false;
     if ((p.sites || 1) < F.sites) return false;
     if (F.dm && !p.official) return false;
-    if (F.stage === 'lf' ? !LF.ids[p.id] : F.stage === 'res' ? !p.research : F.stage !== 'all' && stageOf(s) !== F.stage) return false;
+    if (F.stage === 'lf' ? !lfOf(p) : F.stage === 'res' ? !p.research : F.stage !== 'all' && stageOf(s) !== F.stage) return false;
     if (q && !`${p.name} ${p.city} ${p.st} ${p.official || ''}`.toLowerCase().includes(q)) return false;
     return true;
   }).sort((a, b) => b.priority - a.priority || b.potential - a.potential);
@@ -72,7 +75,7 @@ X.prospects = () => {
   <div class="card sp-list">
     <div class="muted small" style="margin-bottom:8px">${fmt(list.length)} match · fit weighs agency type, number of sites, size and whether a decision maker is listed (NPPES).${LF.loaded && !LF.configured ? ' · Lightfield sync is off until an API key is added.' : ''}</div>
     <table class="sp"><thead><tr><th>Fit</th><th>Agency</th><th>Type</th><th>Sites</th><th>Decision maker</th><th>Phone</th><th>Last touch</th><th></th></tr></thead>
-    <tbody>${shown.map(s => { const p = s.p, lf = LF.ids[p.id]; return `<tr data-id="${esc(p.id)}">
+    <tbody>${shown.map(s => { const p = s.p, lf = lfOf(p); return `<tr data-id="${esc(p.id)}">
       <td><b class="sp-fit">${s.potential}</b></td>
       <td><a href="#" data-open>${esc(p.name)}</a><div class="muted small">${esc([p.city, p.st].filter(Boolean).join(', '))}${p.research?.website ? ` · <a href="${esc(url(p.research.website))}" target="_blank" rel="noopener">site</a>` : ''}${p.research?.parent ? ` · part of ${esc(p.research.parent)}` : ''}</div></td>
       <td class="small">${esc(p.type)}</td>
@@ -102,7 +105,7 @@ X.prospects = () => {
     });
   });
   app.querySelector('#spLfTop').onclick = async e => {
-    const top = list.filter(s => !LF.ids[s.p.id]).slice(0, 25); if (!top.length) return W().toast('Everything shown is already in Lightfield');
+    const top = list.filter(s => !lfOf(s.p)).slice(0, 25); if (!top.length) return W().toast('Everything shown is already in Lightfield');
     e.target.disabled = true; e.target.textContent = 'Copying…';
     try { const n = await lfPush(top); W().toast(`Copied ${n} prospects to Lightfield`); re(); } catch (x) { W().toast(x.message); e.target.disabled = false; e.target.textContent = 'Copy top 25 to Lightfield'; }
   };
@@ -142,7 +145,7 @@ X._drawer = (id, d) => {
   if (!sales() || d.querySelector('.dSales')) return;
   const s = W().S.scoredById?.get(id); if (!s) return;
   const row = d.querySelector('.dBd') || d.querySelector('h1'); if (!row) return;
-  const lf = LF.ids[id];
+  const lf = lfOf(s.p);
   const first = (s.p.official || '').split(' ')[0];
   const subj = encodeURIComponent(`${s.p.name} + Wellby`);
   const body = encodeURIComponent(`Hi${first ? ' ' + first : ''},\n\nWellby helps post-acute teams see which hospitals, physicians and facilities are sending referrals, which are slipping, and who to visit next. Your liaisons get a daily plan and you get the results.\n\nYou can try it free for 14 days: https://app.wellbyinroads.com/signup\n\nHappy to walk you through it for 20 minutes.\n`);
