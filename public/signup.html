@@ -33,13 +33,13 @@
       <div class="seg" role="tablist" aria-label="Billing period"><button type="button" data-int="month" class="on">Monthly</button><button type="button" data-int="year">Annual <span class="save">2 months free</span></button></div>
       <div class="plans" id="plans"></div>
       <div class="seats" id="seatBox">
-        <div><div class="small" style="font-weight:600;margin-bottom:6px">Users</div>
-          <div class="stepper"><button type="button" data-d="-1" aria-label="Fewer users">−</button><b id="seatN">1</b><button type="button" data-d="1" aria-label="More users">+</button></div>
-          <div class="small muted" id="seatHint" style="margin-top:6px">3 included · $79/mo per extra user · up to 10</div></div>
+        <div><div class="small" style="font-weight:600;margin-bottom:6px" id="unitLabel">Locations</div>
+          <div class="stepper"><button type="button" data-d="-1" aria-label="Fewer locations">−</button><b id="seatN">1</b><button type="button" data-d="1" aria-label="More locations">+</button></div>
+          <div class="small muted" id="seatHint" style="margin-top:6px">Up to 5 users · $149/mo per extra location (3 more users) · up to 5</div></div>
         <div class="total"><span class="small muted">After your free trial</span><b id="total"></b><span class="small muted" id="totalSub"></span></div>
       </div>
       <button class="btn cta wide" id="toS2" type="button">Continue</button>
-      <p class="fine">Today: $0. Your card is charged on <b class="chargeDate"></b> unless you cancel before then. We'll remind you before your trial ends. Change plans or users anytime.</p>
+      <p class="fine">Today: $0. Your card is charged on <b class="chargeDate"></b> unless you cancel before then. We'll remind you before your trial ends. Change plans or locations anytime.</p>
     </section>
 
     <!-- Step 2: account -->
@@ -77,23 +77,27 @@
     </div>
   </main></section>
 <script>
-// Mirrors lib/plans.mjs; the server re-checks the plan, price and user limits.
+// Mirrors lib/plans.mjs (pricing v5, per location); the server re-checks the plan, price and user limits.
 const PLANS = {
-  solo: { art: 'seed', tint: '#e4f0fd', name: 'Solo', monthly: 149, annual: 1490, included: 1, max: 1, who: 'For the owner or one marketer doing it all.', what: '1 user. Market map, ranked targets and a weekly visit list, a scorecard for every referral source, drafted outreach you approve, and follow-up until they reply.' },
-  team: { art: 'bloom', tint: '#fde7d6', name: 'Team', monthly: 249, annual: 2490, included: 3, max: 10, extraMonthly: 79, extraAnnual: 790, tag: 'Most popular', what: '3 users included, up to 10. Everything in Solo, plus shared sources and notes, territories for each marketer, a team view and one combined scorecard.' },
+  solo: { art: 'seed', tint: '#e4f0fd', name: 'Solo', monthly: 199, annual: 1990, what: '1 user, 1 location. Market map, ranked targets and a weekly visit list, a scorecard for every referral source with the real share of what each partner sends, drafted outreach you approve, and follow-up until they reply.' },
+  team: { art: 'bloom', tint: '#fde7d6', name: 'Team', monthly: 499, annual: 4990, locMonthly: 149, locAnnual: 1490, tag: 'Most popular', what: '1 location and up to 5 users; each extra location adds 3 users, up to 5 locations. Everything in Solo, plus a scorecard and territory per location, shared sources and notes, per-marketer visit lists, and a combined team scorecard.' },
 };
 const LEGACY = { insight: 'solo', growth: 'team', network: 'team' };
 const q = new URLSearchParams(location.search);
 const code = PLANS[q.get('plan')] ? q.get('plan') : LEGACY[q.get('plan')] || 'team';
-const S = { plan: code, interval: q.get('interval') === 'year' ? 'year' : 'month', seats: Math.max(3, Math.min(10, +q.get('users') || 3)) };
+const clampLoc = n => Math.max(1, Math.min(5, Math.round(+n || 1)));
+const usersFor = loc => 5 + 3 * (loc - 1);
+// ?locations=N (1–5); an old ?users=N link picks the fewest locations that cover N users.
+const startLoc = q.get('locations') ? clampLoc(q.get('locations')) : q.get('users') ? clampLoc(Math.ceil((+q.get('users') - 5) / 3) + 1) : 1;
+const S = { plan: code, interval: q.get('interval') === 'year' ? 'year' : 'month', locations: startLoc };
 const $ = id => document.getElementById(id);
 const money = n => '$' + Math.round(n).toLocaleString('en-US');
 const charge = new Date(Date.now() + 14 * 864e5).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
 document.querySelectorAll('.chargeDate').forEach(e => e.textContent = charge);
-const seatsOf = () => S.plan === 'solo' ? 1 : S.seats;
-function totalOf(k, seats) {
+const locOf = () => S.plan === 'solo' ? 1 : S.locations;
+function totalOf(k, loc) {
   const p = PLANS[k], y = S.interval === 'year';
-  return (y ? p.annual : p.monthly) + (k === 'team' ? Math.max(0, seats - 3) * (y ? p.extraAnnual : p.extraMonthly) : 0);
+  return (y ? p.annual : p.monthly) + (k === 'team' ? (loc - 1) * (y ? p.locAnnual : p.locMonthly) : 0);
 }
 
 function step(n) {
@@ -103,26 +107,28 @@ function step(n) {
   scrollTo(0, 0);
 }
 function render() {
-  const P = PLANS[S.plan], y = S.interval === 'year', n = seatsOf(), total = totalOf(S.plan, n);
-  S.seats = Math.max(3, Math.min(10, S.seats));
+  const P = PLANS[S.plan], y = S.interval === 'year', loc = locOf(), total = totalOf(S.plan, loc);
+  const users = S.plan === 'solo' ? 1 : usersFor(loc);
   document.querySelectorAll('[data-int]').forEach(b => b.classList.toggle('on', b.dataset.int === S.interval));
   $('plans').innerHTML = Object.entries(PLANS).map(([k, p]) => `<button type="button" class="plan ${k === S.plan ? 'on' : ''}" data-plan="${k}" aria-pressed="${k === S.plan}">
     <span class="dot"></span><span class="nm"><img class="tier" src="/img/g-tier-${p.art}-cut.webp" alt="" width="40" height="40" style="--t:${p.tint}"><span class="name">${p.name}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</span>
-    <span class="price">${money(y ? Math.floor(p.annual / 12) : p.monthly)}<small>per month${k === 'team' ? ' · 3 users' : ' · 1 user'}${y ? ', billed yearly' : ''}</small></span>
+    <span class="price">${money(y ? Math.floor(p.annual / 12) : p.monthly)}<small>per month${k === 'team' ? ' · 1 location, 5 users' : ' · 1 user'}${y ? ', billed yearly' : ''}</small></span>
     <span class="what">${p.what}</span></button>`).join('') +
     `<a class="plan ent" href="mailto:team@wellbyhealth.com?subject=Wellby%20Enterprise%20demo"><span class="dot"></span><span class="nm"><img class="tier" src="/img/g-tier-house-cut.webp" alt="" width="40" height="40" style="--t:#ece6fb"><span class="name">Enterprise</span></span>
-    <span class="price">Custom<small>from 10 users, billed yearly</small></span>
-    <span class="what">Per-rep scorecards, goals and quotas, rollups across locations, roles and permissions, SSO, a signed BAA, and CRM and EMR connections. <b>Book a demo →</b></span></a>`;
+    <span class="price">Custom<small>6+ locations or 20+ users</small></span>
+    <span class="what">Per-rep scorecards, goals and quotas, rollups across regions, roles and permissions, SSO, a signed BAA, and CRM and EMR connections. Billed yearly. <b>Book a demo →</b></span></a>`;
   document.querySelectorAll('[data-plan]').forEach(b => b.onclick = () => { S.plan = b.dataset.plan; render(); });
   $('seatBox').querySelector('.stepper').hidden = S.plan === 'solo';
-  $('seatN').textContent = S.seats;
-  $('seatHint').textContent = S.plan === 'solo' ? '1 user, signed in on one device at a time. Need teammates? Pick Team.' : `3 included · ${money(y ? P.extraAnnual : P.extraMonthly)}/${y ? 'yr' : 'mo'} per extra user · up to 10`;
+  $('unitLabel').textContent = S.plan === 'solo' ? 'Users' : 'Locations';
+  $('seatN').textContent = S.locations;
+  $('seatHint').textContent = S.plan === 'solo' ? '1 user and 1 location, signed in on one device at a time. Need teammates? Pick Team.'
+    : `Covers up to ${users} users · ${money(y ? P.locAnnual : P.locMonthly)}/${y ? 'yr' : 'mo'} per extra location (3 more users) · up to 5`;
   $('total').textContent = `${money(total)}/${y ? 'yr' : 'mo'}`;
-  $('totalSub').textContent = S.plan === 'solo' ? '1 user' : n > 3 ? `3 users included + ${n - 3} × ${money(y ? P.extraAnnual : P.extraMonthly)}` : '3 users included';
-  $('sum').innerHTML = `<b>${P.name}</b> · ${n} user${n === 1 ? '' : 's'} · ${money(total)}/${y ? 'year' : 'month'} after your free trial`;
+  $('totalSub').textContent = S.plan === 'solo' ? '1 user' : loc > 1 ? `1 location + ${loc - 1} × ${money(y ? P.locAnnual : P.locMonthly)} · up to ${users} users` : '1 location · up to 5 users';
+  $('sum').innerHTML = `<b>${P.name}</b> · ${S.plan === 'solo' ? '1 user' : `${loc} location${loc === 1 ? '' : 's'}, up to ${users} users`} · ${money(total)}/${y ? 'year' : 'month'} after your free trial`;
 }
 document.querySelectorAll('[data-int]').forEach(b => b.onclick = () => { S.interval = b.dataset.int; render(); });
-document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { S.seats = Math.max(3, Math.min(10, S.seats + +b.dataset.d)); render(); });
+document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { S.locations = clampLoc(S.locations + +b.dataset.d); render(); });
 $('toS2').onclick = () => step(2);
 $('backS1').onclick = () => step(1);
 $('show').onclick = e => { const pw = document.querySelector('#f [name=password]'), s = pw.type === 'password'; pw.type = s ? 'text' : 'password'; e.target.textContent = s ? 'Hide' : 'Show'; };
@@ -135,13 +141,13 @@ $('f').addEventListener('submit', async e => {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { err.textContent = 'Enter a valid work email.'; return; }
   if ((d.password || '').length < 10) { err.textContent = 'Use a password of at least 10 characters.'; return; }
   btn.disabled = true; btn.textContent = 'Creating your workspace…';
-  const r = await fetch('/api/auth?action=signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, plan: S.plan, interval: S.interval, seats: seatsOf() }) });
+  const r = await fetch('/api/auth?action=signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, plan: S.plan, interval: S.interval, locations: locOf() }) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { err.innerHTML = (j.error || 'Sign up failed.').replace('Sign in instead.', '<a href="/login">Sign in instead.</a>'); btn.disabled = false; btn.textContent = 'Continue to payment'; return; }
   if (j.next !== '/#plan') { location.href = j.next || '/#welcome'; return; } // billing switched off: straight to setup
   step(3);
   try {
-    const c = await fetch('/api/billing', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'checkout', plan: S.plan, interval: S.interval, seats: seatsOf() }) });
+    const c = await fetch('/api/billing', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'checkout', plan: S.plan, interval: S.interval, locations: locOf() }) });
     const cj = await c.json().catch(() => ({}));
     if (!c.ok || !cj.url) throw new Error(cj.error || "We couldn't open checkout.");
     location.href = cj.url;
