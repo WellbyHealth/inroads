@@ -30,3 +30,8 @@ Referral intelligence and a system of action for post-acute care. The marketing 
 - Plans are priced per user: Insight $99, Growth $199, Network $179 with a 5-user minimum. Annual billing is 10× the monthly price.
 - Stripe prices are found by lookup key (`wellby_<plan>_monthly|annual`), so no price IDs are kept in code or env.
 - The plan list appears in both `api/billing.js` (`PLANS`) and `public/signup.html`. Keep them in sync.
+
+## Wellby sales workspace
+Staff (the admin account and STAFF_EMAILS) open it from Settings → Workspaces → "Open Wellby sales". It lists post-acute
+agencies nationwide (market/v3/p, built by the prospects pipeline) as prospects, ranked by fit, with Lightfield sync
+when LIGHTFIELD_API_KEY is set (lib/lightfield.mjs).
