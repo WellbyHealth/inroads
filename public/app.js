@@ -454,10 +454,24 @@ async function boot() {
   route();
   if (S.me.mustChange && !location.hash.startsWith('#settings')) toast('Please set a new password in Settings.');
 }
+// Settings → Workspaces: switch, archive (hides it from the switcher; nothing is deleted) or restore.
+let wsShowArchived = false;
+function drawWsList() {
+  const el = $('#wsList'); if (!el) return;
+  const all = S.orgs || [], arch = all.filter(o => o.archived && o.id !== S.me.org);
+  const list = all.filter(o => wsShowArchived ? o.archived && o.id !== S.me.org : !o.archived || o.id === S.me.org);
+  el.innerHTML = list.map(o => `<div class="row" style="justify-content:space-between;padding:6px 0;border-top:1px solid var(--line-soft)"><span><b>${esc(o.name)}</b> ${o.demo ? '<span class="chip">demo</span>' : '<span class="chip st-Healthy">customer</span>'} ${o.id === S.me.org ? '<span class="chip st-Open">current</span>' : ''}${o.archived ? ' <span class="chip">archived</span>' : ''}</span><span class="row" style="gap:6px">${o.id !== S.me.org && !o.archived ? `<button class="btn sm" data-ws="${esc(o.id)}">Switch</button><button class="btn sm" data-arch="${esc(o.id)}">Archive</button>` : ''}${o.archived && o.id !== S.me.org ? `<button class="btn sm" data-unarch="${esc(o.id)}">Restore</button>` : ''}</span></div>`).join('')
+    + `<div class="row small" style="padding:8px 0 0;border-top:1px solid var(--line-soft)"><a href="#" id="wsArchTog">${wsShowArchived ? 'Back to active workspaces' : `Archived (${arch.length})`}</a><span class="muted">Archived workspaces are hidden from the switcher. Nothing is deleted.</span></div>`;
+  const act = async (body, msg) => { try { const r = await api('/api/workspaces', body); S.orgs = r.orgs; drawWsList(); renderMe(); toast(msg); } catch (e) { toast(e.message); } };
+  el.querySelectorAll('[data-ws]').forEach(b => b.onclick = async () => { await api('/api/workspaces', { action: 'switch', id: b.dataset.ws }); location.hash = '#map'; $('#app').innerHTML = '<div class="loading">Switching workspace…</div>'; boot(); });
+  el.querySelectorAll('[data-arch]').forEach(b => b.onclick = () => act({ action: 'archive', id: b.dataset.arch }, 'Archived'));
+  el.querySelectorAll('[data-unarch]').forEach(b => b.onclick = () => act({ action: 'archive', id: b.dataset.unarch, archived: false }, 'Restored'));
+  $('#wsArchTog').onclick = e => { e.preventDefault(); wsShowArchived = !wsShowArchived; drawWsList(); };
+}
 async function renderMe() {
   let ws = '';
   if (S.me.super) {
-    try { const w = await api('/api/workspaces'); S.orgs = w.orgs; ws = `<select id="wsSel" title="Workspace" style="width:auto;height:36px;padding:0 10px">${w.orgs.map(o => `<option value="${esc(o.id)}" ${o.id === S.me.org ? 'selected' : ''}>${esc(o.name)}${o.demo ? ' (demo)' : ''}</option>`).join('')}<option value="__new">+ New workspace…</option></select>`; } catch {}
+    try { const w = await api('/api/workspaces'); S.orgs = w.orgs; ws = `<select id="wsSel" title="Workspace" style="width:auto;height:36px;padding:0 10px">${w.orgs.filter(o => !o.archived || o.id === S.me.org).map(o => `<option value="${esc(o.id)}" ${o.id === S.me.org ? 'selected' : ''}>${esc(o.name)}${o.demo ? ' (demo)' : ''}</option>`).join('')}<option value="__new">+ New workspace…</option></select>`; } catch {}
   }
   const ac = S.me.access || {};
   const chip = ac.status === 'trial' ? `<a class="trialchip" href="#settings/billing">Free trial · ${ac.daysLeft} day${ac.daysLeft === 1 ? '' : 's'} left</a>` : ac.status === 'past_due' ? '<a class="trialchip warn" href="#settings/billing">Payment issue</a>' : '';
@@ -1281,7 +1295,7 @@ async function viewSettings(sub) {
   }
   bindBilling();
   if (sub === 'workspaces' && $('#workspaces')) $('#workspaces').scrollIntoView();
-  if (S.me.super) { bindWorkspaceForm(); $('#wsList').innerHTML = (S.orgs || []).map(o => `<div class="row" style="justify-content:space-between;padding:6px 0;border-top:1px solid var(--line-soft)"><span><b>${esc(o.name)}</b> ${o.demo ? '<span class="chip">demo</span>' : '<span class="chip st-Healthy">customer</span>'} ${o.id === S.me.org ? '<span class="chip st-Open">current</span>' : ''}</span>${o.id !== S.me.org ? `<button class="btn sm" data-ws="${esc(o.id)}">Switch</button>` : ''}</div>`).join(''); document.querySelectorAll('[data-ws]').forEach(b => b.onclick = async () => { await api('/api/workspaces', { action: 'switch', id: b.dataset.ws }); location.hash = '#map'; $('#app').innerHTML = '<div class="loading">Switching workspace…</div>'; boot(); }); }
+  if (S.me.super) { bindWorkspaceForm(); drawWsList(); document.querySelectorAll('[data-ws]').forEach(b => b.onclick = async () => { await api('/api/workspaces', { action: 'switch', id: b.dataset.ws }); location.hash = '#map'; $('#app').innerHTML = '<div class="loading">Switching workspace…</div>'; boot(); }); }
   $('#addOff').onclick = () => { $('#offList').insertAdjacentHTML('beforeend', officeRow({})); bindOffRows(); };
   bindOffRows();
   $('#saveOff').onclick = async e => {

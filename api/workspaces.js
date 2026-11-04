@@ -3,9 +3,20 @@ import { loadUsers, loadOrgs, slug } from '../lib/auth.mjs';
 import { writeDoc, GLOBAL, orgDocs } from '../lib/store.mjs';
 import { readBody, send, withUser } from '../lib/http.mjs';
 
+// Test workspaces left by QA and billing checks ("… (delete me)", "zz …"): archived automatically so they stay out of
+// the switcher. Archiving only hides a workspace from staff; nothing is deleted and it can be restored in Settings.
+const TEST_NAME = /\(delete me\)|^zz\b/i;
+const PAID = ['active', 'trialing', 'past_due'];
+const archivable = o => !PAID.includes(o.billing?.status);
+
 export default withUser(async (req, res, me) => {
   const orgs = await loadOrgs();
-  if (req.method === 'GET') return send(res, 200, { orgs, active: me.org });
+  if (req.method === 'GET') {
+    let changed = false;
+    for (const o of orgs) if (!o.archived && !o.keep && o.id !== me.org && TEST_NAME.test(o.name || '') && archivable(o)) { o.archived = new Date().toISOString(); o.archivedWhy = 'test'; changed = true; }
+    if (changed) await writeDoc(GLOBAL.orgs, orgs);
+    return send(res, 200, { orgs, active: me.org });
+  }
   const body = await readBody(req);
   const users = await loadUsers();
   const self = users.find(u => u.email === me.email);
@@ -35,6 +46,17 @@ export default withUser(async (req, res, me) => {
     if (!orgs.some(o => o.id === body.id)) return send(res, 404, { error: 'No such workspace' });
     self.activeOrg = body.id; await writeDoc(GLOBAL.users, users);
     return send(res, 200, { ok: true, active: body.id });
+  }
+  if (body.action === 'archive') {
+    const ids = new Set((Array.isArray(body.ids) ? body.ids : [body.id]).map(String));
+    for (const o of orgs) if (ids.has(o.id)) {
+      if (body.archived === false) { delete o.archived; delete o.archivedWhy; o.keep = true; continue; }
+      if (o.id === me.org) return send(res, 400, { error: 'Switch to another workspace before archiving this one.' });
+      if (!archivable(o)) return send(res, 400, { error: `${o.name} has an active subscription, so it stays visible.` });
+      o.archived = new Date().toISOString();
+    }
+    await writeDoc(GLOBAL.orgs, orgs);
+    return send(res, 200, { ok: true, orgs });
   }
   if (body.action === 'rename') {
     const o = orgs.find(x => x.id === body.id); if (!o) return send(res, 404, { error: 'No such workspace' });
