@@ -33,6 +33,11 @@ export default withUser(async (req, res, me) => {
   await version();
   const part = q.get('part');
   // Wellby sales workspace: the national prospect list (agencies that might buy Wellby), by state or the top ranked.
+  if (q.get('file') === 'outreach') {
+    if (!me.orgSales && !me.super) return send(res, 403, { error: 'For the Wellby sales workspace.' });
+    const t = await readRaw('sales/outreach.json');
+    return t == null ? send(res, 200, { leads: [], campaigns: [], replies: [] }) : send(res, 200, t, { 'Cache-Control': 'no-store' });
+  }
   const pf = q.get('file') === 'prospects' ? 'index' : q.get('file') === 'top' ? 'top' : q.get('file') === 'contacts' ? 'contacts' : /^[A-Z]{2}-\d{1,2}$/.test(q.get('pp') || '') ? q.get('pp') : null;
   if (pf) {
     if (!me.orgSales && !me.super) return send(res, 403, { error: 'Prospects are for the Wellby sales workspace.' });

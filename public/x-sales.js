@@ -10,6 +10,44 @@ const sales = () => !!W()?.S?.me?.orgSales;
 const STATES = 'AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA PR RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ');
 const F = { q: '', type: '', sites: 1, dm: false, stage: 'all', n: 100 };
 const LF = { loaded: false, configured: false, ids: {} };
+// LinkedIn outreach (La Growth Machine), posted daily by the scheduled check: campaigns, each person's status, replies.
+const LI = { loaded: false, data: null, open: false };
+const LI_RANK = { queued: 0, invited: 1, accepted: 2, messaged: 3, replied: 4, interested: 5, call: 6, not_interested: 1 };
+const LI_LABEL = { queued: 'Queued', invited: 'Invited', accepted: 'Accepted', messaged: 'Messaged', replied: 'Replied', interested: 'Interested', call: 'Call agreed', not_interested: 'Not interested' };
+const coNorm = s => String(s || '').toLowerCase().replace(/&amp;/g, '&').replace(/\(.*?\)/g, ' ').replace(/\b(llc|inc|corp|corporation|co|ltd|lp|pllc|pc|the|dba|of|and|services|service|group)\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
+async function liLoad() {
+  if (LI.loaded) return LI;
+  try { const r = await fetch('/api/market?file=outreach'); LI.data = r.ok ? await r.json() : null; } catch { LI.data = null; }
+  LI.loaded = true;
+  const by = new Map();
+  for (const l of LI.data?.leads || []) { const k = coNorm(l.company); if (!k) continue; if (!by.has(k)) by.set(k, []); by.get(k).push(l); }
+  LI.byCo = by;
+  return LI;
+}
+// LinkedIn people at this agency (matched on the agency name, or the researched name).
+function liOf(p) {
+  if (!LI.byCo) return [];
+  const keys = [coNorm(p.name), coNorm(p.research?.name)].filter(Boolean);
+  for (const k of keys) if (LI.byCo.has(k)) return LI.byCo.get(k);
+  return [];
+}
+const liBest = ls => ls.reduce((b, l) => (LI_RANK[l.status] ?? 0) > (LI_RANK[b?.status] ?? -1) ? l : b, null);
+function liCard(esc, fmt) {
+  const d = LI.data; if (!d || !(d.leads || []).length) return '';
+  const L = d.leads, n = k => L.filter(l => (LI_RANK[l.status] ?? 0) >= LI_RANK[k] && l.status !== 'not_interested').length;
+  const calls = L.filter(l => l.status === 'call').length;
+  const reps = (d.replies || []).slice().sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+  const when = d.updatedAt ? new Date(d.updatedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+  const tile = (l, v, sub) => `<div class="sp-li-t"><div class="muted small">${l}</div><b>${fmt(v)}</b>${sub ? `<div class="muted small">${sub}</div>` : ''}</div>`;
+  return `<div class="card sp-li"><div class="row" style="justify-content:space-between;align-items:baseline"><h2 style="margin:0">LinkedIn outreach</h2><span class="muted small">Updated ${esc(when)} · from La Growth Machine</span></div>
+    <div class="sp-li-tiles">${tile('In campaigns', L.length, d.queued ? `${fmt(d.queued)} more waiting to screen` : '')}${tile('Invited', n('invited'))}${tile('Accepted', n('accepted'), n('invited') ? Math.round(100 * n('accepted') / n('invited')) + '% of invited' : '')}${tile('Replied', n('replied'))}${tile('Calls agreed', calls)}</div>
+    ${(d.campaigns || []).length ? `<div class="muted small" style="margin:6px 0 10px">${d.campaigns.map(c => `${esc(c.name)}: ${fmt(c.invited || 0)} invited · ${fmt(c.accepted || 0)} accepted · ${fmt(c.replied || 0)} replied`).join(' &nbsp;|&nbsp; ')}${d.addedToday ? ` &nbsp;|&nbsp; ${fmt(d.addedToday)} new people added today` : ''}</div>` : ''}
+    ${reps.length ? `<h3 style="margin:10px 0 6px">Replies</h3>${reps.slice(0, 12).map((r, i) => `<div class="sp-li-r"><div><b>${r.linkedin ? `<a href="${esc(r.linkedin)}" target="_blank" rel="noopener">${esc(r.name)}</a>` : esc(r.name)}</b> <span class="chip ${r.status === 'call' || r.status === 'interested' ? 'st-Grow' : r.status === 'not_interested' ? 'st-Protect' : 'st-Open'}">${esc(LI_LABEL[r.status] || r.status || 'Replied')}</span> <span class="muted small">${esc([r.title, r.company].filter(Boolean).join(', '))}${r.at ? ' · ' + esc(String(r.at).slice(0, 10)) : ''}${r.lightfield ? ' · logged in Lightfield' : ''}</span></div>
+      ${r.summary ? `<div class="small" style="margin-top:2px">${esc(r.summary)}</div>` : ''}${r.draft ? `<details class="small" style="margin-top:4px"><summary>Suggested reply</summary><div class="sp-li-d">${esc(r.draft)}</div><button class="btn sm" data-licopy="${i}">Copy</button></details>` : ''}</div>`).join('')}` : '<p class="muted small" style="margin:6px 0 0">No replies yet. Messages go out once people accept your connection request.</p>'}
+    <details ${LI.open ? 'open' : ''} id="spLiAll" style="margin-top:10px"><summary class="small">Everyone in the campaigns (${fmt(L.length)})</summary>
+      <table class="sp" style="margin-top:8px"><thead><tr><th>Person</th><th>Agency</th><th>Campaign</th><th>Status</th></tr></thead><tbody>${L.slice().sort((a, b) => (LI_RANK[b.status] ?? 0) - (LI_RANK[a.status] ?? 0) || String(a.company).localeCompare(String(b.company))).map(l => `<tr><td class="small">${l.linkedin ? `<a href="${esc(l.linkedin)}" target="_blank" rel="noopener">${esc(l.name)}</a>` : esc(l.name)}<div class="muted">${esc(l.title || '')}</div></td><td class="small">${esc(l.company || '')}</td><td class="small">${esc(l.campaign === 'bd' ? 'BD & growth' : 'Owners & leaders')}</td><td class="small">${esc(LI_LABEL[l.status] || l.status || '')}</td></tr>`).join('')}</tbody></table></details>
+  </div>`;
+}
 const tier = n => n >= 6 ? 'Enterprise' : n >= 2 ? 'Team' : 'Solo';
 const phone = p => W().phoneFmt ? W().phoneFmt(p) : p;
 
@@ -48,7 +86,7 @@ function filtered() {
     if (F.type && p.type !== F.type) return false;
     if ((p.sites || 1) < F.sites) return false;
     if (F.dm && !p.official) return false;
-    if (F.stage === 'lf' ? !lfOf(p) : F.stage === 'res' ? !p.research : F.stage !== 'all' && stageOf(s) !== F.stage) return false;
+    if (F.stage === 'li' ? !liOf(p).length : F.stage === 'lf' ? !lfOf(p) : F.stage === 'res' ? !p.research : F.stage !== 'all' && stageOf(s) !== F.stage) return false;
     if (q && !`${p.name} ${p.city} ${p.st} ${p.official || ''}`.toLowerCase().includes(q)) return false;
     return true;
   }).sort((a, b) => b.priority - a.priority || b.potential - a.potential);
@@ -60,11 +98,12 @@ X.prospects = () => {
   const m = S.market.sales || { states: [], total: 0 };
   const types = Object.entries(S.market.counts || {}).sort((a, b) => b[1] - a[1]);
   const list = filtered(), shown = list.slice(0, F.n);
-  const stages = { all: 'All', res: 'Researched', new: 'Not contacted', working: 'In progress', due: 'Follow-up due', lf: 'In Lightfield' };
+  const stages = { all: 'All', res: 'Researched', new: 'Not contacted', working: 'In progress', due: 'Follow-up due', lf: 'In Lightfield', li: 'On LinkedIn' };
   app.innerHTML = `
   <div class="head"><div><span class="eyebrow">Wellby sales</span><h1>Prospects</h1>
     <div class="muted">${fmt(S.market.providers.length)} agencies loaded · ${esc(m.states.length ? m.states.join(', ') : `top ranked of ${fmt(m.total)} nationwide`)} · <a href="#" id="spStates">${m.states.length ? 'Change states' : 'Load every agency in chosen states'}</a></div></div>
     <div class="row"><button class="btn sm" id="spLfTop" title="Copies each account and its listed official">Copy top 25 to Lightfield</button></div></div>
+  ${liCard(esc, fmt)}
   <div class="card sp-tools">
     <input id="spQ" type="search" placeholder="Search agency, city, state or person" value="${esc(F.q)}">
     <select id="spType"><option value="">All types</option>${types.map(([t, n]) => `<option value="${esc(t)}" ${F.type === t ? 'selected' : ''}>${esc(t)} (${fmt(n)})</option>`).join('')}</select>
@@ -77,7 +116,7 @@ X.prospects = () => {
     <table class="sp"><thead><tr><th>Fit</th><th>Agency</th><th>Type</th><th>Sites</th><th>Decision maker</th><th>Phone</th><th>Last touch</th><th></th></tr></thead>
     <tbody>${shown.map(s => { const p = s.p, lf = lfOf(p); return `<tr data-id="${esc(p.id)}">
       <td><b class="sp-fit">${s.potential}</b></td>
-      <td><a href="#" data-open>${esc(p.name)}</a><div class="muted small">${esc([p.city, p.st].filter(Boolean).join(', '))}${p.research?.website ? ` · <a href="${esc(url(p.research.website))}" target="_blank" rel="noopener">site</a>` : ''}${p.research?.parent ? ` · part of ${esc(p.research.parent)}` : ''}</div></td>
+      <td><a href="#" data-open>${esc(p.name)}</a>${(() => { const b = liBest(liOf(p)); return b ? ` <span class="chip sp-lic" title="LinkedIn: ${esc(liOf(p).map(l => `${l.name} (${LI_LABEL[l.status] || l.status})`).join(', '))}">LinkedIn · ${esc(LI_LABEL[b.status] || b.status)}</span>` : ''; })()}<div class="muted small">${esc([p.city, p.st].filter(Boolean).join(', '))}${p.research?.website ? ` · <a href="${esc(url(p.research.website))}" target="_blank" rel="noopener">site</a>` : ''}${p.research?.parent ? ` · part of ${esc(p.research.parent)}` : ''}</div></td>
       <td class="small">${esc(p.type)}</td>
       <td class="small">${p.sites || 1}<div class="muted">${tier(p.sites || 1)}</div></td>
       <td class="small">${personCell(p, esc)}</td>
@@ -88,6 +127,9 @@ X.prospects = () => {
     ${!list.length ? '<p class="muted">No prospects match. Clear a filter or load more states.</p>' : ''}
   </div>`;
   const re = () => X.prospects();
+  if (!LI.loaded) liLoad().then(() => { if (W().S.view === 'prospects' && LI.data?.leads?.length) re(); });
+  app.querySelector('#spLiAll')?.addEventListener('toggle', e => { LI.open = e.target.open; });
+  app.querySelectorAll('[data-licopy]').forEach(b => b.onclick = () => { const r = (LI.data.replies || []).slice().sort((a, c) => String(c.at || '').localeCompare(String(a.at || '')))[+b.dataset.licopy]; navigator.clipboard?.writeText(r?.draft || ''); W().toast('Reply copied. Paste it in LinkedIn.'); });
   const q = app.querySelector('#spQ'); let t; q.oninput = () => { clearTimeout(t); t = setTimeout(() => { F.q = q.value; F.n = 100; re(); app.querySelector('#spQ')?.focus(); const e = app.querySelector('#spQ'); if (e) e.selectionStart = e.selectionEnd = e.value.length; }, 250); };
   app.querySelector('#spType').onchange = e => { F.type = e.target.value; F.n = 100; re(); };
   app.querySelector('#spSites').onchange = e => { F.sites = +e.target.value; F.n = 100; re(); };
