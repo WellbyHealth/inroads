@@ -138,3 +138,5 @@
 @media(max-width:900px){.td-steps{margin-top:18px}}
 @media(max-width:760px){.td-steps{gap:4px;margin-top:16px}.td-steps button{padding:10px 12px;align-items:center}.td-t span{display:none}.td-t b{font-size:16px}.td-n{width:26px;height:26px;font-size:13px}.td-lede{font-size:16.5px}}
 @media(max-width:760px){.td-row .hq-d{display:none}.td-link{height:10px}}
+/* Panorama hero art (21:9): show the whole desk on wide, short screens; fade only the empty floor */
+@media(min-width:901px){.h2-art img{-webkit-mask-image:linear-gradient(#000 93%,transparent 100%);mask-image:linear-gradient(#000 93%,transparent 100%)}}
