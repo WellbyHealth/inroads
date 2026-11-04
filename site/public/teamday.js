@@ -5,6 +5,7 @@
   const tabs = [...document.querySelectorAll('.td-steps [role=tab]')];
   const rows = [...card.querySelectorAll('.td-row')];
   const send = card.querySelector('.td-send');
+  const links = [...card.querySelectorAll('.td-link')];
   const sec = document.getElementById('team-day');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DUR = 3600;
@@ -16,10 +17,11 @@
     tabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === n)); t.tabIndex = k === n ? 0 : -1; t.classList.toggle('done', k < n); });
     rows.forEach((r, k) => { r.classList.toggle('on', k === n); r.classList.toggle('past', k < n); });
     card.dataset.step = n;
+    links.forEach((l, k) => l.classList.toggle('on', k < n));
     // restart the progress bar animation
     tabs.forEach(t => t.classList.remove('run'));
     if (!reduce.matches && !paused && !user) { void tabs[n].offsetWidth; tabs[n].classList.add('run'); }
-    if (send) { send.textContent = 'Approve & send'; send.className = 'hq-chip btn td-send'; }
+    if (send) { if (n > 1) { send.textContent = send.dataset.done || 'Sent ✓'; send.className = 'hq-chip up td-send'; } else { send.textContent = 'Approve & send'; send.className = 'hq-chip btn td-send'; } }
     const row = rows[n];
     if (!reduce.matches) row.querySelectorAll('.td-count').forEach(c => {
       const a = +c.dataset.from, b = +c.dataset.to; let v = a; c.textContent = v;

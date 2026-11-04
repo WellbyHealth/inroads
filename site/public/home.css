@@ -129,7 +129,7 @@
 .td-row.past .td-num{background:#d6ecd9;color:#1F7A4D}
 .td-link{position:relative;height:16px;margin:2px 0}
 .td-link i{position:absolute;left:33px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(#d9d6cf 0 4px,transparent 4px 8px)}
-.td-card[data-step="1"] .td-link:nth-of-type(1) i,.td-card[data-step="2"] .td-link i{background:repeating-linear-gradient(#E07A3F 0 4px,transparent 4px 8px)}
+
 .td-chip1{background:#e7f0fd;color:#1d4f91}
 .td-send{transition:background .3s,color .3s}
 .td-send.sent{animation:td-pop .35s var(--ease)}
@@ -152,3 +152,10 @@
 .acct-why i{font-style:normal;color:var(--muted)}
 @media(min-width:901px){.h2-copy{align-items:center}}
 @media(min-width:901px){.h2-side{transform:translateY(18px)}.hero2 h1{transform:translateY(18px)}}
+
+/* Connector draws from one row to the next as the flow advances */
+.td-link{height:22px}
+.td-link i::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(#E07A3F 0 4px,transparent 4px 8px);transform:scaleY(0);transform-origin:top;transition:transform .55s var(--ease)}
+.td-link i{width:3px}
+.td-link.on i::after{transform:scaleY(1)}
+@media (prefers-reduced-motion:reduce){.td-link i::after{transition:none}}
