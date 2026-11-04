@@ -1,5 +1,5 @@
 /* Sign in and sign up: matches wellbyinroads.com (Figtree, warm off-white, navy, orange CTA, clay art). */
-@font-face { font-family: Figtree; src: url(https://wellbyinroads.com/fonts/figtree-latin-wght-normal.woff2) format("woff2"); font-weight: 300 900; font-display: swap; }
+@font-face { font-family: Figtree; src: url(/fonts/figtree-latin-wght-normal.woff2) format("woff2"); font-weight: 300 900; font-display: swap; }
 :root {
   --bg: #F9F8F6; --surface: #fff; --ink: #000; --body: #2E2D29; --muted: #6B6A64; --line: #E6E4DD; --line-soft: #EEEDE8;
   --navy: #0D2747; --navy-2: #16355C; --orange: #EE8B4B; --orange-ink: #A84A14; --magenta: #BA2997; --sky-soft: #E3EEFD;

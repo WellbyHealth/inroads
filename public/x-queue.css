@@ -24,7 +24,7 @@
 #app #qApprove, #app #qThanks, #app #qVisits, #app .qbooked { margin-top: 14px; scroll-margin-top: 20px; }
 .qrow.qv { grid-template-columns: 22px 28px 1fr auto; cursor: pointer; }
 .qrow.qv input { width: 18px; height: 18px; margin: 5px 0 0; }
-.qplan { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(0,113,227,.06); }
+.qplan { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(13,39,71,.06); }
 .qplan input, .qplan select { width: auto; padding: 6px 8px; }
 .qplan b { margin-right: 4px; }
 .qplan #qPickN { margin-right: auto; }

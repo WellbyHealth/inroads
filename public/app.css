@@ -1,4 +1,4 @@
-@font-face { font-family: Figtree; src: url(https://inroad-site.vercel.app/fonts/figtree-latin-wght-normal.woff2) format("woff2"); font-weight: 300 900; font-display: swap; }
+@font-face { font-family: Figtree; src: url(/fonts/figtree-latin-wght-normal.woff2) format("woff2"); font-weight: 300 900; font-display: swap; }
 :root {
   --bg: #F9F8F6; --surface: #fff; --stone: #F3F3F1; --stone-2: #F1F2ED; --ink: #000; --body: #2E2D29; --muted: #6B6A64; --line: #E6E4DD; --line-soft: #EEEDE8;
   --sky: #C5DEFB; --sky-soft: #E3EEFD; --blue-ink: #2F6DB5; --blush: #F9D9EE; --mag-ink: #9C1F7E; --butter: #FCEFA0; --peach: #F8E3D5;

@@ -1,0 +1,69 @@
+/* Wellby theme: the look of wellbyinroads.com applied on top of the app's layout styles. Loaded last.
+   Tokens come from hig.css :root (site palette). Rules: black ink, warm off-white surfaces, Figtree,
+   black buttons for actions, orange for the one main call to action, black pills for the selected state. */
+
+body { font-family: var(--sans); background: var(--bg); color: var(--body); letter-spacing: -.005em; }
+::selection { background: rgba(238,139,75,.30); }
+:focus-visible { outline: 3px solid #1c1916; outline-offset: 2px; }
+a { color: var(--blue-ink); text-underline-offset: 3px; }
+
+/* Type: the site's tight, medium-weight headings */
+h1 { font-weight: 500; letter-spacing: -.035em; line-height: 1.06; }
+h2 { font-weight: 600; letter-spacing: -.025em; }
+h1, h2, h3 { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+
+/* Buttons: black (site .btn-1), soft stone secondary, orange main call to action (site .btn-cta) */
+.btn { height: 36px; padding: 0 15px; border-radius: 12px; font-weight: 600; background: var(--stone-2); color: var(--ink); }
+.btn:hover { background: #E8E7E0; }
+.btn.primary, .btn.dark { background: #000; color: #fff; }
+.btn.primary:hover, .btn.dark:hover { background: #222; }
+.btn.ghost { background: none; color: var(--ink); }
+.btn.ghost:hover { background: var(--stone); }
+.btn.cta, #planGo { background: var(--orange); color: #000; }
+.btn.cta:hover, #planGo:hover { background: #F39A5F; }
+.btn.sm { height: 30px; border-radius: 10px; }
+.btn.wide { height: 46px; border-radius: 14px; }
+.btn[disabled], .btn:disabled { opacity: .45; }
+
+/* Forms */
+input:focus, select:focus, textarea:focus { border-color: #000; box-shadow: 0 0 0 3px rgba(0,0,0,.10); }
+
+/* Cards and surfaces: white on warm off-white, hairline warm border, soft site shadow */
+.card, .hcard, .pcard { border-radius: var(--r); box-shadow: 0 0 0 1px var(--line-soft), var(--shadow-sm); }
+
+/* Segmented controls: selected option is a black pill (site .seg / tabs) */
+.seg { background: var(--stone-2); border-radius: 999px; padding: 3px; }
+.seg button { border-radius: 999px; font-weight: 600; }
+.seg button.on, .seg button[aria-pressed="true"] { background: #000; color: #fff; box-shadow: none; }
+
+/* Eyebrows: the site's small uppercase label */
+.eyebrow, .eyebrow.sky { color: var(--orange-ink); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+
+/* Sidebar (desktop/tablet) and phone tab bar: selected item is a black pill with a white icon */
+@media (min-width: 721px) {
+  .bar { background: #fff; border-right: 1px solid var(--line); }
+  .bar nav a { border-radius: 12px; }
+  .bar nav a:hover { background: var(--stone); }
+  .bar nav a.on { background: #000; color: #fff; font-weight: 600; }
+  .bar nav a.on::before { background: #fff; }
+}
+.msItem.on { background: #000; color: #fff; }
+
+/* Status chips and notices in site colors */
+.notice { border-radius: 16px; }
+.notice.info { background: var(--sky-soft); color: var(--ink); }
+
+/* Plan screens */
+.plan-card { border-radius: 22px; }
+.plan-card.on { box-shadow: 0 0 0 2px #000, var(--shadow-sm); }
+.plan-tag { color: var(--orange-ink); background: #FDEBD9; }
+
+/* Account avatar and setup steps */
+.meAv, .wizSteps .on b { background: var(--navy, #0D2747); }
+
+/* Native controls and calendar events in site colors */
+input[type=checkbox], input[type=radio], input[type=range], progress { accent-color: #000; }
+.ev.m-scheduled { background: var(--sky-soft); border-left-color: var(--navy, #0D2747); }
+.mst.s-scheduled { background: var(--sky-soft); color: var(--navy, #0D2747); }
+.lgd.m-scheduled { background: var(--navy, #0D2747); }

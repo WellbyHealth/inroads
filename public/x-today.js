@@ -9,7 +9,7 @@ const mLong = k => { const [y, m] = k.split('-'); return new Date(Date.UTC(+y, +
 const pct = (a, b) => b ? Math.round(100 * (a - b) / b) : null;
 const weekStart = () => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.toISOString().slice(0, 10); };
 
-function spark(vals, { w = 132, h = 36, color = '#0071E3' } = {}) {
+function spark(vals, { w = 132, h = 36, color = '#2F6DB5' } = {}) {
   if (!vals.length) return '';
   const max = Math.max(1, ...vals), step = w / Math.max(1, vals.length - 1);
   const pts = vals.map((v, i) => [i * step, h - 3 - (h - 6) * v / max]);
@@ -19,7 +19,7 @@ function spark(vals, { w = 132, h = 36, color = '#0071E3' } = {}) {
 }
 function ring(done, goal) {
   const r = 22, c = 2 * Math.PI * r, f = Math.min(1, goal ? done / goal : 0);
-  return `<svg class="tring" viewBox="0 0 56 56" width="56" height="56" aria-hidden="true"><circle cx="28" cy="28" r="${r}" fill="none" stroke="rgba(118,118,128,.18)" stroke-width="6"/><circle cx="28" cy="28" r="${r}" fill="none" stroke="${f >= 1 ? '#34C759' : '#0071E3'}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(c * f).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 28 28)"/></svg>`;
+  return `<svg class="tring" viewBox="0 0 56 56" width="56" height="56" aria-hidden="true"><circle cx="28" cy="28" r="${r}" fill="none" stroke="rgba(118,118,128,.18)" stroke-width="6"/><circle cx="28" cy="28" r="${r}" fill="none" stroke="${f >= 1 ? '#34C759' : '#2F6DB5'}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(c * f).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 28 28)"/></svg>`;
 }
 
 function data() {
@@ -100,7 +100,7 @@ function render() {
         <p class="tfwhy">${esc(F.why)}</p>
         <div class="tfmeta">${c ? `<span><b>${esc(c.name)}</b>${c.role ? ', ' + esc(c.role) : ''}${c.phone ? ` · <a href="tel:${esc(c.phone)}">${esc(phoneFmt(c.phone))}</a>` : ''}</span>` : s.p.phone ? `<span>Main line <a href="tel:${esc(s.p.phone)}">${esc(phoneFmt(s.p.phone))}</a></span>` : ''}<span>${s.lastTouch ? 'Last touch ' + W().agoText(s.lastTouch).toLowerCase() : 'No outreach yet'}</span></div>
         <div class="row" style="margin-top:12px">${F.act ? `<button class="btn primary" id="tfAct">${esc(F.act.label)}</button>` : ''}<button class="btn" id="tfOpen">Open source</button>${X.openMeeting ? '<button class="btn ghost" id="tfMeet">Schedule a visit</button>' : ''}</div></div>
-        ${s.total12 ? `<div class="tfchart"><div class="tlab">Their referrals, 12 months</div>${spark(s.h, { w: 180, h: 54, color: s.status === 'Protect' ? '#C0262D' : '#0071E3' })}<div class="tsub">${s.last3} in the last 3 months · ${s.prior3} the 3 before</div></div>` : ''}</div></div>`;
+        ${s.total12 ? `<div class="tfchart"><div class="tlab">Their referrals, 12 months</div>${spark(s.h, { w: 180, h: 54, color: s.status === 'Protect' ? '#C0262D' : '#2F6DB5' })}<div class="tsub">${s.last3} in the last 3 months · ${s.prior3} the 3 before</div></div>` : ''}</div></div>`;
   }
   const ICON = { down: '↘', up: '↗', new: '★' };
   const changes = D.sig.length ? `<div class="card tchanges"><div class="row" style="justify-content:space-between;align-items:baseline"><h2 style="margin:0">What changed</h2><a class="small" href="#results">See results</a></div>

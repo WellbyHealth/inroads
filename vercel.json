@@ -31,6 +31,15 @@
           "value": "public, max-age=604800, stale-while-revalidate=86400"
         }
       ]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -41,6 +50,10 @@
     {
       "source": "/img/:path*",
       "destination": "https://wellbyinroads.com/img/:path*"
+    },
+    {
+      "source": "/fonts/:path*",
+      "destination": "https://wellbyinroads.com/fonts/:path*"
     },
     {
       "source": "/apple-touch-icon.png",

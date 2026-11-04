@@ -7,8 +7,8 @@
 .plan-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .plan-card { position: relative; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 18px; border-radius: 18px; background: var(--surface, #fff); border: 0; box-shadow: 0 0 0 .5px var(--line); cursor: pointer; font: inherit; color: inherit; transition: box-shadow .15s, transform .15s; }
 .plan-card:hover { transform: translateY(-1px); box-shadow: 0 0 0 .5px var(--line), 0 6px 18px rgba(0,0,0,.08); }
-.plan-card.on { box-shadow: 0 0 0 2px var(--tint), 0 6px 18px rgba(0,113,227,.12); }
-.plan-tag { position: absolute; top: 14px; right: 14px; font-size: 11px; font-weight: 700; color: var(--tint); background: rgba(0,113,227,.1); padding: 3px 8px; border-radius: 999px; }
+.plan-card.on { box-shadow: 0 0 0 2px var(--tint), 0 6px 18px rgba(13,39,71,.12); }
+.plan-tag { position: absolute; top: 14px; right: 14px; font-size: 11px; font-weight: 700; color: var(--tint); background: rgba(13,39,71,.1); padding: 3px 8px; border-radius: 999px; }
 .plan-name { font-size: 17px; }
 .plan-price { font-size: 30px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .plan-price small { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: 4px; }

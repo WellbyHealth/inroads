@@ -2,23 +2,25 @@
    Clarity: system type, one tint, real hierarchy. Deference: chrome recedes, content leads. Depth: materials and sheets, not stickers and gradients.
    Loaded last so it refines app.css / ui.css without rewriting them. */
 :root {
-  --bg: #F5F5F7; --surface: #fff; --stone: rgba(118,118,128,.10); --stone-2: rgba(118,118,128,.12);
-  --ink: #1D1D1F; --body: #1D1D1F; --muted: #6E6E73; --tertiary: #86868B;
-  --line: rgba(60,60,67,.14); --line-soft: rgba(60,60,67,.09);
-  --tint: #0071E3; --tint-hover: #0077ED; --tint-soft: rgba(0,113,227,.10);
-  --blue-ink: #0066CC; --pos: #248A3D; --pos-soft: rgba(52,199,89,.14); --err: #D70015; --err-soft: rgba(255,59,48,.12);
-  --warn: #B25000; --warn-soft: rgba(255,149,0,.13);
-  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Segoe UI", Inter, system-ui, sans-serif;
-  --ease: cubic-bezier(.25,.1,.25,1); --bounce: var(--ease);
-  --shadow: 0 12px 40px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.05);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.05), 0 0 0 .5px rgba(0,0,0,.04);
-  --material: rgba(251,251,253,.78);
-  --r: 14px;
+  /* Wellby site theme (wellbyinroads.com styles.css): warm neutrals, black ink, Figtree, navy and orange accents. */
+  --bg: #F9F8F6; --surface: #fff; --stone: #F3F3F1; --stone-2: #F1F2ED;
+  --ink: #000; --body: #2E2D29; --muted: #6B6A64; --tertiary: #8A8880;
+  --line: #E6E4DD; --line-soft: #EEEDE8;
+  --tint: #0D2747; --tint-hover: #16355C; --tint-soft: rgba(13,39,71,.08);
+  --blue-ink: #2F6DB5; --pos: #1F7A4D; --pos-soft: #E1F3E8; --err: #C0262D; --err-soft: #FBE4E5;
+  --warn: #9A4A00; --warn-soft: #FDEBD3;
+  --orange: #EE8B4B; --orange-ink: #A84A14; --peach: #F8E3D5; --sky-soft: #E3EEFD;
+  --sans: Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(.23,1,.32,1); --bounce: cubic-bezier(.34,1.56,.64,1);
+  --shadow: 0 24px 48px -28px rgba(0,0,0,.28), 0 4px 12px -6px rgba(0,0,0,.08);
+  --shadow-sm: 0 10px 30px -20px rgba(0,0,0,.35);
+  --material: rgba(249,248,246,.82);
+  --r: 20px;
 }
 body { font-size: 15px; line-height: 1.47; letter-spacing: -.01em; color: var(--ink); font-feature-settings: "kern"; }
 a { color: var(--blue-ink); text-decoration: none; } a:hover { text-decoration: underline; }
-::selection { background: rgba(0,113,227,.22); }
-:focus-visible { outline: 3px solid rgba(0,113,227,.45); outline-offset: 2px; }
+::selection { background: rgba(13,39,71,.22); }
+:focus-visible { outline: 3px solid rgba(13,39,71,.45); outline-offset: 2px; }
 
 /* Type scale: Large Title, Title 2, Headline, Footnote */
 h1, h2, h3 { color: var(--ink); }
@@ -77,8 +79,8 @@ main#app { padding-top: 34px; }
 .chip { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 6px; background: var(--stone-2); color: var(--ink); }
 .chip.st-Protect, .chip.st-Grow, .chip.st-Open, .chip.st-Healthy, .chip.st-Followup { background: var(--stone-2); color: var(--ink); padding-left: 7px; }
 .chip[class*="st-"]::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; background: currentColor; }
-.chip.st-Protect::before { background: #FF3B30; } .chip.st-Grow::before { background: #FF9500; } .chip.st-Open::before { background: #8E8E93; }
-.chip.st-Healthy::before { background: #34C759; } .chip.st-Followup::before { background: #FFCC00; }
+.chip.st-Protect::before { background: #FF3B30; } .chip.st-Grow::before { background: #EE8B4B; } .chip.st-Open::before { background: #8A8880; }
+.chip.st-Healthy::before { background: #2E9E62; } .chip.st-Followup::before { background: #E8C547; }
 
 /* Buttons: one filled tint for the primary action; everything else recedes */
 .btn { height: 34px; padding: 0 14px; border-radius: 8px; font-size: 14px; font-weight: 500; background: var(--stone-2); color: var(--tint); transition: background .15s var(--ease), opacity .15s; }
@@ -93,7 +95,7 @@ main#app { padding-top: 34px; }
 
 /* Controls */
 input, select, textarea { font-size: 15px; border: .5px solid rgba(60,60,67,.29); border-radius: 8px; padding: 8px 11px; }
-input:focus, select:focus, textarea:focus { outline: 0; border-color: var(--tint); box-shadow: 0 0 0 3.5px rgba(0,113,227,.25); }
+input:focus, select:focus, textarea:focus { outline: 0; border-color: var(--tint); box-shadow: 0 0 0 3.5px rgba(13,39,71,.25); }
 label { font-size: 13px; font-weight: 500; color: var(--muted); }
 .seg { background: rgba(118,118,128,.12); border-radius: 9px; padding: 2px; }
 .seg button { font-size: 13px; font-weight: 500; color: var(--ink); border-radius: 7px; padding: 5px 12px; }
@@ -106,7 +108,7 @@ tr.click:hover td { background: rgba(118,118,128,.06); }
 .plan li, .qrow, .trow, .checklist li, .steps li { border-top: .5px solid var(--line-soft); }
 .bar-g { background: rgba(118,118,128,.16); }
 .bar-g > i { background: var(--tint); }
-.goal .bar-g > i { background: #34C759; }
+.goal .bar-g > i { background: #2E9E62; }
 
 /* Sheets and materials */
 .drawer { top: 64px; right: 12px; bottom: 12px; border: 0; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.18), 0 0 0 .5px rgba(0,0,0,.06); padding: 22px 24px 40px; }
@@ -120,7 +122,7 @@ tr.click:hover td { background: rgba(118,118,128,.06); }
 .stages span.done { background: none; color: var(--pos); }
 .stages span.on { background: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,.1); }
 .steps li::before { width: 8px; height: 8px; background: rgba(118,118,128,.35); }
-.steps li.done::before { background: #34C759; } .steps li.next::before { background: var(--tint); }
+.steps li.done::before { background: #2E9E62; } .steps li.next::before { background: var(--tint); }
 
 /* Board */
 .bcol { background: rgba(118,118,128,.08); border-radius: 14px; }
@@ -158,7 +160,7 @@ body.mapmode .hdr { position: fixed; }
 @media (max-width: 720px) {
   .bar { height: 48px; padding: 0 14px; -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(251,251,253,.97); } /* a filter here would trap the fixed tab bar */
   .bar nav { background: var(--material); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-top: .5px solid var(--line); box-shadow: none; padding: 5px 0 calc(4px + env(safe-area-inset-bottom)); }
-  .bar nav a { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; padding: 2px 4px; color: #8E8E93; font-weight: 500; }
+  .bar nav a { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; padding: 2px 4px; color: #8A8880; font-weight: 500; }
   .bar nav a.on { color: var(--tint); }
   .bar nav a::before { content: ""; width: 24px; height: 24px; background: currentColor; -webkit-mask: var(--ico) center / contain no-repeat; mask: var(--ico) center / contain no-repeat; }
   .bar nav a[data-view="today"] { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Crect x='4' y='5' width='16' height='15' rx='3'/%3E%3Cpath d='M4 10h16M9 3v4M15 3v4'/%3E%3C/svg%3E"); }

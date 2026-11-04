@@ -28,7 +28,7 @@
 .terrT th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); padding: 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 .terrT td { padding: 10px 8px; border-bottom: 1px solid var(--line-soft, #eee); vertical-align: top; }
 .terrT tbody tr { cursor: pointer; }
-.terrT tbody tr:hover { background: rgba(0,113,227,.04); }
+.terrT tbody tr:hover { background: rgba(13,39,71,.04); }
 .terrT .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .terrNext { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
 .printOnly { display: none; }
@@ -67,7 +67,7 @@
 .meMenu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 2500; min-width: 220px; padding: 6px; border-radius: 14px; background: var(--surface, #fff); box-shadow: 0 12px 32px rgba(0,0,0,.16), 0 0 0 .5px var(--line); display: grid; }
 .meMenu[hidden] { display: none; }
 .meMenu a, .meMenu button { display: block; text-align: left; padding: 9px 12px; border: 0; background: none; border-radius: 9px; font: inherit; font-size: 14px; color: var(--ink); text-decoration: none; cursor: pointer; }
-.meMenu a:hover, .meMenu button:hover { background: rgba(0,113,227,.08); }
+.meMenu a:hover, .meMenu button:hover { background: rgba(13,39,71,.08); }
 .meMenu hr { border: 0; border-top: 1px solid var(--line); margin: 4px 6px; }
 @media (max-width: 720px) { .meNm { display: none; } }
 

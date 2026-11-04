@@ -8,7 +8,7 @@
 .lx { border: 0; background: none; font-size: 14px; color: var(--muted); cursor: pointer; padding: 2px 4px; }
 .lmodes { display: flex; flex-direction: column; gap: 2px; margin-bottom: 6px; }
 .lmode { display: flex; gap: 10px; align-items: flex-start; text-align: left; border: 0; background: none; padding: 7px 8px; border-radius: 9px; cursor: pointer; color: var(--ink); font: inherit; }
-.lmode:hover { background: rgba(118,118,128,.08); } .lmode.on { background: rgba(0,113,227,.10); }
+.lmode:hover { background: rgba(118,118,128,.08); } .lmode.on { background: rgba(13,39,71,.10); }
 .lmode .sw { width: 26px; height: 26px; border-radius: 7px; flex: none; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.15); margin-top: 1px; }
 .lmode b { display: block; font-size: 14px; font-weight: 600; } .lmode.on b { color: var(--tint); }
 .lmode small, .ltog small { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; font-weight: 400; margin-top: 1px; }
@@ -19,10 +19,10 @@
 .ltog input { position: absolute; opacity: 0; width: 0; height: 0; }
 .ltog i { width: 38px; height: 22px; border-radius: 11px; background: rgba(120,120,128,.32); position: relative; transition: background .2s; flex: none; }
 .ltog i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
-.ltog input:checked + i { background: #34C759; } .ltog input:checked + i::after { transform: translateX(16px); }
+.ltog input:checked + i { background: #2E9E62; } .ltog input:checked + i::after { transform: translateX(16px); }
 .ltog input:focus-visible + i { outline: 2px solid var(--tint); outline-offset: 2px; }
 .lreset { margin-top: 8px; border: 0; background: none; color: var(--tint); font: 500 13px var(--sans, system-ui); cursor: pointer; padding: 0; }
-.wbtouch span { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #fff; color: #1E7B34; font: 700 12px var(--sans, system-ui); box-shadow: 0 0 0 2px #34C759, 0 1px 4px rgba(0,0,0,.25); }
+.wbtouch span { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #fff; color: #1E7B34; font: 700 12px var(--sans, system-ui); box-shadow: 0 0 0 2px #2E9E62, 0 1px 4px rgba(0,0,0,.25); }
 @media (max-width: 720px) {
   .mlayers { bottom: calc(45vh + 12px); right: 12px; } .mlayers .lbtn { width: 50px; height: 50px; }
   .lpanel { position: fixed; left: 12px; right: 12px; top: 58px; bottom: auto; width: auto; max-height: calc(55vh - 80px); }
