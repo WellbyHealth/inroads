@@ -1,10 +1,10 @@
 # Wellby
 
-> Wellby is referral intelligence plus a system of action for post-acute care (home health, hospice, skilled nursing, home care and more). It is built to map every referral source around a provider's offices, show the provider's share of each source's referrals, hold referral partners accountable to the real numbers with a one-page partner sheet for visits, and draft the outreach and follow-up for the business development, sales and marketing team to approve. Wellby is in development with self-serve sign-up and a 14-day free trial.
+> Wellby is referral intelligence plus a system of action for referral-driven care: health systems and hospitals growing their service lines, specialty practices, and post-acute care (home health, hospice, skilled nursing, home care and more). It is built to map every referral source around a provider's offices, show the provider's share of each source's referrals, hold referral partners accountable to the real numbers with a one-page partner sheet for visits, and draft the outreach and follow-up for the business development, sales and marketing team to approve. Wellby is in development with self-serve sign-up and a 14-day free trial.
 
 ## Pages
 - [Home](https://wellbyinroads.com/): what Wellby does and how it works
-- [Specialties](https://wellbyinroads.com/specialties): the 18 kinds of referral-driven care Wellby is built for
+- [Specialties](https://wellbyinroads.com/specialties): health systems, specialty practices and 18 more kinds of referral-driven care Wellby is built for
 - [Pricing](https://wellbyinroads.com/pricing): Solo $199/month (1 user, 1 location); Team $499/month (1 location and up to 5 users, $149 per extra location which adds 3 users, up to 5 locations); Enterprise priced after a demo for 6+ locations or 20+ users, with team performance insights; annual billing includes 2 months free; 14-day free trial on Solo and Team
 - [Wellby vs Trella Health](https://wellbyinroads.com/compare/trella)
 - [Wellby vs Definitive Healthcare](https://wellbyinroads.com/compare/definitive-healthcare)
