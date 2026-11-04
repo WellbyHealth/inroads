@@ -102,3 +102,47 @@
 }
 @media(max-width:374px){.h2-btn{justify-content:center;font-size:15px;padding:0 10px}.h2-btn svg{display:none}.h2-what{font-size:15.5px}}
 .h2-what{max-width:28em}
+
+/* "Your team's day" moved near the bottom: standalone card; hero keeps a rounded lip */
+.hero2::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(1240px,calc(100% - 2*clamp(12px,3vw,40px)));height:clamp(28px,3vw,40px);background:var(--bg);border-radius:40px 40px 0 0;z-index:1}
+.h2-copy{padding-bottom:clamp(72px,7vw,112px)}
+@media(max-width:760px){.h2-copy{padding-bottom:64px}.hero2::after{border-radius:28px 28px 0 0}}
+.h2-panel.h2-moved{margin-top:0;padding:clamp(40px,5vw,72px) clamp(12px,3vw,40px)}
+.h2-moved .h2-panel-in{background:#fff;border:1px solid var(--line);border-radius:40px;padding:clamp(32px,4.5vw,64px) clamp(20px,4vw,64px)}
+@media(max-width:760px){.h2-moved .h2-panel-in{border-radius:28px}}
+
+/* Your team's day: steps + highlighted queue */
+.td-lede{margin:14px 0 0;font-size:17.5px;line-height:1.5;color:var(--body);max-width:34em}
+.td-steps{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:8px}
+.td-steps button{position:relative;display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:1px solid transparent;border-radius:16px;padding:14px 16px;cursor:pointer;overflow:hidden;transition:background .25s,border-color .25s}
+.td-steps button:hover{background:#f6f5f1}
+.td-steps button[aria-selected="true"]{background:#fff8ef;border-color:#f3dcc4}
+.td-steps button:focus-visible{outline:3px solid #1c1916;outline-offset:2px}
+.td-n{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#ecebe6;color:#3b3a36;font-size:14px;font-weight:700;transition:background .25s,color .25s}
+.td-steps button[aria-selected="true"] .td-n{background:#1c1916;color:#fff}
+.td-steps button.done .td-n{background:#d6ecd9;color:#1F7A4D}
+.td-t b{display:block;font-size:17px;letter-spacing:-.01em;color:#1c1916}
+.td-t span{display:block;margin-top:3px;font-size:15px;line-height:1.45;color:var(--muted)}
+.td-steps button[aria-selected="true"] .td-t span{color:var(--body)}
+.td-bar{position:absolute;left:16px;right:16px;bottom:6px;height:3px;border-radius:3px;background:transparent;transform-origin:left;transform:scaleX(0)}
+.td-steps button.run .td-bar{background:#E07A3F;animation:td-fill 3.6s linear forwards}
+@keyframes td-fill{to{transform:scaleX(1)}}
+.td-time{font-weight:500;color:var(--muted);margin-left:6px;font-size:.92em}
+.td-card{position:relative}
+.td-row{position:relative;cursor:pointer;opacity:.5;transform:scale(.97);transition:opacity .35s,transform .35s var(--ease),box-shadow .35s,background .35s}
+.td-row.past{opacity:.72}
+.td-row.on{opacity:1;transform:scale(1);background:#fff;box-shadow:0 0 0 2px #E07A3F,0 18px 36px -22px rgba(120,64,30,.45)}
+.td-num{position:absolute;left:-10px;top:-10px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#ecebe6;color:#3b3a36;font-size:12px;font-weight:700;transition:background .3s,color .3s}
+.td-row.on .td-num{background:#E07A3F;color:#fff}
+.td-row.past .td-num{background:#d6ecd9;color:#1F7A4D}
+.td-link{position:relative;height:16px;margin:2px 0}
+.td-link i{position:absolute;left:33px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(#d9d6cf 0 4px,transparent 4px 8px)}
+.td-card[data-step="1"] .td-link:nth-of-type(1) i,.td-card[data-step="2"] .td-link i{background:repeating-linear-gradient(#E07A3F 0 4px,transparent 4px 8px)}
+.td-chip1{background:#e7f0fd;color:#1d4f91}
+.td-send{transition:background .3s,color .3s}
+.td-send.sent{animation:td-pop .35s var(--ease)}
+@keyframes td-pop{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.td-row{opacity:1;transform:none;transition:none}.td-steps button.run .td-bar{animation:none}}
+@media(max-width:900px){.td-steps{margin-top:18px}}
+@media(max-width:760px){.td-steps{gap:4px;margin-top:16px}.td-steps button{padding:10px 12px;align-items:center}.td-t span{display:none}.td-t b{font-size:16px}.td-n{width:26px;height:26px;font-size:13px}.td-lede{font-size:16.5px}}
+@media(max-width:760px){.td-row .hq-d{display:none}.td-link{height:10px}}
