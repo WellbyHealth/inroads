@@ -64,7 +64,7 @@ function headline(O, where) {
   const { esc } = W();
   if (!O.top.length) return '';
   const val = O.value ? `<b>≈${moneyShort(O.extraValue)} a year</b>` : `<b>≈${Math.round(O.extraClients)} new clients a year</b>`;
-  return `<a class="card oppBanner" href="#territory" data-where="${where}"><img src="/img/g-stk-market-cut.webp" alt=""><div><div class="oppEye">Your biggest opportunity</div>
+  return `<a class="card oppBanner" href="#territory" data-where="${where}"><img src="/img/g-cl-stk-market-cut.webp" alt=""><div><div class="oppEye">Your biggest opportunity</div>
     <div class="oppMain">Your top ${O.top.length} sources refer out <b>≈${Math.round(O.totalOut).toLocaleString('en-US')}</b> ${esc(O.careLabel)} patients a year. ${O.hasRefs ? `You get about <b>${pctTxt(O.share)}</b>.` : 'Add who sends you patients to see your share.'}</div>
     <div class="oppSub">Reaching a ${Math.round(100 * O.target)}% share of each is worth ${val}. See your territory →</div></div></a>`;
 }

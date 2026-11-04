@@ -50,9 +50,9 @@ const STATUS_COLOR = { Protect: '#C0262D', Grow: '#EE8B4B', Healthy: '#1F7A4D', 
 const IMG = n => `/img/${n}.webp`;
 // Source-group palette (validated: lightness, chroma, CVD separation, contrast). Status colors stay reserved for relationship state.
 const GROUP_COLOR = { 'Hospitals': '#2F6DB5', 'Post-acute': '#D9692C', 'Physicians': '#B52E92', 'Other': '#6E9A1F' };
-const GROUP_ART = { 'Hospitals': 'g-rehab-cut', 'Post-acute': 'g-nursing-cut', 'Physicians': 'g-clipboard-cut', 'Other': 'g-envelope-cut' };
+const GROUP_ART = { 'Hospitals': 'g-cl-rehab-cut', 'Post-acute': 'g-cl-nursing-cut', 'Physicians': 'g-cl-clipboard-cut', 'Other': 'g-cl-envelope-cut' };
 const SEQ = ['#EEF4FD', '#D3E3F8', '#A9C8EE', '#6F9FDC', '#3F77C2', '#1E4F8F', '#0D2747']; // sequential, one hue light->dark
-const artFor = t => IMG(GROUP_ART[groupOf(t)] || 'g-envelope-cut');
+const artFor = t => IMG(GROUP_ART[groupOf(t)] || 'g-cl-envelope-cut');
 const fmtShort = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
 
 // ---------- Win flows: a playbook per source type, stages from first contact to regular referrer ----------
@@ -144,18 +144,18 @@ function viewResults() {
   const r = resultsData(), noRefs = !(S.referrals.rows || []).length;
   const max = Math.max(1, ...r.series.map(x => x.worked + x.other)), W = 640, H = 170, bw = W / 12;
   const chart = `<svg class="chart" viewBox="0 0 ${W} ${H + 22}" preserveAspectRatio="none" role="img" aria-label="Referrals by month from worked sources and from the rest of the market">${r.series.map((x, i) => { const hw = H * .92 * x.worked / max, ho = H * .92 * x.other / max, bx = i * bw + bw * .18; return `<g data-tip="${esc(`<b>${monthLabel(x.m)}</b><br>${x.worked} from sources you worked<br>${x.other} from the rest`)}"><rect x="${bx}" y="${H - hw - ho}" width="${bw * .64}" height="${Math.max(0, ho - (ho && hw ? 2 : 0))}" rx="2" fill="#A9C8EE"/><rect x="${bx}" y="${H - hw}" width="${bw * .64}" height="${hw}" rx="2" fill="#0D2747"/><text x="${i * bw + bw / 2}" y="${H + 16}" font-size="10" text-anchor="middle" fill="#667085">${monthLabel(x.m)}</text></g>`; }).join('')}</svg>`;
-  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-scorecard-600')}" alt="" style="width:120px"><div><span class="eyebrow">Prove it worked</span><h1>Results</h1><div class="muted">Referrals from the sources your team works, compared with the rest of your market.</div></div></div><button class="btn no-print" onclick="print()">Print summary</button></div>
+  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-cl-stk-score-cut')}" alt="" style="width:120px"><div><span class="eyebrow">Prove it worked</span><h1>Results</h1><div class="muted">Referrals from the sources your team works, compared with the rest of your market.</div></div></div><button class="btn no-print" onclick="print()">Print summary</button></div>
     ${sampleNotice()}
-    ${noRefs ? `<div class="notice info"><img src="${IMG('g-clipboard-cut')}" alt=""><div>Results need your referral history. <a href="#referrals">Upload it</a> (or load sample data) and every touch is measured against the referrals that followed.</div></div>` : ''}
+    ${noRefs ? `<div class="notice info"><img src="${IMG('g-cl-clipboard-cut')}" alt=""><div>Results need your referral history. <a href="#referrals">Upload it</a> (or load sample data) and every touch is measured against the referrals that followed.</div></div>` : ''}
     <div class="grid kpis">
-      <div class="card kpi c1"><img src="${IMG('g-stk-score-cut')}" alt=""><div class="l">Referrals from sources you worked (3 mo)</div><div class="v">${fmt(r.w3)}</div><div class="d">${change(r.w3, r.w0)}</div></div>
-      <div class="card kpi c2"><img src="${IMG('g-stk-market-cut')}" alt=""><div class="l">From the rest of your market (3 mo)</div><div class="v">${fmt(r.o3)}</div><div class="d">${change(r.o3, r.o0)}</div></div>
-      <div class="card kpi c3"><img src="${IMG('g-stk-reconnect-cut')}" alt=""><div class="l">Quiet sources won back</div><div class="v">${fmt(r.wonBack)}</div><div class="d muted">referred again within 3 months of outreach</div></div>
-      <div class="card kpi c4"><img src="${IMG('g-stk-plan-cut')}" alt=""><div class="l">Referrals per 10 touches</div><div class="v">${r.touches ? (10 * r.refsAfter / r.touches).toFixed(1) : '–'}</div><div class="d muted">${fmt(r.touches)} touches logged${r.medianWait != null ? ` · drafts approved in ${r.medianWait < 1 ? 'under an hour' : Math.round(r.medianWait) + ' h'} (median)` : ''}</div></div>
+      <div class="card kpi c1"><img src="${IMG('g-cl-stk-score-cut')}" alt=""><div class="l">Referrals from sources you worked (3 mo)</div><div class="v">${fmt(r.w3)}</div><div class="d">${change(r.w3, r.w0)}</div></div>
+      <div class="card kpi c2"><img src="${IMG('g-cl-stk-market-cut')}" alt=""><div class="l">From the rest of your market (3 mo)</div><div class="v">${fmt(r.o3)}</div><div class="d">${change(r.o3, r.o0)}</div></div>
+      <div class="card kpi c3"><img src="${IMG('g-cl-stk-reconnect-cut')}" alt=""><div class="l">Quiet sources won back</div><div class="v">${fmt(r.wonBack)}</div><div class="d muted">referred again within 3 months of outreach</div></div>
+      <div class="card kpi c4"><img src="${IMG('g-cl-stk-plan-cut')}" alt=""><div class="l">Referrals per 10 touches</div><div class="v">${r.touches ? (10 * r.refsAfter / r.touches).toFixed(1) : '–'}</div><div class="d muted">${fmt(r.touches)} touches logged${r.medianWait != null ? ` · drafts approved in ${r.medianWait < 1 ? 'under an hour' : Math.round(r.medianWait) + ' h'} (median)` : ''}</div></div>
     </div>
     <div class="cols">
       <div class="card"><div class="head"><h2>Referrals by month</h2><div class="legend"><span><i class="dot" style="background:#0D2747"></i>Sources you worked (${fmt(r.worked)})</span><span><i class="dot" style="background:#A9C8EE"></i>The rest</span></div></div>${chart}</div>
-      <div class="card"><h2>Win flows by stage</h2>${Object.keys(S.flows).length ? hbars(r.stages) : `<div class="empty small"><img src="${IMG('g-map-600')}" alt="" style="width:140px">No win flows yet. Start one from <a href="#today">Today</a>.</div>`}</div>
+      <div class="card"><h2>Win flows by stage</h2>${Object.keys(S.flows).length ? hbars(r.stages) : `<div class="empty small"><img src="${IMG('g-cl-stk-market-cut')}" alt="" style="width:140px">No win flows yet. Start one from <a href="#today">Today</a>.</div>`}</div>
     </div>
     <div class="card" style="margin-top:18px"><h2>By marketer</h2>${r.people.length ? `<table><thead><tr><th>Marketer</th><th class="num">Touches</th><th class="num">Sources worked</th><th class="num">Referrals since first touch</th></tr></thead><tbody>${r.people.map(x => `<tr><td><b>${esc(x.who)}</b></td><td class="num">${fmt(x.touches)}</td><td class="num">${fmt(x.sources)}</td><td class="num">${fmt(x.refs)}</td></tr>`).join('')}</tbody></table>` : '<div class="muted small">Approve or log outreach and each marketer\'s results show here.</div>'}</div>`;
 }
@@ -164,10 +164,10 @@ function viewResults() {
 function viewFlows() {
   const ids = Object.keys(S.flows).filter(id => S.scoredById.has(id));
   const cols = STAGES.map((st, i) => ({ st, items: ids.map(id => ({ id, fs: flowState(id) })).filter(x => x.fs.stage === i) }));
-  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-stk-plan-cut')}" alt="" style="width:96px"><div><span class="eyebrow">Win</span><h1>Win flows</h1><div class="muted">${ids.length} target${ids.length === 1 ? '' : 's'} in a flow, from first contact to regular referrer.</div></div></div><a class="btn" href="#map">Find targets</a></div>
+  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-cl-stk-plan-cut')}" alt="" style="width:96px"><div><span class="eyebrow">Win</span><h1>Win flows</h1><div class="muted">${ids.length} target${ids.length === 1 ? '' : 's'} in a flow, from first contact to regular referrer.</div></div></div><a class="btn" href="#map">Find targets</a></div>
     ${ids.length ? `<div class="board">${cols.map(c => `<div class="bcol"><div class="bhead"><b>${c.st}</b><span class="chip">${c.items.length}</span></div>${c.items.map(({ id, fs }) => { const p = S.scoredById.get(id).p, late = fs.next && fs.next.due < today();
       return `<div class="bcard" data-src="${esc(id)}"><div class="name">${esc(p.name)}</div><div class="muted small">${esc(p.type)}${p.city ? ' · ' + esc(p.city) : ''}</div>${fs.next ? `<div class="small ${late ? 'down' : ''}" style="margin-top:6px">Next: ${esc(fs.next.label)} · ${late ? 'overdue' : fmtShort(fs.next.due)}</div>` : `<div class="small muted" style="margin-top:6px">${fs.stage >= 3 ? 'Keep the relationship warm' : 'Waiting on a first referral'}</div>`}</div>`; }).join('') || '<div class="muted small" style="padding:6px 4px">None yet</div>'}</div>`).join('')}</div>`
-    : `<div class="card empty"><img src="${IMG('g-map-600')}" alt="" style="width:220px">No win flows yet. Pick a target on <a href="#today">Today</a> or the <a href="#map">map</a> and tap <b>Start win flow</b>.</div>`}`;
+    : `<div class="card empty"><img src="${IMG('g-cl-stk-market-cut')}" alt="" style="width:220px">No win flows yet. Pick a target on <a href="#today">Today</a> or the <a href="#map">map</a> and tap <b>Start win flow</b>.</div>`}`;
   bindCommon($('#app'));
 }
 
@@ -442,7 +442,7 @@ async function startCheckout(btn) { btn.disabled = true; try { const r = await a
 async function openPortal(btn) { btn.disabled = true; try { const r = await api('/api/billing', { action: 'portal' }); location.href = r.url; } catch (e) { toast(e.message); btn.disabled = false; } }
 function viewPaywall() {
   const admin = S.me.role === 'admin', ended = S.me.access?.status === 'canceled';
-  $('#app').innerHTML = `<div class="card paywall"><img src="${IMG('g-house-cut')}" alt=""><span class="eyebrow">${ended ? 'Subscription ended' : 'Free trial ended'}</span><h1>Keep your referral plan going</h1>
+  $('#app').innerHTML = `<div class="card paywall"><img src="${IMG('g-cl-house-cut')}" alt=""><span class="eyebrow">${ended ? 'Subscription ended' : 'Free trial ended'}</span><h1>Keep your referral plan going</h1>
     <p class="muted">Your ${esc(S.me.orgName || 'agency')} workspace is saved: offices, referral data, contacts and outreach history. ${admin ? 'Subscribe to pick up right where you left off.' : 'Ask your admin to subscribe to keep using Wellby.'}</p>
     ${admin ? '<button class="btn primary wide" id="subNow">Subscribe</button>' : ''}</div>`;
   if (admin) $('#subNow').onclick = e => startCheckout(e.target);
@@ -455,7 +455,7 @@ function billingCard() {
   const line = ac.status === 'trial' ? `<b>Free trial</b> · ${ac.daysLeft} day${ac.daysLeft === 1 ? '' : 's'} left, ends ${fmtDate(ac.trialEndsAt)}`
     : ac.status === 'active' ? `<b>Subscribed</b>${ac.periodEnd ? ` · renews ${fmtDate(ac.periodEnd)}` : ''}`
     : ac.status === 'past_due' ? '<b class="down">Payment failed</b> · update your card to keep access' : '<b>Not subscribed</b>';
-  return `<div class="card" id="billing" style="margin-bottom:14px"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2>Plan and billing</h2><p class="small" style="margin:0 0 10px">${line}</p></div><img src="${IMG('g-stk-plan-cut')}" alt="" style="width:64px"></div>
+  return `<div class="card" id="billing" style="margin-bottom:14px"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2>Plan and billing</h2><p class="small" style="margin:0 0 10px">${line}</p></div><img src="${IMG('g-cl-stk-plan-cut')}" alt="" style="width:64px"></div>
     <div class="row">${ac.status !== 'active' ? '<button class="btn sm primary" id="bSub">Subscribe</button>' : ''}${ac.hasCustomer ? '<button class="btn sm" id="bPortal">Manage billing and invoices</button>' : ''}</div>
     <p class="muted small" id="bNote" style="margin:10px 0 0">Secure checkout by Stripe. Cancel anytime.</p></div>`;
 }
@@ -528,7 +528,7 @@ function viewToday() {
   const followRow = s => `<div class="qrow"><span class="qicon q-call"></span><div><span class="name" data-src="${esc(s.p.id)}">${esc(s.p.name)}</span><div class="why">Follow-up due ${fmtShort(s.due)} · ${esc(s.p.type)}</div></div>
       <div class="row"><button class="btn sm primary" data-draft="${esc(s.p.id)}" data-kind="email">Draft email</button><button class="btn sm" data-flow="${esc(s.p.id)}">Start win flow</button></div></div>`;
   $('#app').innerHTML = `
-    <div class="head"><div class="hero-head"><img src="${IMG('g-house-cut')}" alt=""><div><span class="eyebrow">Today in Wellby</span><h1>${hello}, ${esc(S.me.name.split(' ')[0])}</h1><div class="muted">${queueCount ? `${drafts.length} to approve · ${steps.length} flow step${steps.length === 1 ? '' : 's'} due · ${follow.length} follow-up${follow.length === 1 ? '' : 's'}` : 'Your queue is clear. Pick a target below to start winning their referrals.'}</div></div></div>
+    <div class="head"><div class="hero-head"><img src="${IMG('g-cl-house-cut')}" alt=""><div><span class="eyebrow">Today in Wellby</span><h1>${hello}, ${esc(S.me.name.split(' ')[0])}</h1><div class="muted">${queueCount ? `${drafts.length} to approve · ${steps.length} flow step${steps.length === 1 ? '' : 's'} due · ${follow.length} follow-up${follow.length === 1 ? '' : 's'}` : 'Your queue is clear. Pick a target below to start winning their referrals.'}</div></div></div>
     <div class="goal"><div class="small"><b>${doneWk} of ${goal}</b> touches this week</div><div class="bar-g"><i style="width:${Math.min(100, 100 * doneWk / goal)}%"></i></div></div></div>
     ${checklist()}
     ${sampleNotice()}
@@ -544,7 +544,7 @@ function viewToday() {
       <div class="row" style="margin:6px 0"><span class="chip st-${s.status}">${s.status}</span><span class="chip">Score ${s.priority}</span><span class="chip">${esc(s.p.type)}</span></div>
       ${rchips(s.why)}
       <div class="row" style="margin-top:12px"><button class="btn sm primary" data-flow="${esc(s.p.id)}">Start win flow</button><button class="btn sm ghost" data-skip="${esc(s.p.id)}">Skip</button></div></div>`).join('')}</div>
-    ${noRefs ? `<div class="notice info"><img src="${IMG('g-clipboard-cut')}" alt=""><div>Your market is loaded from public data. <a href="#referrals">Add your referral history</a> so Wellby can tell who's sending you patients, who's gone quiet, and prove which outreach worked.</div></div>` : ''}
+    ${noRefs ? `<div class="notice info"><img src="${IMG('g-cl-clipboard-cut')}" alt=""><div>Your market is loaded from public data. <a href="#referrals">Add your referral history</a> so Wellby can tell who's sending you patients, who's gone quiet, and prove which outreach worked.</div></div>` : ''}
     <div class="cols" style="margin-top:18px">
       <div class="card"><div class="head"><h2>Up next</h2><span class="muted small">${S.market.providers.length ? fmt(S.market.providers.length) + ' sources in your market' : ''}</span></div>
         <ul class="plan">${items.slice(3).map((s, i) => `<li>
@@ -802,7 +802,7 @@ function viewMap() {
   const dotLayer = L.layerGroup().addTo(map);
   for (const o of S.offices) {
     L.circle([o.lat, o.lng], { radius: o.radiusMiles * 1609.34, color: '#EE8B4B', weight: 1.5, fill: false, dashArray: '5 5', interactive: false }).addTo(map);
-    L.marker([o.lat, o.lng], { icon: L.divIcon({ className: 'opin', html: `<img src="${IMG('g-house-cut')}" alt=""><span>${esc(o.label)}</span>`, iconSize: [44, 44], iconAnchor: [22, 40] }), zIndexOffset: 1000 }).bindTooltip(`${esc(o.label)} office · ${o.radiusMiles} mi`).addTo(map);
+    L.marker([o.lat, o.lng], { icon: L.divIcon({ className: 'opin', html: `<img src="${IMG('g-cl-house-cut')}" alt=""><span>${esc(o.label)}</span>`, iconSize: [44, 44], iconAnchor: [22, 40] }), zIndexOffset: 1000 }).bindTooltip(`${esc(o.label)} office · ${o.radiusMiles} mi`).addTo(map);
   }
   if (!S.pure) planItems(10).filter(s => s.p.lat != null).forEach((s, i) => L.marker([s.p.lat, s.p.lng], { icon: L.divIcon({ className: 'tgt', html: `<span>${i + 1}</span>`, iconSize: [26, 26], iconAnchor: [13, 13] }), zIndexOffset: 900 }).bindTooltip(`<b>#${i + 1} ${esc(s.p.name)}</b><br>${esc(s.p.type)} · score ${s.priority}`).on('click', () => openSource(s.p.id)).addTo(map));
   let countyLayer = null, breaks = [];
@@ -878,14 +878,14 @@ function viewMap() {
     }
     const metricName = MAP.metric === 'all' ? 'sources' : MAP.metric.toLowerCase();
     const terr = S.offices.length && S.pure ? `<div class="pcard terr"><span class="eyebrow sky">Around your offices \u00b7 public data</span><div class="row" style="margin:8px 0 4px">${S.offices.map(o => `<button class="chip click" data-off="${esc(o.id)}">${esc(o.label)} \u00b7 ${o.radiusMiles} mi</button>`).join('')}</div>${donut(groupItems(S.market.counts), { size: 120, center: fmt(S.market.providers.length), sub: 'sources' })}<a class="btn wide" href="#market/list" style="margin-top:10px">See the list</a></div>` : S.offices.length ? (() => { const st = { Protect: 0, Grow: 0, Healthy: 0, Open: 0 }; for (const x of S.scored) st[x.status]++; return `
-      <div class="pcard terr"><div class="row" style="justify-content:space-between"><div><span class="eyebrow sky">Your territory</span><div class="pname">${esc(S.settings.agencyName || 'Your agency')}</div></div><img src="${IMG('g-house-cut')}" alt="" style="width:58px"></div>
+      <div class="pcard terr"><div class="row" style="justify-content:space-between"><div><span class="eyebrow sky">Your territory</span><div class="pname">${esc(S.settings.agencyName || 'Your agency')}</div></div><img src="${IMG('g-cl-house-cut')}" alt="" style="width:58px"></div>
         <div class="row" style="margin:8px 0 4px">${S.offices.map(o => `<button class="chip click" data-off="${esc(o.id)}">${esc(o.label)} · ${o.radiusMiles} mi</button>`).join('')}</div>
         ${donut(Object.entries(st).map(([k, v]) => ({ key: k, label: k, value: v, color: STATUS_COLOR[k] })), { size: 120, center: fmt(S.market.providers.length), sub: 'in territory' })}
         <a class="btn primary wide" href="#today" style="margin-top:10px">Open today's plan</a></div>
       <div class="pcard"><h3>Your top targets</h3>${planItems(5).map((s, i) => `<div class="trow"><span class="rank">${i + 1}</span><div><span class="name" data-src="${esc(s.p.id)}">${esc(s.p.name)}</span><div class="muted small">${esc(s.p.type)} · score ${s.priority}</div></div><button class="btn sm primary" data-flow="${esc(s.p.id)}">Start</button></div>`).join('') || '<div class="muted small">Every top target is in a win flow.</div>'}</div>`; })() : `<div class="pcard"><h3>Add your offices</h3><p class="muted small">Set office addresses in <a href="#settings">Settings</a> and Wellby scores every source around them.</p></div>`;
     $('#mpanel').innerHTML = `
       <div class="ptitle">${sc.kind !== 'us' ? `<button class="btn sm ghost" id="pBack">← ${sc.kind === 'county' ? (GEO?.stateName[sc.id.slice(0, 2)] || 'State') : 'United States'}</button>` : ''}<span class="eyebrow">Market</span><h2>${esc(title)}</h2><div class="muted small">${sub}</div></div>
-      <div class="vcards">${[{ key: 'all', label: 'All sources', value: agg.n, art: 'g-map-600', color: '#0D2747' }, ...gi.map(g => ({ ...g, art: GROUP_ART[g.key] }))].filter(c => c.key !== 'Other').map(c => `<button class="vcard ${MAP.metric === c.key ? 'on' : ''}" data-metric="${c.key}" style="--c:${c.color}"><img src="${IMG(c.art)}" alt=""><span class="vv">${fmt(c.value)}</span><span class="vl">${esc(c.label)}</span></button>`).join('')}</div>
+      <div class="vcards">${[{ key: 'all', label: 'All sources', value: agg.n, art: 'g-cl-stk-market-cut', color: '#0D2747' }, ...gi.map(g => ({ ...g, art: GROUP_ART[g.key] }))].filter(c => c.key !== 'Other').map(c => `<button class="vcard ${MAP.metric === c.key ? 'on' : ''}" data-metric="${c.key}" style="--c:${c.color}"><img src="${IMG(c.art)}" alt=""><span class="vv">${fmt(c.value)}</span><span class="vl">${esc(c.label)}</span></button>`).join('')}</div>
       <div class="pcard"><h3>Source mix</h3>${donut(gi, { center: fmt(agg.n), sub: 'sources', onKey: true })}</div>
       ${bars.length ? `<div class="pcard"><h3>${barsTitle} · ${sc.kind === 'county' ? 'beds or size' : metricName}</h3>${hbars(bars, { clickable: true, color: '#2F6DB5' })}</div>` : ''}
       ${terr}`;
@@ -931,7 +931,7 @@ function viewMarketList() {
   const f = MF, base = S.market.providers.map(p => S.scoredById.get(p.id)).filter(Boolean);
   const byType = Object.entries(S.market.counts).sort((a, b) => b[1] - a[1]).slice(0, 9).map(([k, v]) => ({ key: k, label: k, value: v, color: GROUP_COLOR[groupOf(k)] }));
   const byCity = Object.entries(base.reduce((m, x) => (x.p.city && (m[x.p.city] = (m[x.p.city] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1]).slice(0, 9).map(([k, v]) => ({ key: k, label: k, value: v }));
-  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-map-600')}" alt="" style="width:110px"><div><span class="eyebrow">Market · public data only</span><h1>Your market</h1><div class="muted">Every hospital, facility and referring physician around your offices (${esc(S.market.territory.label)}), straight from NPPES and CMS. None of your referral history, outreach or win flows is mixed in.</div></div></div><div class="row"><a class="btn" href="#market">Map view</a><a class="btn" href="#sources">With your data</a><button class="btn" id="csvOut">Export CSV</button></div></div>
+  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-cl-stk-market-cut')}" alt="" style="width:110px"><div><span class="eyebrow">Market · public data only</span><h1>Your market</h1><div class="muted">Every hospital, facility and referring physician around your offices (${esc(S.market.territory.label)}), straight from NPPES and CMS. None of your referral history, outreach or win flows is mixed in.</div></div></div><div class="row"><a class="btn" href="#market">Map view</a><a class="btn" href="#sources">With your data</a><button class="btn" id="csvOut">Export CSV</button></div></div>
     <div class="grid charts2" style="margin-top:16px">
       <div class="card"><h3>Sources by type · click to filter</h3>${hbars(byType, { clickable: true })}</div>
       <div class="card"><h3>Sources by city</h3>${hbars(byCity, { color: '#2F6DB5' })}</div></div>
@@ -970,7 +970,7 @@ function viewMarketList() {
 function viewSources() {
   if (S.pure) return viewMarketList();
   const f = S.srcFilter;
-  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-rehab-cut')}" alt="" style="width:96px"><div><span class="eyebrow">Targets</span><h1>Referral sources</h1><div class="muted">Every hospital, facility and referring physician around your offices (${esc(S.market.territory.label)}), plus any source in your referral data.</div></div></div><div class="row"><a class="btn" href="#map">Map view</a><button class="btn" id="csvOut">Export CSV</button></div></div>
+  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-cl-rehab-cut')}" alt="" style="width:96px"><div><span class="eyebrow">Targets</span><h1>Referral sources</h1><div class="muted">Every hospital, facility and referring physician around your offices (${esc(S.market.territory.label)}), plus any source in your referral data.</div></div></div><div class="row"><a class="btn" href="#map">Map view</a><button class="btn" id="csvOut">Export CSV</button></div></div>
     <div class="grid charts2" style="margin-top:16px">
       <div class="card"><h3>Sources by type · click to filter</h3>${hbars(Object.entries(S.scored.reduce((m, x) => (m[x.p.type] = (m[x.p.type] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]).slice(0, 9).map(([k, v]) => ({ key: k, label: k, value: v, color: GROUP_COLOR[groupOf(k)] })), { clickable: true })}</div>
       <div class="card"><h3>Relationship · click to filter</h3>${donut(statusItems(), { center: fmt(S.scored.length), sub: 'sources', onKey: true })}</div></div>
@@ -1061,13 +1061,13 @@ function toMonth(v) {
 }
 function viewReferrals() {
   const up = S.referrals.uploads || [];
-  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-scorecard-600')}" alt="" style="width:120px"><div><span class="eyebrow">Referrals</span><h1>Referrals</h1><div class="muted">Your own referral history, matched to the market. Counts only: no patient names or details are stored.</div></div></div>
+  $('#app').innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-cl-stk-score-cut')}" alt="" style="width:120px"><div><span class="eyebrow">Referrals</span><h1>Referrals</h1><div class="muted">Your own referral history, matched to the market. Counts only: no patient names or details are stored.</div></div></div>
     <div class="row"><a class="btn" href="/referral-template.csv" download>Download template</a>${S.me.role === 'admin' ? `<button class="btn" id="sample">Load sample data</button>` : ''}</div></div>
     ${sampleNotice()}
     <div class="cols" style="margin-top:18px">
       <div class="card" id="scorecard"></div>
       <div class="card"><h2>Upload referral history</h2>
-        <div class="drop" id="drop"><img src="${IMG('g-clipboard-cut')}" alt=""><b>Drop a CSV here</b> or click to choose<br><span class="muted small">Export from WellSky, AxisCare, ClearCare, Alora or a spreadsheet. One row per referral, or one row per source per month.</span><input type="file" id="file" accept=".csv,.tsv,.txt" hidden></div>
+        <div class="drop" id="drop"><img src="${IMG('g-cl-clipboard-cut')}" alt=""><b>Drop a CSV here</b> or click to choose<br><span class="muted small">Export from WellSky, AxisCare, ClearCare, Alora or a spreadsheet. One row per referral, or one row per source per month.</span><input type="file" id="file" accept=".csv,.tsv,.txt" hidden></div>
         <p class="muted small">Only the source name, NPI, month, count, admits and payer columns are read. Any other column, including patient names, is dropped in your browser and never uploaded.</p>
         <div id="mapping"></div>
         ${up.length ? `<div class="section"><h3>Upload history</h3>${up.slice().reverse().slice(0, 8).map(u => `<div class="small muted">${esc(u.at.slice(0, 16).replace('T', ' '))} · ${esc(u.file || 'upload')} · ${fmt(u.rows)} rows · ${esc(u.by.split('@')[0])}</div>`).join('')}${S.me.role === 'admin' ? `<button class="btn sm ghost" id="clearRefs" style="margin-top:8px">Clear all referral data</button>` : ''}</div>` : ''}
@@ -1142,7 +1142,7 @@ async function handleFile(f) {
 }
 function renderScorecard() {
   const rows = S.referrals.rows || [], el = $('#scorecard');
-  if (!rows.length) { el.innerHTML = `<h2>Scorecard</h2><div class="empty"><img src="${IMG('g-scorecard-600')}" alt="" style="width:220px">Upload your referral history to see trends by month and by source.<br><span class="small">Use the template if your system's export doesn't import cleanly.</span></div>`; return; }
+  if (!rows.length) { el.innerHTML = `<h2>Scorecard</h2><div class="empty"><img src="${IMG('g-cl-stk-score-cut')}" alt="" style="width:220px">Upload your referral history to see trends by month and by source.<br><span class="small">Use the template if your system's export doesn't import cleanly.</span></div>`; return; }
   const m = S.months; const mode = S.scoreMode;
   const byMonth = Object.fromEntries(m.map(k => [k, 0])), admitsM = Object.fromEntries(m.map(k => [k, 0]));
   let hasAdmits = false;
@@ -1212,9 +1212,9 @@ function officeRow(o) {
 function bindOffRows() { document.querySelectorAll('.off-row [data-rm]').forEach(b => b.onclick = () => b.closest('.off-row').remove()); }
 async function viewSettings(sub) {
   const s = S.settings, admin = S.me.role === 'admin';
-  $('#app').innerHTML = `<div class="hero-head"><img src="${IMG('g-laptop-600')}" alt="" style="width:120px"><div><span class="eyebrow">Settings</span><h1>Settings</h1></div></div>
+  $('#app').innerHTML = `<div class="hero-head"><img src="${IMG('g-cl-office-cut')}" alt="" style="width:120px"><div><span class="eyebrow">Settings</span><h1>Settings</h1></div></div>
     ${S.me.mustChange ? `<div class="notice">You're using a temporary password. Set a new one below.</div>` : ''}
-    ${sub === 'setup' ? `<div class="notice info"><img src="${IMG('g-map-600')}" alt=""><div><b>Welcome to Wellby${S.me.name ? ', ' + esc(S.me.name.split(' ')[0]) : ''}!</b> Add your office addresses below and save. Wellby loads every hospital, physician and facility around each office from national public data, scores them, and builds your plan.</div></div>` : ''}
+    ${sub === 'setup' ? `<div class="notice info"><img src="${IMG('g-cl-stk-market-cut')}" alt=""><div><b>Welcome to Wellby${S.me.name ? ', ' + esc(S.me.name.split(' ')[0]) : ''}!</b> Add your office addresses below and save. Wellby loads every hospital, physician and facility around each office from national public data, scores them, and builds your plan.</div></div>` : ''}
     <div class="cols" style="margin-top:16px">
       <div><div class="card" id="offices"><h2>Offices and territory</h2><p class="muted small">Wellby loads every hospital, physician and facility within each office's radius from national public data. Anywhere in the US.</p>
         <div id="offList">${(s.offices || []).map(officeRow).join('')}</div>

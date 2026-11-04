@@ -67,3 +67,10 @@ input[type=checkbox], input[type=radio], input[type=range], progress { accent-co
 .ev.m-scheduled { background: var(--sky-soft); border-left-color: var(--navy, #0D2747); }
 .mst.s-scheduled { background: var(--sky-soft); color: var(--navy, #0D2747); }
 .lgd.m-scheduled { background: var(--navy, #0D2747); }
+
+/* Logo: the site's clay flower mark and wordmark (styles.css .logo) */
+.logo { font-family: var(--sans); font-weight: 700; letter-spacing: -.045em; font-size: 20px; color: var(--ink); }
+.logo .mark { width: 30px; height: 30px; object-fit: contain; }
+.logo:hover .mark { animation: squish .6s var(--bounce); }
+@keyframes squish { 0% { transform: none; } 35% { transform: scale(1.12, .86); } 65% { transform: scale(.94, 1.06); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .logo:hover .mark { animation: none; } }

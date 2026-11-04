@@ -108,7 +108,7 @@ function buildQueue(app) {
   const tyRow = a => `<div class="qrow"><span class="qicon q-email"></span><div><span class="name" data-src="${esc(a.sourceId)}">${esc(a.sourceName)}</span><div class="why">${esc(W().KIND[a.kind] || a.kind)} ${ago((a.doneAt || a.at).slice(0, 10))}${a.subject ? ' · ' + esc(a.subject) : ''}. Send a short thank-you while it's fresh.</div></div>
       <div class="row"><button class="btn sm primary" data-ty="${esc(a.sourceId)}">Draft thank-you</button></div></div>`;
   const b = Q.booked;
-  wrap.innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-envelope-cut')}" alt=""><div><span class="eyebrow">Win</span><h1>Queue</h1><div class="muted">${total ? 'Everything waiting on you, in the order to do it.' : 'You’re all caught up.'}</div></div></div><a class="btn" href="#map">Find targets</a></div>
+  wrap.innerHTML = `<div class="head"><div class="hero-head"><img src="${IMG('g-cl-envelope-cut')}" alt=""><div><span class="eyebrow">Win</span><h1>Queue</h1><div class="muted">${total ? 'Everything waiting on you, in the order to do it.' : 'You’re all caught up.'}</div></div></div><a class="btn" href="#map">Find targets</a></div>
     <div class="qnav">${[[drafts, 'to approve', 'qApprove'], [steps, steps === 1 ? 'flow step' : 'flow steps', 'qApprove'], [nFollow, nFollow === 1 ? 'follow-up' : 'follow-ups', 'qApprove'], [ty.length, ty.length === 1 ? 'thank-you' : 'thank-yous', 'qThanks'], [vd.length, vd.length === 1 ? 'visit due' : 'visits due', 'qVisits']].filter(x => x[0]).map(x => `<a href="#queue" data-jump="${x[2]}"><b>${x[0]}</b> ${x[1]}</a>`).join('')}</div>
     ${b ? `<div class="card qbooked"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Visit day booked: ${esc(new Date(b.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }))}</h2><button class="btn sm ghost" id="qBookedX">Dismiss</button></div>
       <ol class="qstops">${b.off ? `<li class="muted">Start at your ${esc(b.off.label)} office</li>` : ''}${b.stops.map(x => `<li><b>${x.at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</b> ${esc(x.s.p.name)}${x.leg != null ? ` <span class="muted small">${x.leg.toFixed(1)} mi</span>` : ''}</li>`).join('')}</ol>
@@ -122,7 +122,7 @@ function buildQueue(app) {
         <select name="m"><option value="30">30 min each</option><option value="45" selected>45 min each</option><option value="60">1 hour each</option></select>
         <button class="btn primary" ${Q.pick.size ? '' : 'disabled'}>Book visits and route</button></form>
       <div class="qrule small muted">Visit cadence: every <select id="qEvery">${[14, 21, 30, 45, 60, 90].map(n => `<option ${n === every() ? 'selected' : ''}>${n}</option>`).join('')}</select> days for these sources.</div></div>` : ''}
-    ${!total ? `<div class="card empty"><img src="${IMG('g-map-600')}" alt="" style="width:200px"><p>Nothing waiting. Start a win flow on a new target, or plan a visit day.</p><a class="btn primary" href="#map">Find targets</a></div>` : ''}`;
+    ${!total ? `<div class="card empty"><img src="${IMG('g-cl-stk-market-cut')}" alt="" style="width:200px"><p>Nothing waiting. Start a win flow on a new target, or plan a visit day.</p><a class="btn primary" href="#map">Find targets</a></div>` : ''}`;
   // Keep the app's own queue card (its buttons are already wired) and drop the rest of Today.
   const keep = qcard;
   app.innerHTML = '';

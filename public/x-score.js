@@ -8,7 +8,7 @@ const SC = { mode: 'mom', sel: null, all: false };
 const PAL = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6', '#e34948'];
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const mShort = k => k ? MON[+k.slice(5, 7) - 1] : '';
-const artOf = t => /hospital/i.test(t) && !/rehab/i.test(t) ? 'g-hospital-cut' : /rehab/i.test(t) ? 'g-rehab-cut' : /physician|office|clinic/i.test(t) ? 'g-office-cut' : /skilled|nursing|assisted|living/i.test(t) ? 'g-nursing-cut' : 'g-clipboard-cut';
+const artOf = t => /hospital/i.test(t) && !/rehab/i.test(t) ? 'g-cl-hospital-cut' : /rehab/i.test(t) ? 'g-cl-rehab-cut' : /physician|office|clinic/i.test(t) ? 'g-cl-office-cut' : /skilled|nursing|assisted|living/i.test(t) ? 'g-cl-nursing-cut' : 'g-cl-clipboard-cut';
 const money = v => v >= 1e6 ? '$' + (v / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : v >= 1e3 ? '$' + Math.round(v / 1e3) + 'k' : '$' + Math.round(v);
 const isSent = a => a.kind === 'sentref' && a.status === 'done';
 
@@ -55,7 +55,7 @@ function mapSvg(D) {
   return `<div class="scMap"><svg viewBox="0 0 ${Wd} ${H}" preserveAspectRatio="none" aria-hidden="true">
       <ellipse cx="${cx}" cy="${cy}" rx="250" ry="70" fill="none" stroke="rgba(13,39,71,.08)" stroke-dasharray="3 6"/><ellipse cx="${cx}" cy="${cy}" rx="420" ry="120" fill="none" stroke="rgba(13,39,71,.06)" stroke-dasharray="3 6"/>${lines}</svg>
     ${labels}
-    <div class="scHome" style="left:50%;top:${(100 * cy / H).toFixed(2)}%"><img src="${IMG('g-house-cut')}" alt=""><span class="scOrg">Your organization <span>${D.total} referrals in</span></span></div>
+    <div class="scHome" style="left:50%;top:${(100 * cy / H).toFixed(2)}%"><img src="${IMG('g-cl-house-cut')}" alt=""><span class="scOrg">Your organization <span>${D.total} referrals in</span></span></div>
     </div><div class="scLegend"><span><i class="lw"></i>Line weight = referral volume</span><span><i class="ld"></i>New referral this month</span><span><i class="lq"></i>Going quiet</span>${D.list.filter(r => r.refs || r.tone === 'quiet').length > N ? `<span>Top ${N} sources shown. All sources are in the table.</span>` : ''}</div>`;
 }
 
@@ -114,7 +114,7 @@ function table(D) {
 function view() {
   const { S, esc, fmt } = W(), app = document.getElementById('app');
   if (!(S.referrals.rows || []).length) {
-    app.innerHTML = `<div class="head"><div><span class="eyebrow">The scorecard</span><h1>Every source, scored and mapped.</h1></div></div><div class="card empty"><img src="${W().IMG('g-scorecard-600')}" alt="" style="width:220px"><p>Upload your referral history to score every source.</p><a class="btn primary" href="#referrals">Upload referrals</a></div>`;
+    app.innerHTML = `<div class="head"><div><span class="eyebrow">The scorecard</span><h1>Every source, scored and mapped.</h1></div></div><div class="card empty"><img src="${W().IMG('g-cl-stk-score-cut')}" alt="" style="width:220px"><p>Upload your referral history to score every source.</p><a class="btn primary" href="#referrals">Upload referrals</a></div>`;
     return;
   }
   const D = rows();
