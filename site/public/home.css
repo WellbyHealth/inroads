@@ -101,3 +101,4 @@
 .h2-fine{font-size:13.5px;margin-top:10px}
 }
 @media(max-width:374px){.h2-btn{justify-content:center;font-size:15px;padding:0 10px}.h2-btn svg{display:none}.h2-what{font-size:15.5px}}
+.h2-what{max-width:28em}
