@@ -145,3 +145,8 @@
 .td-row .hq-d{white-space:normal;overflow:visible;text-overflow:clip}
 @media(max-width:760px){.td-time{display:none}.td-card .hq-live{white-space:nowrap}.td-row .hq-k{letter-spacing:.06em}}
 .anchor{position:absolute;top:-80px}#team-day{position:relative}
+.acct-why{margin-top:14px;border:1px solid var(--line-soft);border-radius:14px;padding:12px 14px;background:#f6fbf2}
+.acct-why span{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#2f6b3a}
+.acct-why p{margin:6px 0 0;font-size:14.5px;color:var(--body)}
+.acct-why b{color:#000;font-size:16px;margin-right:4px}
+.acct-why i{font-style:normal;color:var(--muted)}
