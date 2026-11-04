@@ -144,3 +144,4 @@
 @media(min-width:901px){.h2-art img{object-position:50% 0}}
 .td-row .hq-d{white-space:normal;overflow:visible;text-overflow:clip}
 @media(max-width:760px){.td-time{display:none}.td-card .hq-live{white-space:nowrap}.td-row .hq-k{letter-spacing:.06em}}
+.anchor{position:absolute;top:-80px}#team-day{position:relative}
