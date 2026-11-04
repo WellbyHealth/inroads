@@ -32,6 +32,13 @@ export default withUser(async (req, res, me) => {
   const q = new URL(req.url, 'http://x').searchParams;
   await version();
   const part = q.get('part');
+  // Wellby sales workspace: the national prospect list (agencies that might buy Wellby), by state or the top ranked.
+  const pf = q.get('file') === 'prospects' ? 'index' : q.get('file') === 'top' ? 'top' : /^[A-Z]{2}-\d{1,2}$/.test(q.get('pp') || '') ? q.get('pp') : null;
+  if (pf) {
+    if (!me.orgSales && !me.super) return send(res, 403, { error: 'Prospects are for the Wellby sales workspace.' });
+    const t = await cached(`market/v3/p/${pf}.json`, false);
+    return t == null ? send(res, 404, { error: 'Not built yet' }) : send(res, 200, t, { 'Cache-Control': 'private, max-age=3600' });
+  }
   if (q.get('file') === 'seniors') { const t = await cached(`${V}/seniors.json`, false); return t == null ? send(res, 404, { error: 'Not built yet' }) : send(res, 200, t, { 'Cache-Control': 'private, max-age=86400' }); }
   if (part) {
     if (!/^\d{5}-\d{1,3}$/.test(part)) return send(res, 400, { error: 'Bad part' });

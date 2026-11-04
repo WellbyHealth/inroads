@@ -1,3 +1,4 @@
+import { lightfield } from '../lib/lightfield.mjs';
 import crypto from 'node:crypto';
 import { readDoc, writeDoc, updateDoc, orgDocs } from '../lib/store.mjs';
 import { readBody, send, withUser } from '../lib/http.mjs';
@@ -24,6 +25,15 @@ async function geocode(address) {
   return null;
 }
 
+// Wellby sales workspace: a finished touch is copied to the prospect's Lightfield account as a note (when linked).
+async function touchToCrm(me, a) {
+  if (!me.orgSales || !process.env.LIGHTFIELD_API_KEY) return;
+  try {
+    const title = `${a.kind[0].toUpperCase()}${a.kind.slice(1)}: ${a.subject || a.reason || a.sourceName}`;
+    const content = [a.body, a.followUp ? `Next touch: ${a.followUp}` : '', `Logged in Wellby by ${me.name || me.email}`].filter(Boolean).join('\n\n');
+    await lightfield(me, { op: 'note', id: a.sourceId, title, content, key: a.id });
+  } catch (e) { console.error('lightfield note', e.message); }
+}
 export default withUser(async (req, res, me) => {
   const DOCS = orgDocs(me.org);
   if (req.method === 'GET') {
@@ -54,6 +64,7 @@ export default withUser(async (req, res, me) => {
           admitRate: Math.max(0, Math.min(1, +(s.admitRate ?? base.admitRate) || 0)), targetShare: Math.max(0, Math.min(.5, +(s.targetShare ?? base.targetShare) || 0)),
           // Partner sheet: what each partner says about the relationship ("You're our first call"), merged per source.
           sheetNotes: (() => { const n = { ...(base.sheetNotes || {}) }; if (s.sheetNotes && typeof s.sheetNotes === 'object') for (const [k, v] of Object.entries(s.sheetNotes).slice(0, 200)) { const key = clip(k, 80), val = clip(v, 300).trim(); if (val) n[key] = val; else delete n[key]; } return n; })(),
+          sales: s.sales && typeof s.sales === 'object' ? { states: (Array.isArray(s.sales.states) ? s.sales.states : []).filter(x => /^[A-Z]{2}$/.test(x)).slice(0, 60) } : base.sales,
           outbound: s.outbound && typeof s.outbound === 'object' ? Object.fromEntries(Object.entries(s.outbound).slice(0, 3000).map(([k, v]) => [clip(k, 80), Math.max(0, Math.min(1e5, Math.round(+v || 0)))]).filter(([, v]) => v > 0)) : (base.outbound || {}) };
         if (Array.isArray(s.offices)) {
           const prev = cur.offices || [];
@@ -118,6 +129,7 @@ export default withUser(async (req, res, me) => {
       };
       if (item.status === 'done') item.doneAt = now;
       const next = await updateDoc(DOCS.activity, [], cur => [...cur, item].slice(-5000));
+      if (item.status === 'done') await touchToCrm(me, item);
       return send(res, 200, { ok: true, activity: next, item });
     }
     case 'updateActivity': {
@@ -133,6 +145,8 @@ export default withUser(async (req, res, me) => {
         }
         it.updated = now; return cur;
       });
+      const done = a.status === 'done' && next.find(x => x.id === a.id);
+      if (done) await touchToCrm(me, done);
       return send(res, 200, { ok: true, activity: next });
     }
     case 'saveFlow': {

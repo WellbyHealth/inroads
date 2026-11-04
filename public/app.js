@@ -351,12 +351,14 @@ function scoreOne(p) {
     const near = p.lat != null && S.offices.length ? nearestOffice(p.lat, p.lng) : null;
     const dist = near ? near.d : null, radius = near ? near.o.radiusMiles : 20;
     const prox = dist == null ? .6 : dist <= radius ? 1 - .6 * (dist / radius) : Math.max(0, .4 - .4 * (dist - radius) / radius);
-    const fit = fitFor(p.type);
+    const sales = S.me?.orgSales;
+    const fit = sales ? icpType(p) : fitFor(p.type);
     const size = (p.size ?? 50) / 100;
-    const potential = Math.round(100 * (.45 * fit + .30 * size + .25 * prox));
+    const potential = sales ? icp(p) : Math.round(100 * (.45 * fit + .30 * size + .25 * prox));
     let status, priority; const why = [];
     let lastIdx = -1; h.forEach((v, i) => { if (v) lastIdx = i; });
-    if (total12 === 0) { status = 'Open'; priority = potential * .9; why.push(fit >= .8 ? `${p.type.replace('Physician: ', '')}: a core ${careLabel().toLowerCase()} referrer` : p.type); if (size >= .75) why.push(p.beds ? `${p.beds} beds` : 'large practice/campus'); }
+    if (sales && total12 === 0) { status = 'Open'; priority = potential * .9; why.push(p.type); if ((p.sites || 1) >= 2) why.push(`${p.sites} sites: ${p.sites >= 6 ? 'Enterprise' : 'Team'} prospect`); if (p.official) why.push(`Decision maker: ${p.official}${p.officialTitle ? ', ' + p.officialTitle : ''}`); if (p.city) why.push(`${p.city}, ${p.st}`); }
+    else if (total12 === 0) { status = 'Open'; priority = potential * .9; why.push(fit >= .8 ? `${p.type.replace('Physician: ', '')}: a core ${careLabel().toLowerCase()} referrer` : p.type); if (size >= .75) why.push(p.beds ? `${p.beds} beds` : 'large practice/campus'); }
     else if ((last3 === 0 && prior3 + prior6 > 0) || (prior3 >= 2 && last3 < .6 * prior3)) { status = 'Protect'; priority = 60 + .4 * potential + Math.min(20, (prior3 + prior6) * 1.5); why.push(last3 === 0 ? `No referrals in 3 months (last: ${monthLabel(S.months[lastIdx])})` : `Down to ${last3} from ${prior3} vs prior 3 months`); }
     else if (potential >= 55 && last6 < 6) { status = 'Grow'; priority = 30 + .5 * potential; why.push(`${last6} referrals in 6 months; room to grow`); }
     else { status = 'Healthy'; priority = 10 + .3 * potential; why.push(`${last6} referrals in 6 months`); }
@@ -377,7 +379,35 @@ function nearestOffice(lat, lng) {
   for (const o of S.offices) { const d = miles(o.lat, o.lng, lat, lng); if (!best || d < best.d) best = { d, o }; }
   return best;
 }
+// Wellby sales workspace: the prospects are agencies nationwide (the top ranked, or every agency in chosen states).
+async function loadProspects(progress) {
+  S.offices = [];
+  const ir = await fetch('/api/market?file=prospects'); const pidx = ir.ok ? await ir.json() : null;
+  const states = (S.settings.sales?.states || []).filter(st => pidx?.states?.[st]);
+  const files = states.length ? states.flatMap(st => Array.from({ length: pidx.states[st].parts }, (_, k) => `pp=${st}-${k}`)) : ['file=top'];
+  const F = pidx?.fields || [], providers = [], counts = {}, seen = new Set();
+  let done = 0;
+  await Promise.all(files.map(async f => {
+    const r = await fetch(`/api/market?${f}`);
+    if (r.ok) for (const row of await r.json()) {
+      const p = Object.fromEntries(F.map((k, j) => [k, row[j]]));
+      if (seen.has(p.id)) continue; seen.add(p.id);
+      providers.push(p); counts[p.type] = (counts[p.type] || 0) + 1;
+    }
+    progress?.(++done, files.length);
+  }));
+  const label = states.length ? states.join(' · ') : 'Top agencies nationwide';
+  S.market = { territory: { label, center: [39.5, -98.35] }, builtAt: pidx?.builtAt || '', sources: pidx?.sources || {}, counts, providers, sales: { states, total: pidx ? Object.values(pidx.states).reduce((a, c) => a + c.n, 0) : 0, stateCounts: pidx?.states || {} } };
+  S.byId = new Map(providers.map(p => [p.id, p]));
+  nameIndex = null;
+}
+// How well an agency fits Wellby: agencies with field BD reps first, multi-site groups (Team and Enterprise) up.
+const icpType = p => /home care|personal care|private duty|companion/i.test(`${p.tx || ''} ${p.name}`) ? .95
+  : p.type === 'Home health agency' || p.type === 'Hospice' ? 1 : p.type === 'Skilled nursing' ? .75 : p.type === 'Rehab hospital' ? .7 : p.type === 'Assisted living' ? .6 : .5;
+const icpSites = n => n >= 6 ? 1 : n >= 2 ? .85 : .5;
+function icp(p) { return Math.round(100 * (.45 * icpType(p) + .25 * icpSites(p.sites || 1) + .2 * ((p.size ?? 30) / 100) + .1 * (p.official ? 1 : 0))); }
 async function loadMarket(progress) {
+  if (S.me?.orgSales) return loadProspects(progress);
   S.offices = (S.settings.offices || []).filter(o => o.lat);
   const idx = S.index;
   const empty = { territory: { label: 'No offices yet', center: [39.5, -98.35] }, builtAt: idx?.builtAt || '', sources: idx?.sources || {}, counts: {}, providers: [] };
@@ -475,6 +505,7 @@ function bindWorkspaceForm() {
 }
 // Home depends on who signs in: a new agency sets up and sees its map; liaisons get Today; owners get Results.
 function homeView() {
+  if (S.me.orgSales) return 'prospects';
   if (S.me.super) return 'map';
   if (!S.offices.length) return S.me.role === 'admin' ? 'settings/setup' : 'map';
   const started = Object.keys(S.flows).length || S.activity.some(a => !isSkip(a));
@@ -532,7 +563,7 @@ function viewToday() {
     <div class="goal"><div class="small"><b>${doneWk} of ${goal}</b> touches this week</div><div class="bar-g"><i style="width:${Math.min(100, 100 * doneWk / goal)}%"></i></div></div></div>
     ${checklist()}
     ${sampleNotice()}
-    ${!S.offices.length ? `<div class="notice">Add your office locations in <a href="#settings/setup">Settings</a>. Wellby loads every hospital, physician and facility around each office from national public data.</div>` : ''}
+    ${!S.offices.length && !S.me.orgSales ? `<div class="notice">Add your office locations in <a href="#settings/setup">Settings</a>. Wellby loads every hospital, physician and facility around each office from national public data.</div>` : ''}
     ${queueCount ? `<div class="card queue"><div class="head"><h2>Your queue</h2><span class="muted small">Approve, then send or log it. Wellby schedules the next step.</span></div>
       ${drafts.length ? `<h3>Waiting for your approval</h3><div id="drafts">${drafts.map(draftCard).join('')}</div>` : ''}
       ${steps.length ? `<h3>Win flow steps due</h3>${steps.map(stepRow).join('')}` : ''}
@@ -1275,5 +1306,5 @@ async function viewSettings(sub) {
 }
 
 // Extension modules (public/x-*.js) register views in window.WellbyExt and use these helpers.
-window.Wellby = { rescore, S, $, esc, fmt, today, addDays, fmtShort, agoText, KIND, IMG, STATUS_COLOR, api, post, toast, route, refreshView, openSource, closeDrawer, handleFile, navBadges, isSkip, phoneFmt, flowState, queueItems, daysSince };
+window.Wellby = { icp, rescore, S, $, esc, fmt, today, addDays, fmtShort, agoText, KIND, IMG, STATUS_COLOR, api, post, toast, route, refreshView, openSource, closeDrawer, handleFile, navBadges, isSkip, phoneFmt, flowState, queueItems, daysSince };
 boot();

@@ -74,6 +74,7 @@ function headline(O, where) {
 const GROUPS = [['Hospitals', t => /Hospital/.test(t)], ['Skilled nursing', t => t === 'Skilled nursing'], ['Physicians', t => t.startsWith('Physician')], ['Assisted living', t => t === 'Assisted living'], ['Other', () => true]];
 X.territory = () => {
   const { S, esc, fmt, openSource } = W(), app = document.getElementById('app');
+  if (S.me.orgSales) { location.replace('#prospects'); return; }
   if (!S.offices.length) { location.replace('#welcome'); return; }
   const O = opp();
   const counts = GROUPS.map(([n]) => [n, 0]);

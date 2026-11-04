@@ -1,5 +1,6 @@
 // Connections: OAuth for Google, Microsoft 365, HubSpot and Salesforce; sync; CRM contacts; MCP keys for AI assistants.
 import { readDoc, updateDoc } from '../lib/store.mjs';
+import { lightfield } from '../lib/lightfield.mjs';
 import { readBody, send, withUser } from '../lib/http.mjs';
 import { docs, PROVIDERS, configured, authUrl, exchange, seal, signState, verifyState, syncOrg, pushCrm, rid, clip, hashKey } from '../lib/conn.mjs';
 
@@ -64,6 +65,11 @@ export default withUser(async (req, res, me) => {
     case 'crm': {
       const synced = await readDoc(D.synced, {});
       return send(res, 200, { crm: synced.crm || [] });
+    }
+    // Wellby sales workspace: copy prospects (account + decision maker) and touches (notes) to Lightfield.
+    case 'lightfield': {
+      if (!me.orgSales) return send(res, 403, { error: 'Lightfield sync is for the Wellby sales workspace.' });
+      try { return send(res, 200, await lightfield(me, b)); } catch (e) { return send(res, e.status || 502, { error: e.message }); }
     }
     case 'pushCrm': {
       if (!admin) return send(res, 403, { error: 'Admins only' });

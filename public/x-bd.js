@@ -23,7 +23,7 @@ const GROUPS = {
   referrals: { label: 'Referrals', subs: [['referrals', 'Referrals', '#referrals']] },
   results: { label: 'Results', subs: [['results', 'Results', '#results']] },
 };
-const VIEW_GROUP = { sources: 'plan', sheet: 'partners' };
+const VIEW_GROUP = { sources: 'plan', sheet: 'partners', prospects: 'plan' };
 for (const [g, d] of Object.entries(GROUPS)) for (const [v] of d.subs) VIEW_GROUP[v] = g;
 X.navGroups = GROUPS;
 X.groupOf = v => VIEW_GROUP[v] || null;
@@ -296,6 +296,8 @@ X._drawer = (id, d) => {
   d.querySelector('[data-dlog]').onclick = () => openLog({ sourceId: id });
   d.querySelector('.dBd a').onclick = () => W().closeDrawer();
 };
+X.openLog = o => openLog(o);
+X.subnav = v => { markNav(v); subnav(v); };
 // The Log tab button and the L key.
 function bindLog() {
   const a = document.getElementById('navLog'); if (!a || a.dataset.b) return;

@@ -1,0 +1,31 @@
+/* Wellby sales workspace: the Prospects list. */
+body.sales #nav a[data-view="referrals"] { display: none; }
+.sp-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.sp-tools input[type=search] { flex: 1 1 240px; min-width: 200px; }
+.sp-tools select { max-width: 240px; }
+.sp-list { overflow-x: auto; }
+table.sp { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.sp th { text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.sp td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.sp tr:hover td { background: rgba(13,39,71,.03); }
+table.sp td a[data-open] { font-weight: 600; color: var(--ink); text-decoration: none; }
+table.sp td a[data-open]:hover { text-decoration: underline; }
+.sp-fit { display: inline-block; min-width: 34px; text-align: center; padding: 3px 6px; border-radius: 999px; background: #EAF2FD; color: var(--tint); font-variant-numeric: tabular-nums; }
+.sp-act { white-space: nowrap; text-align: right; }
+.sp-act .btn + .btn, .sp-act .btn + span { margin-left: 6px; }
+.sp-dlg { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 9000; padding: 16px; }
+.sp-dlg .card { max-width: 640px; width: 100%; max-height: 86vh; overflow: auto; }
+.sp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px 12px; font-size: 14px; }
+@media (max-width: 760px) {
+  table.sp thead { display: none; }
+  table.sp tr { display: grid; grid-template-columns: 44px 1fr; gap: 2px 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  table.sp td { border: 0; padding: 0; }
+  table.sp td:nth-child(1) { grid-row: span 6; }
+  table.sp td:nth-child(3), table.sp td:nth-child(4), table.sp td:nth-child(7) { display: none; }
+  .sp-act { text-align: left; margin-top: 6px; }
+}
+.sp-tools label { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.sp-tools label input { width: auto; margin: 0; }
+.sp-tools .seg { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+.sp-tools .seg button { white-space: nowrap; }
+.dSales { flex-wrap: wrap; gap: 6px; align-items: center; }

@@ -20,6 +20,17 @@ export default withUser(async (req, res, me) => {
     self.activeOrg = id; await writeDoc(GLOBAL.users, users);
     return send(res, 200, { ok: true, orgs, active: id });
   }
+  // The Wellby sales workspace: Wellby's own staff working agencies nationwide as prospects for Wellby.
+  if (body.action === 'sales') {
+    let o = orgs.find(x => x.sales);
+    if (!o) {
+      o = { id: 'wellby-sales', name: 'Wellby sales', website: 'https://wellbyinroads.com', demo: true, sales: true, created: new Date().toISOString(), by: me.email };
+      orgs.push(o); await writeDoc(GLOBAL.orgs, orgs);
+      await writeDoc(orgDocs(o.id).settings, { agencyName: 'Wellby', website: 'https://wellbyinroads.com', careType: 'other', offices: [], sales: { states: [] } });
+    }
+    self.activeOrg = o.id; await writeDoc(GLOBAL.users, users);
+    return send(res, 200, { ok: true, orgs, active: o.id });
+  }
   if (body.action === 'switch') {
     if (!orgs.some(o => o.id === body.id)) return send(res, 404, { error: 'No such workspace' });
     self.activeOrg = body.id; await writeDoc(GLOBAL.users, users);
