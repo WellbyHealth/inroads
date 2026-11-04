@@ -59,6 +59,7 @@ function opp() {
   return { care, careLabel: CARE_LABEL[care] || 'care', value, valueIsDefault, admitRate, admitFromData: !(+st.admitRate) && admitRows >= 10, target, top, totalOut, yours, share: totalOut ? yours / totalOut : 0, extra, extraClients: extra * admitRate, extraValue: extra * admitRate * value, hasRefs: refs > 0 };
 }
 X.opp = opp;
+X.outPerYear = s => outPerYear(s, W().S.settings?.careType || 'home_care');
 
 function headline(O, where) {
   const { esc } = W();

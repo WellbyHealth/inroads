@@ -58,7 +58,7 @@ function tour(i) {
   c.querySelector('[data-next]').onclick = () => tour(i + 1);
   c.querySelector('[data-skip]').onclick = () => tour(-1);
   const b = c.querySelector('[data-back]'); if (b) b.onclick = () => tour(i - 1);
-  document.querySelector(`#nav a[data-view="${s.view}"]`)?.classList.add('tourOn');
+  document.querySelector(`#nav a[data-view="${X.groupOf?.(s.view) || s.view}"]`)?.classList.add('tourOn');
 }
 X.tour = tour;
 
@@ -66,7 +66,7 @@ const prevAfter = X._after;
 X._after = (view, sub) => {
   if (prevAfter) prevAfter(view, sub);
   menu();
-  if (cur >= 0) { const s = STEPS[cur]; if (location.hash.split('/')[0] !== s.hash) tour(-1); else document.querySelector(`#nav a[data-view="${s.view}"]`)?.classList.add('tourOn'); }
+  if (cur >= 0) { const s = STEPS[cur]; if (location.hash.split('/')[0] !== s.hash) tour(-1); else document.querySelector(`#nav a[data-view="${X.groupOf?.(s.view) || s.view}"]`)?.classList.add('tourOn'); }
   let start = false; try { start = sessionStorage.getItem('wb_tour') === '1'; if (start) sessionStorage.removeItem('wb_tour'); } catch {}
   if (start && view === 'territory') setTimeout(() => tour(0), 400);
 };

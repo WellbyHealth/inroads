@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="/x-mobile.css">
 <link rel="stylesheet" href="/x-billing.css">
 <link rel="stylesheet" href="/x-growth.css">
+<link rel="stylesheet" href="/x-bd.css">
 <link rel="stylesheet" href="/theme.css">
 </head>
 <body>
@@ -31,17 +32,11 @@
   <a class="logo" href="#" aria-label="Wellby home"><img class="mark" src="/img/g-cl-logo-96.webp" width="30" height="30" alt=""><span>Wellby</span></a>
   <span class="agency" id="agencyName"></span>
   <nav id="nav">
+    <a href="#log" data-view="log" id="navLog" title="Log a visit, call or referral (L)">Log</a>
     <a href="#today" data-view="today" title="Today">Today</a>
-    <span class="navsec">Target</span>
-    <a href="#territory" data-view="territory" title="Your territory">Territory</a>
-    <a href="#map" data-view="map" title="Targets">Targets</a>
-    <span class="navsec">Win</span>
-    <a href="#queue" data-view="queue" title="Queue">Queue</a>
-    <a href="#flows" data-view="flows" title="Win flows">Win flows</a>
-    <a href="#calendar" data-view="calendar" title="Calendar">Calendar</a>
-    <a href="#contacts" data-view="contacts" title="Contacts">Contacts</a>
-    <span class="navsec">Prove</span>
-    <a href="#scorecard" data-view="scorecard" title="Scorecard">Scorecard</a>
+    <a href="#territory" data-view="plan" title="Plan: territory, targets, win flows, calendar">Plan</a>
+    <a href="#scorecard" data-view="partners" title="Partners: scorecard, contacts, partner sheets">Partners</a>
+    <a href="#referrals" data-view="referrals" title="Referrals">Referrals</a>
     <a href="#results" data-view="results" title="Results">Results</a>
   </nav>
   <div class="me" id="me"></div>
@@ -61,6 +56,7 @@
 <script type="module" src="/x-billing.js"></script>
 <script type="module" src="/x-growth.js"></script>
 <script type="module" src="/x-nav.js"></script>
+<script type="module" src="/x-bd.js"></script>
 <script src="/load.js"></script>
 </body>
 </html>

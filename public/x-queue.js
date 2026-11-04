@@ -5,7 +5,7 @@
 // in balance: active and at-risk sources get a face-to-face visit every N days, with digital touches between.
 const X = (window.WellbyExt = window.WellbyExt || {});
 const W = () => window.Wellby;
-const IN = new Set(['visit', 'lunch', 'meeting', 'inservice']), DIG = new Set(['email', 'call']);
+const IN = new Set(['visit', 'lunch', 'meeting', 'inservice', 'dropoff']), DIG = new Set(['email', 'call']);
 const Q = { pick: new Set(), booked: null };
 const every = () => +W().S.settings.visitEvery || 30;
 const dAgo = d => W().daysSince(d);
@@ -182,6 +182,7 @@ function drawerMix(id, d) {
 }
 
 // ---------- wiring ----------
+X.visitsDue = visitsDue; X.routeStops = route; X.touchInfo = touchInfo; X.mapsUrl = mapsUrl;
 X.queue = () => { const { S, refreshView } = W(); X._queueMode = true; S.view = 'today'; try { refreshView(); } finally { X._queueMode = false; S.view = 'queue'; } };
 
 const prevAfter = X._after;

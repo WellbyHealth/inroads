@@ -175,7 +175,7 @@ function viewFlows() {
 const CF = { mode: 'people', q: '', cat: 'all', group: 'none', sort: 'last', dir: -1 };
 const daysSince = d => d ? Math.round((Date.parse(today()) - Date.parse(d.slice(0, 10))) / 864e5) : null;
 const agoText = d => { const n = daysSince(d); return n == null ? 'Never' : n <= 0 ? 'Today' : n === 1 ? 'Yesterday' : n < 45 ? `${n} days ago` : fmtShort(d.slice(0, 10)); };
-const KIND = { email: 'Email', call: 'Call', visit: 'Visit', lunch: 'Lunch / in-service', meeting: 'Meeting' };
+const KIND = { email: 'Email', call: 'Call', visit: 'Visit', lunch: 'Lunch / in-service', meeting: 'Meeting', dropoff: 'Drop-off', sentref: 'Sent them a client', sheet: 'Partner sheet shared' };
 function crmData() {
   const touch = new Map(), byEmail = new Map();
   for (const a of S.activity) {
@@ -1275,5 +1275,5 @@ async function viewSettings(sub) {
 }
 
 // Extension modules (public/x-*.js) register views in window.WellbyExt and use these helpers.
-window.Wellby = { S, $, esc, fmt, today, addDays, fmtShort, agoText, KIND, IMG, STATUS_COLOR, api, post, toast, route, refreshView, openSource, closeDrawer, handleFile, navBadges, isSkip, phoneFmt, flowState, queueItems, daysSince };
+window.Wellby = { rescore, S, $, esc, fmt, today, addDays, fmtShort, agoText, KIND, IMG, STATUS_COLOR, api, post, toast, route, refreshView, openSource, closeDrawer, handleFile, navBadges, isSkip, phoneFmt, flowState, queueItems, daysSince };
 boot();

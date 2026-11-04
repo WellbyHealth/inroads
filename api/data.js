@@ -52,6 +52,8 @@ export default withUser(async (req, res, me) => {
           clientValue: Math.max(0, Math.min(1e7, Math.round(+(s.clientValue ?? base.clientValue) || 0))),
           // Opportunity assumptions: share of referrals that become clients, and the share of each source to aim for (0 = default).
           admitRate: Math.max(0, Math.min(1, +(s.admitRate ?? base.admitRate) || 0)), targetShare: Math.max(0, Math.min(.5, +(s.targetShare ?? base.targetShare) || 0)),
+          // Partner sheet: what each partner says about the relationship ("You're our first call"), merged per source.
+          sheetNotes: (() => { const n = { ...(base.sheetNotes || {}) }; if (s.sheetNotes && typeof s.sheetNotes === 'object') for (const [k, v] of Object.entries(s.sheetNotes).slice(0, 200)) { const key = clip(k, 80), val = clip(v, 300).trim(); if (val) n[key] = val; else delete n[key]; } return n; })(),
           outbound: s.outbound && typeof s.outbound === 'object' ? Object.fromEntries(Object.entries(s.outbound).slice(0, 3000).map(([k, v]) => [clip(k, 80), Math.max(0, Math.min(1e5, Math.round(+v || 0)))]).filter(([, v]) => v > 0)) : (base.outbound || {}) };
         if (Array.isArray(s.offices)) {
           const prev = cur.offices || [];
