@@ -5,7 +5,6 @@
   const tabs = [...document.querySelectorAll('.td-steps [role=tab]')];
   const rows = [...card.querySelectorAll('.td-row')];
   const send = card.querySelector('.td-send');
-  const share = card.querySelector('.td-share');
   const sec = document.getElementById('team-day');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DUR = 3600;
@@ -21,12 +20,14 @@
     tabs.forEach(t => t.classList.remove('run'));
     if (!reduce.matches && !paused && !user) { void tabs[n].offsetWidth; tabs[n].classList.add('run'); }
     if (send) { send.textContent = 'Approve & send'; send.className = 'hq-chip btn td-send'; }
-    if (n === 1 && share && !reduce.matches) {
-      let v = 26; share.textContent = v + '%';
-      const tick = () => { v++; share.textContent = v + '%'; if (v < 31) sub = setTimeout(tick, 90); };
+    const row = rows[n];
+    if (!reduce.matches) row.querySelectorAll('.td-count').forEach(c => {
+      const a = +c.dataset.from, b = +c.dataset.to; let v = a; c.textContent = v;
+      const step = Math.max(1, Math.round((b - a) / 12));
+      const tick = () => { v = Math.min(b, v + step); c.textContent = v; if (v < b) sub = setTimeout(tick, 70); };
       sub = setTimeout(tick, 250);
-    }
-    if (n === 2 && send) sub = setTimeout(() => { send.textContent = 'Sent ✓'; send.className = 'hq-chip up td-send sent'; }, 1600);
+    });
+    if (n === 1 && send) sub = setTimeout(() => { send.textContent = send.dataset.done || 'Sent ✓'; send.className = 'hq-chip up td-send sent'; }, 1700);
   };
   const loop = () => {
     clearTimeout(timer);
