@@ -88,6 +88,38 @@ function templateDraft(c) {
   return { subject, body: [hi, para, ...lines.slice(1).filter(Boolean), ask, `Thank you,\n${sign}`].filter(Boolean).join('\n\n') };
 }
 
+// Wellby sales workspace: the reader is an agency owner or growth leader we are selling Wellby to.
+// No referral language: they are a prospective customer, not a referral source.
+const PITCH = 'Wellby shows a home care, home health or hospice team which hospitals, physician offices and facilities are sending them referrals, which ones are slipping, and who each liaison should visit next, then drafts the outreach for them.';
+function salesIntent(step, kind) {
+  const l = String(step?.label || '').toLowerCase();
+  if (/demo/.test(l)) return 'demo';
+  if (/trial invite/.test(l)) return 'trial';
+  if (/check-in/.test(l)) return 'checkin';
+  if (/close|plan/.test(l)) return 'close';
+  if (/follow/.test(l)) return 'followup';
+  return kind === 'email' ? 'intro' : kind;
+}
+function salesTemplate(c) {
+  const { short, who, role, senderFull, senderFirst, intent, kind, lastTouch, src } = c;
+  const hi = who ? `Hi ${who},` : 'Hello,';
+  const sign = [senderFull || '[Your name]', 'Wellby'].join('\n');
+  const multi = src.sites > 1 ? ` across your ${src.sites} locations` : '';
+  if (kind !== 'email') {
+    const goal = { demo: 'run a 20-minute demo on their own market', checkin: 'see how the trial is going and clear any blockers', close: 'agree on a plan and a start date', followup: 'get a reply to the intro email and book a demo' }[intent] || 'find out how they grow referrals today and book a demo';
+    return { subject: `${kind === 'visit' ? 'Demo plan' : 'Call plan'}: ${short}`, body: `Goal: ${goal}.\n\nWho: ${who ? `${c.contactFull}${role ? `, ${role}` : ''}` : 'Ask for the owner, administrator or director of business development'}\n\nOpen with: ${lastTouch ? `following up on my ${lastTouch.kind} ${when(lastTouch.at)}` : `I work with home care and hospice teams on referral growth`}.\n\nAsk:\n- How do your liaisons decide who to visit each week?\n- How do you see which referral sources are slowing down?\n- What do you use today (CRM, spreadsheets, nothing)?\n\nOffer: a 14-day free trial loaded with their own market: app.wellbyinroads.com/signup` };
+  }
+  const body = {
+    intro: [`${PITCH.replace('Wellby shows a home care, home health or hospice team', `Wellby shows teams like ${short}`)}`, `It's built for agencies with liaisons in the field${multi}, and it works from public data on day one, so there's nothing to set up before you see value.`, 'Would you be open to a 20-minute look at your own market next week?'],
+    followup: [`Following up on my note${lastTouch ? ' ' + when(lastTouch.at) : ''} about Wellby.`, `The short version: your liaisons get a ranked list of who to visit, and you see which referral sources are growing or slipping${multi}.`, 'Is a quick demo worth 20 minutes? Happy to work around your schedule.'],
+    trial: ['Thanks for taking the time to see Wellby.', 'Here is your free 14-day trial: app.wellbyinroads.com/signup. Your market loads automatically, and I can add your team in a few minutes.', 'Want me to set up a short kickoff with your liaisons?'],
+    checkin: ["Checking in on your Wellby trial.", 'Is your team using the daily plan, and is anything getting in the way? I can help load your referral history so the trends are yours, not just the public data.', 'Would a 15-minute call this week help?'],
+    close: ['Your Wellby trial is wrapping up soon.', `Based on your team size${multi}, I'd suggest the ${src.sites >= 6 ? 'Enterprise' : src.sites >= 2 ? 'Team' : 'Solo'} plan. I can send the details or walk through them on a quick call.`, 'Which works better for you?'],
+  }[intent] || [PITCH, 'Would you be open to a 20-minute demo?'];
+  const subject = { intro: `Referral growth for ${short}`, followup: `Re: referral growth for ${short}`, trial: `Your Wellby trial`, checkin: `How's the Wellby trial going?`, close: `Next step with Wellby` }[intent] || `Wellby for ${short}`;
+  return { subject, body: [hi, ...body, `Thank you,\n${sign}`].join('\n\n') };
+}
+
 export default withUser(async (req, res, me) => {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
   const b = await readBody(req);
@@ -119,14 +151,24 @@ export default withUser(async (req, res, me) => {
   const agency = settings.agencyName || me.orgName || 'our agency';
   const senderFull = clip(settings.senderName || me.name || '', 120);
   const senderFirst = senderFull.split(/[ ,]/)[0] || '';
-  const intent = intentOf(step, stats.status, kind);
+  const SALES = !!me.orgSales;
+  if (SALES) Object.assign(src, { st: clip(b.source?.st, 4), sites: Math.max(1, +b.source?.sites || 1), website: clip(b.source?.website, 200), parent: clip(b.source?.parent, 120), notes: clip(b.source?.notes, 600) });
+  const intent = SALES ? salesIntent(step, kind) : intentOf(step, stats.status, kind);
   const ctx = { src, short: shortName(src.name), who, role, contactFull, agency, senderFull, senderFirst, care, careKey, stats, intent, lastTouch, lastMtg, nextMtg, office, kind };
 
   const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return send(res, 200, { ...templateDraft(ctx), drafter: 'template' });
+  const tmpl = () => SALES ? salesTemplate(ctx) : templateDraft(ctx);
+  if (!key) return send(res, 200, { ...tmpl(), drafter: 'template' });
 
   // A few of the sender's own sent emails, so the draft sounds like them.
   const voice = activity.filter(a => a.by === me.email && a.kind === 'email' && a.status === 'done' && (a.body || '').length > 80).slice(-3).map(a => clip(a.body, 700));
+  const salesSystem = `You write sales outreach from ${senderFull || 'a Wellby founder'} at Wellby to the owner, administrator or business development leader of a home care, home health or hospice agency. They are a prospective customer for Wellby software. They do not send referrals to Wellby, so never thank them for referrals or ask for referrals or patients.
+
+What Wellby does: ${PITCH} Free 14-day trial at app.wellbyinroads.com/signup. Plans: Solo, Team (2 to 5 locations), Enterprise (6 or more).
+
+Use only the facts provided: the contact's name and role, the agency's locations and notes, and any past touches or meetings. Fit the purpose of the step (intro, follow-up, demo, trial invite, trial check-in, close). For calls or demos, write a short plan: goal, who, opener, three questions, the offer.
+
+Rules: under 110 words for emails. One clear, small ask. No hype, no exclamation marks, no invented facts, customers, numbers or results. Avoid stock phrases: "I hope this email finds you well", "reach out", "touch base", "circle back", "synergy", "I wanted to introduce". Reply as JSON: {\"subject\": \"...\", \"body\": \"...\"}.`;
   const system = `You write outreach for a ${care.org}'s community liaison to one specific referral source. The reader is a busy case manager, discharge planner, social worker, facility director or office manager who gets generic vendor emails every day and ignores them. Your job is to sound like a real local person who knows this relationship.
 
 Make it personal using only the facts provided:
@@ -139,7 +181,13 @@ Make it personal using only the facts provided:
 - If voice samples are provided, match the sender's tone, sentence length and sign-off.
 
 Rules: under 120 words for emails. One clear, small ask. No hype, no exclamation marks, no invented facts, numbers, awards or patient stories, never mention a specific patient. Never claim services the agency profile doesn't list. Avoid stock phrases: "I hope this email finds you well", "reach out", "touch base", "valued partner", "circle back", "synergy", "I wanted to introduce". Sign off with the sender's name and agency. Return only JSON: {"subject": string, "body": string}. The subject should be short and specific to them, not a marketing headline. For kind "call" or "visit", the subject is a short plan title and the body is a brief plan: goal, who to ask for, what you know, an opener in quotes, 2-3 questions, and the next step.`;
-  const user = JSON.stringify({
+  const user = SALES ? JSON.stringify({
+    kind, purpose: step ? `Sales step: ${step.label}` : `Sales outreach (${intent})`,
+    sender: { name: senderFull || '[Your name]', company: 'Wellby', voiceSamples: voice },
+    prospect: { name: niceName(src.name), shortName: ctx.short, type: src.type, city: src.city, state: src.st, locations: src.sites, website: src.website || null, parentCompany: src.parent || null, researchNotes: src.notes || null },
+    contact: ct ? { firstName: who, fullName: contactFull, role } : 'unknown, use "Hello,"',
+    history: { recentTouches: done.slice(0, 4).map(a => ({ kind: a.kind, when: when(a.doneAt || a.at), note: clip(a.subject, 160) })), lastMeeting: lastMtg ? { title: lastMtg.title, when: when(lastMtg.end), outcome: clip(lastMtg.outcome || lastMtg.notes, 300) } : null, upcomingMeeting: nextMtg ? { title: nextMtg.title, when: ahead(nextMtg.start) } : null },
+  }) : JSON.stringify({
     kind, purpose: step ? `Win-flow step: ${step.label}` : `Status-based outreach (${intent})`,
     agency: { name: agency, careType: care.label, services: settings.services || care.services, differentiators: settings.pitch || '' },
     sender: { name: senderFull || '[Your name]', voiceSamples: voice },
@@ -156,7 +204,7 @@ Rules: under 120 words for emails. One clear, small ask. No hype, no exclamation
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5', max_tokens: 800, system, messages: [{ role: 'user', content: user }] }),
+      body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5', max_tokens: 800, system: SALES ? salesSystem : system, messages: [{ role: 'user', content: user }] }),
     });
     const j = await r.json();
     if (!r.ok) throw new Error(j?.error?.message || `HTTP ${r.status}`);
@@ -166,6 +214,6 @@ Rules: under 120 words for emails. One clear, small ask. No hype, no exclamation
     return send(res, 200, { subject: clip(out.subject, 300), body: clip(out.body, 6000), drafter: 'claude' });
   } catch (e) {
     console.error('draft failed', e?.message);
-    return send(res, 200, { ...templateDraft(ctx), drafter: 'template', warning: 'AI drafting unavailable, used a personal template.' });
+    return send(res, 200, { ...tmpl(), drafter: 'template', warning: 'AI drafting unavailable, used a personal template.' });
   }
 });

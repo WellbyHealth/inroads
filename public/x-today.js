@@ -4,6 +4,8 @@
 const X = (window.WellbyExt = window.WellbyExt || {});
 const W = () => window.Wellby;
 const STAGES = ['Targeted', 'Introduced', 'Met', 'First referral', 'Regular'];
+const salesWs = () => !!W()?.S?.me?.orgSales;
+const SALES_STAGES = ['Targeted', 'Contacted', 'Demo', 'Trial', 'Customer'];
 const mLabel = k => { const [y, m] = k.split('-'); return new Date(Date.UTC(+y, +m - 1, 1)).toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }); };
 const mLong = k => { const [y, m] = k.split('-'); return new Date(Date.UTC(+y, +m - 1, 1)).toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }); };
 const pct = (a, b) => b ? Math.round(100 * (a - b) / b) : null;
@@ -78,12 +80,16 @@ function render() {
   const { S, esc, fmt, phoneFmt, openSource } = W(), app = document.getElementById('app');
   if (!app || S.view !== 'today') return;
   document.getElementById('tBrief')?.remove();
+  if (salesWs() && STAGES[3] !== 'Trial') STAGES.splice(0, STAGES.length, ...SALES_STAGES);
   const D = data(), F = focusPick(D);
   const hello = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
   const dateLine = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const p = pct(D.cur, D.prev);
-  const refTile = D.hasRefs ? `<div class="ttile" data-go="#results"><div class="tlab">Referrals · ${esc(mLabel(D.months[11]))}</div><div class="tbig">${fmt(D.cur)}${p != null ? `<span class="tdelta ${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p)}%</span>` : ''}</div>${spark(D.byMonth)}<div class="tsub">12 months · ${fmt(D.byMonth.reduce((a, b) => a + b, 0))} total</div></div>`
+  let refTile = D.hasRefs ? `<div class="ttile" data-go="#results"><div class="tlab">Referrals · ${esc(mLabel(D.months[11]))}</div><div class="tbig">${fmt(D.cur)}${p != null ? `<span class="tdelta ${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p)}%</span>` : ''}</div>${spark(D.byMonth)}<div class="tsub">12 months · ${fmt(D.byMonth.reduce((a, b) => a + b, 0))} total</div></div>`
     : `<div class="ttile" data-go="#referrals"><div class="tlab">Referrals</div><div class="tbig muted">–</div><div class="tsub"><a href="#referrals">Add your referral history</a> to see your trend</div></div>`;
+  const SW = salesWs();
+  if (SW) { const ps = S.scored || [], res = ps.filter(s => s.p.research?.people?.length).length, inFlow = Object.keys(S.flows).length;
+    refTile = `<div class="ttile" data-go="#prospects"><div class="tlab">Prospects</div><div class="tbig">${fmt(ps.length)}</div><div class="tsub">${fmt(res)} with researched contacts · ${fmt(inFlow)} being worked</div></div>`; }
   const left = Math.max(0, D.goal - D.doneWk);
   const wkTile = `<div class="ttile row2"><div>${ring(D.doneWk, D.goal)}</div><div><div class="tlab">Touches this week</div><div class="tbig">${D.doneWk}<span class="tof">/ ${D.goal}</span></div><div class="tsub">${left ? `${left} to go to hit your goal` : 'Goal hit. Nice work.'}</div></div></div>`;
   const mDone = D.mtgWk.filter(m => m.status === 'done').length, mUp = D.mtgWk.filter(m => m.status === 'scheduled' && Date.parse(m.end) >= Date.now()).length;
@@ -99,7 +105,7 @@ function render() {
         <div class="muted small">${esc(s.p.type)}${s.p.city ? ' · ' + esc(s.p.city) : ''}${s.dist != null ? ` · ${s.dist.toFixed(1)} mi from ${esc(s.office)}` : ''}</div>
         <p class="tfwhy">${esc(F.why)}</p>
         <div class="tfmeta">${c ? `<span><b>${esc(c.name)}</b>${c.role ? ', ' + esc(c.role) : ''}${c.phone ? ` · <a href="tel:${esc(c.phone)}">${esc(phoneFmt(c.phone))}</a>` : ''}</span>` : s.p.phone ? `<span>Main line <a href="tel:${esc(s.p.phone)}">${esc(phoneFmt(s.p.phone))}</a></span>` : ''}<span>${s.lastTouch ? 'Last touch ' + W().agoText(s.lastTouch).toLowerCase() : 'No outreach yet'}</span></div>
-        <div class="row" style="margin-top:12px">${F.act ? `<button class="btn primary" id="tfAct">${esc(F.act.label)}</button>` : ''}<button class="btn" id="tfOpen">Open source</button>${X.openMeeting ? '<button class="btn ghost" id="tfMeet">Schedule a visit</button>' : ''}</div></div>
+        <div class="row" style="margin-top:12px">${F.act ? `<button class="btn primary" id="tfAct">${esc(F.act.label)}</button>` : ''}<button class="btn" id="tfOpen">${SW ? 'Open prospect' : 'Open source'}</button>${X.openMeeting ? `<button class="btn ghost" id="tfMeet">${SW ? 'Schedule a demo' : 'Schedule a visit'}</button>` : ''}</div></div>
         ${s.total12 ? `<div class="tfchart"><div class="tlab">Their referrals, 12 months</div>${spark(s.h, { w: 180, h: 54, color: s.status === 'Protect' ? '#C0262D' : '#2F6DB5' })}<div class="tsub">${s.last3} in the last 3 months · ${s.prior3} the 3 before</div></div>` : ''}</div></div>`;
   }
   const ICON = { down: '↘', up: '↗', new: '★' };

@@ -63,7 +63,11 @@ const PLAYBOOKS = { // [kind, step, day offset from start; null = after the firs
   'Physicians': [['email', 'Intro email to the office manager', 0], ['visit', 'Drop off materials and meet the staff', 7], ['visit', 'Lunch for the office', 21], ['call', 'Follow-up call', 35], ['email', 'Thank-you after the first referral', null]],
   'Other': [['email', 'Intro email', 0], ['call', 'Intro call', 5], ['visit', 'Visit', 14], ['call', 'Follow-up call', 30], ['email', 'Thank-you after the first referral', null]],
 };
-const playbookFor = t => PLAYBOOKS[groupOf(t)] || PLAYBOOKS.Other;
+// Wellby sales workspace: agencies are customers to win, not referral sources.
+const SALES_STAGES = ['Targeted', 'Contacted', 'Demo', 'Trial', 'Customer'];
+const SALES_PLAYBOOK = [['email', 'Intro email to the owner or director', 0, 1], ['call', 'Follow-up call', 3, 1], ['visit', '20-minute demo', 10, 2], ['email', 'Send the free trial invite', 12, 3], ['call', 'Trial check-in', 19, 3], ['call', 'Close: pick a plan', 26, 4]];
+function useSalesVocab() { if (S.me?.orgSales && STAGES[3] !== 'Trial') STAGES.splice(0, STAGES.length, ...SALES_STAGES); }
+const playbookFor = t => S.me?.orgSales ? SALES_PLAYBOOK : PLAYBOOKS[groupOf(t)] || PLAYBOOKS.Other;
 function flowState(id) {
   const f = S.flows[id]; if (!f) return null;
   const sc = S.scoredById?.get(id), startM = f.startedAt.slice(0, 7);
@@ -75,6 +79,7 @@ function flowState(id) {
   if (done.some(st => st.kind === 'visit')) stage = 2;
   if (refsSince > 0) stage = 3;
   if (refsSince >= 3 && activeMonths >= 2) stage = 4;
+  if (S.me?.orgSales) stage = done.reduce((m, st) => Math.max(m, st.stage ?? 1), 0); // sales: the furthest step done
   const steps = f.steps.map((st, i) => ({ ...st, i, due: st.offset == null ? (stage >= 3 ? today() : null) : addDays(f.startedAt, st.offset) }));
   const next = steps.find(st => !st.done && !st.skipped && st.due);
   return { f, stage, steps, next, refsSince };
@@ -83,7 +88,7 @@ const snap = p => ({ name: p.name, type: p.type, tx: p.tx, city: p.city, address
 async function saveFlow(id, flow) { const s = S.scoredById.get(id); const r = await post('saveFlow', { sourceId: id, flow: flow && { ...flow, p: flow.p || (s && snap(s.p)) } }); S.flows = r.flows; }
 async function startFlow(id) {
   const s = S.scoredById.get(id); if (!s) return;
-  const flow = { startedAt: today(), steps: playbookFor(s.p.type).map(([kind, label, offset]) => ({ kind, label, offset })), p: snap(s.p) };
+  const flow = { startedAt: today(), steps: playbookFor(s.p.type).map(([kind, label, offset, stage]) => ({ kind, label, offset, ...(stage != null ? { stage } : {}) })), p: snap(s.p) };
   await saveFlow(id, flow);
   toast('Win flow started. Drafting the first step…');
   await makeDraft(id, flow.steps[0].kind, true, 0);
@@ -109,7 +114,7 @@ const rchips = why => `<div class="rchips">${why.map(w => `<span class="rchip">$
 const stepVerb = st => st.kind === 'visit' ? 'Visit plan' : st.kind === 'call' ? 'Call plan' : 'Draft email';
 function flowSection(id) {
   const s = S.scoredById.get(id), fs = flowState(id);
-  if (!fs) { const pb = playbookFor(s.p.type); return `<div class="section flowbox"><h3>Win flow</h3><p class="small" style="margin:0 0 10px">A ${pb.length}-step playbook for ${esc(groupOf(s.p.type).toLowerCase())}: ${pb.map(x => esc(x[1].toLowerCase())).join(', ')}. Wellby drafts each step when it's due, and you approve it.</p><button class="btn primary" data-flow="${esc(id)}">Start win flow</button></div>`; }
+  if (!fs) { const pb = playbookFor(s.p.type); return `<div class="section flowbox"><h3>Win flow</h3><p class="small" style="margin:0 0 10px">A ${pb.length}-step ${S.me?.orgSales ? 'sales sequence' : `playbook for ${esc(groupOf(s.p.type).toLowerCase())}`}: ${pb.map(x => esc(x[1].toLowerCase())).join(', ')}. Wellby drafts each step when it's due, and you approve it.</p><button class="btn primary" data-flow="${esc(id)}">Start win flow</button></div>`; }
   return `<div class="section flowbox"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Win flow</h3><button class="btn sm ghost" data-stopflow="${esc(id)}">Stop flow</button></div>${stageBar(fs.stage)}
     <ol class="steps">${fs.steps.map(st => { const isNext = fs.next === st, late = isNext && st.due < today();
       return `<li class="${st.done ? 'done' : st.skipped ? 'skipped' : isNext ? 'next' : ''}"><div><b>${esc(st.label)}</b><div class="muted small ${late ? 'down' : ''}">${st.done ? `Done ${fmtShort(st.done)}` : st.skipped ? 'Skipped' : st.due ? `${late ? 'Overdue · was due' : 'Due'} ${fmtShort(st.due)}` : 'After the first referral'}</div></div>
@@ -212,8 +217,8 @@ function viewContacts() {
       <span class="muted small" id="ccnt"></span></div>
     <div class="card" style="padding:0;overflow:auto"><table class="crm"><thead><tr id="cHead"></tr></thead><tbody id="ctb"></tbody></table></div>`;
   const P = f.mode === 'people';
-  const cols = P ? [['name', 'Name'], ['org', 'Organization'], ['status', 'Relationship'], ['stage', 'Stage'], ['last', 'Last contacted'], ['next', 'Next step'], ['refs', 'Referrals 12 mo', 'num'], ['owner', 'Owner'], ['', 'Email · phone']]
-    : [['org', 'Organization'], ['people', 'Contacts'], ['status', 'Relationship'], ['stage', 'Stage'], ['last', 'Last contacted'], ['touches', 'Touches', 'num'], ['next', 'Next step'], ['refs', 'Referrals 12 mo', 'num'], ['owner', 'Owner']];
+  const cols = (P ? [['name', 'Name'], ['org', 'Organization'], ['status', 'Relationship'], ['stage', 'Stage'], ['last', 'Last contacted'], ['next', 'Next step'], ['refs', 'Referrals 12 mo', 'num'], ['owner', 'Owner'], ['', 'Email · phone']]
+    : [['org', 'Organization'], ['people', 'Contacts'], ['status', 'Relationship'], ['stage', 'Stage'], ['last', 'Last contacted'], ['touches', 'Touches', 'num'], ['next', 'Next step'], ['refs', 'Referrals 12 mo', 'num'], ['owner', 'Owner']]).filter(c => !(S.me?.orgSales && (c[0] === 'refs' || c[0] === 'status')));
   $('#cHead').innerHTML = cols.map(([k, l, c]) => `<th ${k ? `data-cs="${k}"` : ''} class="${c || ''}">${l}${f.sort === k ? (f.dir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('');
   const val = (r, k) => ({ name: r.c?.name || '', org: r.s.p.name, status: r.s.status, stage: r.fs ? r.fs.stage : -1, last: r.last || '', next: r.next?.due || '9999', refs: r.s.total12, owner: r.owner, touches: r.t.count, people: r.contacts.length })[k];
   const gkey = r => f.group === 'cat' ? r.cat : f.group === 'status' ? r.s.status : f.group === 'stage' ? (r.stage || 'Not in a flow') : f.group === 'owner' ? (r.owner || 'Unassigned') : '';
@@ -252,7 +257,7 @@ function viewContacts() {
     const opts = S.scored.slice().sort((a, b) => b.priority - a.priority).slice(0, 3000), byLabel = new Map(opts.map(x => [`${x.p.name}${x.p.city ? ' — ' + x.p.city : ''}`, x.p.id]));
     $('#cForm2').innerHTML = `<div class="card" style="margin-bottom:14px"><h2>Add a contact</h2><form id="cNew" class="grid" style="grid-template-columns:2fr 1fr 1fr;gap:8px">
       <input name="org" list="cOrgs" placeholder="Organization (start typing)" required autocomplete="off"><datalist id="cOrgs">${[...byLabel.keys()].map(k => `<option value="${esc(k)}">`).join('')}</datalist>
-      <input name="name" placeholder="Name" required><input name="role" placeholder="Role (e.g. discharge planner)">
+      <input name="name" placeholder="Name" required><input name="role" placeholder="${SL ? 'Role (e.g. owner, director of operations)' : 'Role (e.g. discharge planner)'}">
       <input name="email" type="email" placeholder="Email"><input name="phone" placeholder="Phone">
       <div class="row"><button class="btn primary">Save contact</button><button class="btn ghost" type="button" id="cCancel">Cancel</button></div></form><p class="err small" id="cErr"></p></div>`;
     $('#cCancel').onclick = () => { $('#cForm2').innerHTML = ''; };
@@ -454,7 +459,7 @@ async function boot() {
     const data = await r.json();
     if (r.status === 409 && data.needWorkspace) { S.me = data.me; renderMe(); return viewNoWorkspace(); }
     if (r.status === 402 && data.locked) { S.me = data.me; renderMe(); return viewPaywall(); }
-    Object.assign(S, { me: data.me, settings: data.settings, referrals: data.referrals, activity: data.activity, contacts: data.contacts, flows: data.flows || {} });
+    Object.assign(S, { me: data.me, settings: data.settings, referrals: data.referrals, activity: data.activity, contacts: data.contacts, flows: data.flows || {} }); useSalesVocab();
     renderMe();
     const ir = await fetch('/api/market');
     S.index = ir.ok ? await ir.json() : null;
@@ -646,10 +651,12 @@ function composeUrl(to, subject, body) {
 }
 async function makeDraft(sourceId, kind, quiet, flowStep) {
   const s = S.scoredById.get(sourceId); if (!s) return;
-  const contact = (S.contacts[sourceId] || [])[0];
+  let contact = (S.contacts[sourceId] || [])[0];
+  const R = S.me?.orgSales ? s.p.research : null;
+  if (!contact && R?.people?.length) { const x = R.people.find(y => /business development|sales|marketing|growth|referral|community/i.test(y.title || '')) || R.people[0]; contact = { name: x.name, role: x.title, email: x.email || '' }; }
   const stats = { status: s.status, last6: s.last6, prior6: s.prior6, total12: s.total12, lastMonth: (() => { let k = ''; s.h.forEach((v, i) => { if (v) k = S.months[i]; }); return k; })(), lastTouch: s.lastTouch || '', why: s.why.join('; ') };
   if (!quiet) toast('Drafting…');
-  const d = await api('/api/draft', { kind, source: { name: s.p.name, type: s.p.type, taxonomy: s.p.tx, city: s.p.city, address: s.p.address, distance: s.dist?.toFixed(1) }, stats, contact });
+  const d = await api('/api/draft', { kind, sourceId, flowStep: Number.isInteger(flowStep) ? flowStep : undefined, source: { name: s.p.name, type: s.p.type, taxonomy: s.p.tx, city: s.p.city, address: s.p.address, distance: s.dist?.toFixed(1), st: s.p.st, sites: s.p.sites || 1, website: R?.website || '', parent: R?.parent || '', notes: R?.notes || '' }, stats, contact });
   const r = await post('addActivity', { activity: { sourceId, sourceName: s.p.name, kind, status: 'draft', subject: d.subject, body: d.body, to: contact?.email || '', reason: s.why.join('; '), drafter: d.drafter, followUp: addDays(today(), kind === 'visit' ? 14 : 7), flowStep: Number.isInteger(flowStep) ? flowStep : undefined } });
   S.activity = r.activity; rescore();
   if (!quiet) { refreshView(); if (S.view !== 'today' || $('#drawer').classList.contains('open')) openSource(sourceId); toast(d.warning || 'Draft ready for review'); }
@@ -692,9 +699,10 @@ function openSource(id) {
   const acts = S.activity.filter(a => a.sourceId === id && !isSkip(a)).sort((a, b) => b.at.localeCompare(a.at));
   const isNpi = /^\d{10}$/.test(p.id);
   if (S.pure) return openMarketSource(s, isNpi);
+  const SL = !!S.me?.orgSales;
   d.innerHTML = `<button class="btn ghost close" id="dClose" aria-label="Close">✕</button>
     <img class="d-art" src="${artFor(p.type)}" alt=""><div class="muted small">${esc(p.type)}</div><h1 style="padding-right:30px">${esc(p.name)}</h1>
-    <div class="row" style="margin-top:6px"><span class="chip st-${s.status}">${s.status}</span><span class="chip">Score ${s.priority}</span>${S.flows[id] ? `<span class="chip st-Open">${STAGES[flowState(id).stage]}</span>` : ''}</div>
+    <div class="row" style="margin-top:6px">${SL ? '' : `<span class="chip st-${s.status}">${s.status}</span>`}<span class="chip">${SL ? 'Wellby fit' : 'Score'} ${SL ? s.potential : s.priority}</span>${S.flows[id] ? `<span class="chip st-Open">${STAGES[flowState(id).stage]}</span>` : ''}</div>
     <div style="margin-top:10px">${rchips(s.why)}</div>
     <dl class="facts">
       ${p.address ? `<dt>Address</dt><dd>${esc(p.address)}, ${esc(p.city)} ${esc(p.zip)}${s.dist != null ? ` · ${s.dist.toFixed(1)} mi` : ''}</dd>` : ''}
@@ -708,13 +716,13 @@ function openSource(id) {
       ${p.colocated > 1 ? `<dt>At this address</dt><dd>${p.colocated} registered providers</dd>` : ''}
     </dl>
     ${flowSection(id)}
-    <details class="section"><summary><b>How the score works</b> <span class="muted small">opportunity ${s.potential} of 100, then adjusted for your relationship</span></summary>
+    ${SL ? salesFitBox(p) : `    <details class="section"><summary><b>How the score works</b> <span class="muted small">opportunity ${s.potential} of 100, then adjusted for your relationship</span></summary>
     <div class="breakdown" style="margin-top:12px">
       <span>Fit for ${esc(careLabel().toLowerCase())}</span><span class="bar-g"><i style="width:${s.fit * 100}%"></i></span><span class="num">${Math.round(s.fit * 100)}</span>
       <span>Size</span><span class="bar-g"><i style="width:${s.size * 100}%"></i></span><span class="num">${Math.round(s.size * 100)}</span>
       <span>Proximity</span><span class="bar-g"><i style="width:${s.prox * 100}%"></i></span><span class="num">${Math.round(s.prox * 100)}</span>
     </div></details>
-    <div class="section"><h3>Referrals, last 12 months</h3>${s.total12 ? spark(s.h) + `<div class="muted small">${s.total12} total · ${s.last3} in the last 3 months</div>` : '<div class="muted small">No referrals from this source in your data yet.</div>'}</div>
+    <div class="section"><h3>Referrals, last 12 months</h3>${s.total12 ? spark(s.h) + `<div class="muted small">${s.total12} total · ${s.last3} in the last 3 months</div>` : '<div class="muted small">No referrals from this source in your data yet.</div>'}</div>`}
     <div class="section"><h3>Outreach history</h3><div class="row"><button class="btn sm" data-draft="${esc(id)}" data-kind="email">Draft email</button><button class="btn sm" data-draft="${esc(id)}" data-kind="call">Call plan</button><button class="btn sm" data-draft="${esc(id)}" data-kind="visit">Visit plan</button><button class="btn sm" id="logTouch">Log a touch</button></div>
       <div id="logForm"></div>
       <div style="margin-top:10px">${acts.filter(a => a.status === 'draft').map(draftCard).join('')}</div>
@@ -736,6 +744,13 @@ function openSource(id) {
     $('#logForm').innerHTML = `<form class="grid" style="grid-template-columns:1fr 1fr;gap:6px;margin-top:10px"><select name="kind"><option value="visit">Visit</option><option value="call">Call</option><option value="email">Email</option><option value="lunch">Lunch / in-service</option></select><input type="date" name="followUp" value="${addDays(today(), 14)}" title="Follow-up date"><input name="subject" placeholder="Note (e.g. met with Sarah in case management)" style="grid-column:span 2"><button class="btn sm primary" style="justify-self:start">Save</button></form>`;
     $('#logForm form').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const r = await post('addActivity', { activity: { sourceId: id, sourceName: p.name, kind: f.kind, subject: f.subject, followUp: f.followUp, status: 'done' } }); S.activity = r.activity; rescore(); openSource(id); toast('Touch logged'); if (S.view === 'today') viewToday(); };
   };
+}
+// Sales workspace: how well an agency fits Wellby, in place of the referral score and history.
+function salesFitBox(p) {
+  const bar = (l, v) => `<span>${l}</span><span class="bar-g"><i style="width:${Math.round(v * 100)}%"></i></span><span class="num">${Math.round(v * 100)}</span>`;
+  return `<details class="section"><summary><b>How the fit score works</b> <span class="muted small">${icp(p)} of 100</span></summary><div class="breakdown" style="margin-top:12px">
+    ${bar('Agency type', icpType(p))}${bar('Locations', icpSites(p.sites || 1))}${bar('Size', (p.size ?? 30) / 100)}${bar('Decision maker listed', p.official ? 1 : 0)}</div>
+    ${ICP_OUT.test(p.name) || p.research?.status === 'acquired' ? '<div class="muted small" style="margin-top:8px">Scored down: part of a chain, hospital system or government, which buy software top-down.</div>' : ''}</details>`;
 }
 function openMarketSource(s, isNpi) {
   const p = s.p, d = $('#drawer');

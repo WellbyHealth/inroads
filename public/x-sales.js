@@ -128,12 +128,13 @@ function pickStates() {
   dlg.querySelector('[data-ok]').onclick = () => save([...dlg.querySelectorAll('input:checked')].map(i => i.value));
 }
 
-// Plan tab: Prospects replaces Territory; Referrals hides; Partners reads Accounts.
+// Plan tab: Prospects replaces Territory; Referrals and Results hide (prospects don't send referrals); Partners reads Accounts.
 function shapeNav() {
   if (!sales() || document.body.classList.contains('sales')) return;
   document.body.classList.add('sales');
   const g = X.navGroups; if (g?.plan) g.plan.subs = [['prospects', 'Prospects', '#prospects'], ...g.plan.subs.filter(x => x[0] !== 'territory')];
   if (g?.partners) g.partners.label = 'Accounts';
+  if (g?.partners) g.partners.subs = g.partners.subs.filter(x => x[0] !== 'scorecard'); // the partner scorecard is about referrals
   const pa = document.querySelector('#nav a[data-view="partners"]');
   if (pa) { const tn = [...pa.childNodes].reverse().find(n => n.nodeType === 3 && n.textContent.trim()); if (tn) tn.textContent = 'Accounts'; pa.title = 'Accounts: prospects you are working, contacts'; }
   const plan = document.querySelector('#nav a[data-view="plan"]'); if (plan) plan.setAttribute('href', '#prospects');
