@@ -112,7 +112,7 @@ function render() {
   document.querySelectorAll('[data-int]').forEach(b => b.classList.toggle('on', b.dataset.int === S.interval));
   $('plans').innerHTML = Object.entries(PLANS).map(([k, p]) => `<button type="button" class="plan ${k === S.plan ? 'on' : ''}" data-plan="${k}" aria-pressed="${k === S.plan}">
     <span class="dot"></span><span class="nm"><img class="tier" src="/img/g-tier-${p.art}-cut.webp" alt="" width="40" height="40" style="--t:${p.tint}"><span class="name">${p.name}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</span>
-    <span class="price">${money(y ? Math.floor(p.annual / 12) : p.monthly)}<small>per month${k === 'team' ? ' · 1 location, 5 users' : ' · 1 user'}${y ? ', billed yearly' : ''}</small></span>
+    <span class="price">${money(y ? Math.round(p.annual / 12) : p.monthly)}<small>per month${k === 'team' ? ' · 1 location, 5 users' : ' · 1 user'}${y ? ', billed yearly' : ''}</small></span>
     <span class="what">${p.what}</span></button>`).join('') +
     `<a class="plan ent" href="mailto:team@wellbyhealth.com?subject=Wellby%20Enterprise%20demo"><span class="dot"></span><span class="nm"><img class="tier" src="/img/g-tier-house-cut.webp" alt="" width="40" height="40" style="--t:#ece6fb"><span class="name">Enterprise</span></span>
     <span class="price">Custom<small>6+ locations or 20+ users</small></span>

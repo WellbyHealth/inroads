@@ -38,7 +38,7 @@ function picker(host, { heading, sub } = {}) {
       <div class="seg" role="tablist"><button data-int="month" class="${!y ? 'on' : ''}">Monthly</button><button data-int="year" class="${y ? 'on' : ''}">Annual · 2 months free</button></div></div>
     <div class="plan-grid">${Object.entries(P).map(([k, p]) => `<button class="plan-card ${B.plan === k ? 'on' : ''}" data-plan="${k}">
         ${k === 'team' ? '<span class="plan-tag">Most popular</span>' : ''}${tier(k)}<b class="plan-name">${p.name}</b>
-        <span class="plan-price">${money(y ? Math.floor(p.annual / 12) : p.monthly)}<small>/month</small></span>
+        <span class="plan-price">${money(y ? Math.round(p.annual / 12) : p.monthly)}<small>/month</small></span>
         <span class="muted small">${k === 'team' ? `1 location, 5 users · ${money(y ? p.locationAnnual : p.locationMonthly)}/${y ? 'yr' : 'mo'} per extra location` : '1 user, 1 location'}${y ? ` · ${money(p.annual)} billed yearly` : ''}</span>
         <ul>${FEAT[k].map(f => `<li>${f}</li>`).join('')}</ul></button>`).join('')}
       <a class="plan-card" href="mailto:${d.enterpriseEmail || 'team@wellbyhealth.com'}?subject=Wellby%20Enterprise%20demo">${tier('enterprise')}<b class="plan-name">Enterprise</b><span class="plan-price">Custom</span>
