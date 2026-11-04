@@ -19,3 +19,6 @@ Live at https://wellbyinroads.com (Vercel project `inroad-site`, team `aria`).
 
 ## tools/
 The scripts that originally generated this site from FLORA renders (`build.mjs` and the post-build steps). They are kept for reference and for regenerating art; they are not run on deploy.
+
+## After editing any CSS or JS
+Run `python3 site/tools/bust.py` before committing. It stamps every `<link>`/`<script>` in the HTML with `?v=<content hash>`, so browsers always load the new file (CSS/JS are cached for a day).
