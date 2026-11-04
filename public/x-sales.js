@@ -191,10 +191,16 @@ X._drawer = (id, d) => {
   const lf = lfOf(s.p);
   const first = (s.p.official || '').split(' ')[0];
   const subj = encodeURIComponent(`${s.p.name} + Wellby`);
-  const body = encodeURIComponent(`Hi${first ? ' ' + first : ''},\n\nWellby helps post-acute teams see which hospitals, physicians and facilities are sending referrals, which are slipping, and who to visit next. Your liaisons get a daily plan and you get the results.\n\nYou can try it free for 14 days: https://app.wellbyinroads.com/signup\n\nHappy to walk you through it for 20 minutes.\n`);
+  const body = encodeURIComponent(`Hi${first ? ' ' + first : ''},\n\nWe're building Wellby to turn referral growth into a system: every referral source in your market in one place, your real share of each one's referrals, the ones going quiet flagged, and the outreach drafted for your liaisons.\n\nWe're picking a few design partners. Here's a free trial with your market already loaded: https://app.wellbyinroads.com/signup\n\nWould you have 15 minutes to tell me how you find and keep referral partners today?\n`);
   row.insertAdjacentHTML('afterend', `<div class="row dSales" style="margin:0 0 10px"><span class="small muted">Wellby fit ${s.potential} · ${tier(s.p.sites || 1)} prospect</span>
     ${lf?.link ? `<a class="btn sm" href="${W().esc(lf.link)}" target="_blank" rel="noopener">Open in Lightfield ↗</a>` : `<button class="btn sm" data-dlf>Copy to Lightfield</button>`}
     <a class="btn sm" href="mailto:?subject=${subj}&body=${body}">Trial invite</a></div>`);
+  // The plays, Clay-style: each a use case with one outcome. Lead with the two that fit this agency.
+  const PLAYS = [['map', 'Map your market', 'Every referral source in their territory, ranked by opportunity'], ['share', 'See your real share', "Their actual share of each source's referrals, not the share they assume"], ['winback', 'Win back quiet sources', 'Slowing sources flagged, with the follow-up drafted'], ['day', 'Plan the day', 'Each liaison gets stops in driving order with a brief'], ['sheet', 'Show partners their numbers', 'A one-page sheet that holds partners to the true numbers'], ['prove', 'Prove what worked', 'Referrals and admissions by source and by liaison']];
+  const ty = String(s.p.type || '').toLowerCase(), multi = (s.p.sites || 1) >= 2;
+  const lead = multi ? ['prove', 'share'] : /hospice|home health/.test(ty) ? ['share', 'winback'] : /home care|personal/.test(ty) ? ['map', 'day'] : ['map', 'sheet'];
+  const playRow = ([k, t, dsc]) => `<li class="${lead.includes(k) ? 'lead' : ''}"><b>${t}</b><span>${dsc}</span>${lead.includes(k) ? '<em>Lead with</em>' : ''}</li>`;
+  d.querySelector('.dSales').insertAdjacentHTML('afterend', `<div class="sp-plays"><div class="sp-plays-h">Pitch: the plays <span class="muted small">${multi ? 'multi-site: lead with proof and share' : 'lead with the two that fit'} · ask for a 15-minute call, not a demo</span></div><ul>${[...PLAYS].sort((a, b) => lead.includes(b[0]) - lead.includes(a[0])).map(playRow).join('')}</ul></div>`);
   const r = s.p.research;
   if (r) {
     const esc = W().esc;

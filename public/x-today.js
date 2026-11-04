@@ -5,7 +5,7 @@ const X = (window.WellbyExt = window.WellbyExt || {});
 const W = () => window.Wellby;
 const STAGES = ['Targeted', 'Introduced', 'Met', 'First referral', 'Regular'];
 const salesWs = () => !!W()?.S?.me?.orgSales;
-const SALES_STAGES = ['Targeted', 'Contacted', 'Demo', 'Trial', 'Customer'];
+const SALES_STAGES = ['Targeted', 'Contacted', 'Call', 'Trial', 'Customer'];
 const mLabel = k => { const [y, m] = k.split('-'); return new Date(Date.UTC(+y, +m - 1, 1)).toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }); };
 const mLong = k => { const [y, m] = k.split('-'); return new Date(Date.UTC(+y, +m - 1, 1)).toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }); };
 const pct = (a, b) => b ? Math.round(100 * (a - b) / b) : null;
@@ -105,7 +105,7 @@ function render() {
         <div class="muted small">${esc(s.p.type)}${s.p.city ? ' · ' + esc(s.p.city) : ''}${s.dist != null ? ` · ${s.dist.toFixed(1)} mi from ${esc(s.office)}` : ''}</div>
         <p class="tfwhy">${esc(F.why)}</p>
         <div class="tfmeta">${c ? `<span><b>${esc(c.name)}</b>${c.role ? ', ' + esc(c.role) : ''}${c.phone ? ` · <a href="tel:${esc(c.phone)}">${esc(phoneFmt(c.phone))}</a>` : ''}</span>` : s.p.phone ? `<span>Main line <a href="tel:${esc(s.p.phone)}">${esc(phoneFmt(s.p.phone))}</a></span>` : ''}<span>${s.lastTouch ? 'Last touch ' + W().agoText(s.lastTouch).toLowerCase() : 'No outreach yet'}</span></div>
-        <div class="row" style="margin-top:12px">${F.act ? `<button class="btn primary" id="tfAct">${esc(F.act.label)}</button>` : ''}<button class="btn" id="tfOpen">${SW ? 'Open prospect' : 'Open source'}</button>${X.openMeeting ? `<button class="btn ghost" id="tfMeet">${SW ? 'Schedule a demo' : 'Schedule a visit'}</button>` : ''}</div></div>
+        <div class="row" style="margin-top:12px">${F.act ? `<button class="btn primary" id="tfAct">${esc(F.act.label)}</button>` : ''}<button class="btn" id="tfOpen">${SW ? 'Open prospect' : 'Open source'}</button>${X.openMeeting ? `<button class="btn ghost" id="tfMeet">${SW ? 'Book a call' : 'Schedule a visit'}</button>` : ''}</div></div>
         ${s.total12 ? `<div class="tfchart"><div class="tlab">Their referrals, 12 months</div>${spark(s.h, { w: 180, h: 54, color: s.status === 'Protect' ? '#C0262D' : '#2F6DB5' })}<div class="tsub">${s.last3} in the last 3 months · ${s.prior3} the 3 before</div></div>` : ''}</div></div>`;
   }
   const ICON = { down: '↘', up: '↗', new: '★' };

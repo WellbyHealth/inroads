@@ -64,8 +64,8 @@ const PLAYBOOKS = { // [kind, step, day offset from start; null = after the firs
   'Other': [['email', 'Intro email', 0], ['call', 'Intro call', 5], ['visit', 'Visit', 14], ['call', 'Follow-up call', 30], ['email', 'Thank-you after the first referral', null]],
 };
 // Wellby sales workspace: agencies are customers to win, not referral sources.
-const SALES_STAGES = ['Targeted', 'Contacted', 'Demo', 'Trial', 'Customer'];
-const SALES_PLAYBOOK = [['email', 'Intro email to the owner or director', 0, 1], ['call', 'Follow-up call', 3, 1], ['visit', '20-minute demo', 10, 2], ['email', 'Send the free trial invite', 12, 3], ['call', 'Trial check-in', 19, 3], ['call', 'Close: pick a plan', 26, 4]];
+const SALES_STAGES = ['Targeted', 'Contacted', 'Call', 'Trial', 'Customer'];
+const SALES_PLAYBOOK = [['email', 'Intro: ask for a 15-minute call', 0, 1], ['call', 'Follow-up call', 3, 1], ['call', 'Discovery call: how they grow referrals today', 7, 2], ['email', 'Design partner invite (free trial)', 9, 3], ['call', 'Trial check-in', 16, 3], ['call', 'Close: pick a plan', 26, 4]];
 function useSalesVocab() { if (S.me?.orgSales && STAGES[3] !== 'Trial') STAGES.splice(0, STAGES.length, ...SALES_STAGES); }
 const playbookFor = t => S.me?.orgSales ? SALES_PLAYBOOK : PLAYBOOKS[groupOf(t)] || PLAYBOOKS.Other;
 function flowState(id) {

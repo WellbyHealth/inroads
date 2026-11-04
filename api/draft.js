@@ -90,33 +90,44 @@ function templateDraft(c) {
 
 // Wellby sales workspace: the reader is an agency owner or growth leader we are selling Wellby to.
 // No referral language: they are a prospective customer, not a referral source.
-const PITCH = 'Wellby shows a home care, home health or hospice team which hospitals, physician offices and facilities are sending them referrals, which ones are slipping, and who each liaison should visit next, then drafts the outreach for them.';
+const PITCH = 'Wellby turns referral growth into a system. It maps every hospital, physician office and facility in your market, shows your real share of each one\'s referrals, flags the ones going quiet, drafts the outreach for your liaisons, and measures which touches actually brought referrals in.';
+// The plays, Clay-style: one use case, one outcome each. Never claim results we do not have yet.
+const PLAYS = [
+  ['Map your market', 'every referral source in your territory in one place, ranked by opportunity'],
+  ['See your real share', 'what share of each source\'s referrals you actually get, not what you think you get'],
+  ['Win back quiet sources', 'sources that slow down are flagged, and the follow-up is drafted for you'],
+  ['Plan the day', 'each liaison gets their stops in driving order with a brief for every visit'],
+  ['Show partners their numbers', 'a one-page sheet that holds each referral partner to the true numbers'],
+  ['Prove what worked', 'referrals and admissions by source and by liaison, not just activity'],
+];
 function salesIntent(step, kind) {
   const l = String(step?.label || '').toLowerCase();
+  if (/discovery/.test(l)) return 'discovery';
   if (/demo/.test(l)) return 'demo';
-  if (/trial invite/.test(l)) return 'trial';
+  if (/trial invite|design partner/.test(l)) return 'trial';
   if (/check-in/.test(l)) return 'checkin';
   if (/close|plan/.test(l)) return 'close';
   if (/follow/.test(l)) return 'followup';
   return kind === 'email' ? 'intro' : kind;
 }
 function salesTemplate(c) {
-  const { short, who, role, senderFull, senderFirst, intent, kind, lastTouch, src } = c;
+  const { short, who, role, senderFull, intent, kind, lastTouch, src } = c;
   const hi = who ? `Hi ${who},` : 'Hello,';
   const sign = [senderFull || '[Your name]', 'Wellby'].join('\n');
   const multi = src.sites > 1 ? ` across your ${src.sites} locations` : '';
   if (kind !== 'email') {
-    const goal = { demo: 'run a 20-minute demo on their own market', checkin: 'see how the trial is going and clear any blockers', close: 'agree on a plan and a start date', followup: 'get a reply to the intro email and book a demo' }[intent] || 'find out how they grow referrals today and book a demo';
-    return { subject: `${kind === 'visit' ? 'Demo plan' : 'Call plan'}: ${short}`, body: `Goal: ${goal}.\n\nWho: ${who ? `${c.contactFull}${role ? `, ${role}` : ''}` : 'Ask for the owner, administrator or director of business development'}\n\nOpen with: ${lastTouch ? `following up on my ${lastTouch.kind} ${when(lastTouch.at)}` : `I work with home care and hospice teams on referral growth`}.\n\nAsk:\n- How do your liaisons decide who to visit each week?\n- How do you see which referral sources are slowing down?\n- What do you use today (CRM, spreadsheets, nothing)?\n\nOffer: a 14-day free trial loaded with their own market: app.wellbyinroads.com/signup` };
+    const goal = { discovery: 'learn how they find and grow referral sources today and what hurts most, then see if they want to be a design partner', demo: 'show their own market in 20 minutes', checkin: 'see how the trial is going and clear any blockers', close: 'agree on a plan and a start date', followup: 'get a reply to the intro and book a 15-minute call' }[intent] || 'find out how they grow referrals today and book a 15-minute call';
+    const plays = PLAYS.map(([t, d]) => `- ${t}: ${d}`).join('\n');
+    return { subject: `Call plan: ${short}`, body: `Goal: ${goal}.\n\nWho: ${who ? `${c.contactFull}${role ? `, ${role}` : ''}` : 'Ask for the owner, administrator or director of business development'}\n\nOpen with: ${lastTouch ? `following up on my ${lastTouch.kind} ${when(lastTouch.at)}` : `we're working on a new way for agencies to find and keep referral partners, and I'd love to learn how you do it today`}.\n\nAsk:\n- How do your liaisons decide who to see each week?\n- How do you know which referral sources are slowing down, and how fast?\n- Do you know your share of your top sources' referrals?\n- What do you use today (CRM, spreadsheets, nothing)?\n\nListen for which play fits:\n${plays}\n\nOffer: be a design partner. Free trial loaded with their own market: app.wellbyinroads.com/signup` };
   }
   const body = {
-    intro: [`${PITCH.replace('Wellby shows a home care, home health or hospice team', `Wellby shows teams like ${short}`)}`, `It's built for agencies with liaisons in the field${multi}, and it works from public data on day one, so there's nothing to set up before you see value.`, 'Would you be open to a 20-minute look at your own market next week?'],
-    followup: [`Following up on my note${lastTouch ? ' ' + when(lastTouch.at) : ''} about Wellby.`, `The short version: your liaisons get a ranked list of who to visit, and you see which referral sources are growing or slipping${multi}.`, 'Is a quick demo worth 20 minutes? Happy to work around your schedule.'],
-    trial: ['Thanks for taking the time to see Wellby.', 'Here is your free 14-day trial: app.wellbyinroads.com/signup. Your market loads automatically, and I can add your team in a few minutes.', 'Want me to set up a short kickoff with your liaisons?'],
-    checkin: ["Checking in on your Wellby trial.", 'Is your team using the daily plan, and is anything getting in the way? I can help load your referral history so the trends are yours, not just the public data.', 'Would a 15-minute call this week help?'],
-    close: ['Your Wellby trial is wrapping up soon.', `Based on your team size${multi}, I'd suggest the ${src.sites >= 6 ? 'Enterprise' : src.sites >= 2 ? 'Team' : 'Solo'} plan. I can send the details or walk through them on a quick call.`, 'Which works better for you?'],
-  }[intent] || [PITCH, 'Would you be open to a 20-minute demo?'];
-  const subject = { intro: `Referral growth for ${short}`, followup: `Re: referral growth for ${short}`, trial: `Your Wellby trial`, checkin: `How's the Wellby trial going?`, close: `Next step with Wellby` }[intent] || `Wellby for ${short}`;
+    intro: [PITCH.replace('Wellby turns referral growth into a system.', `We're building Wellby to turn referral growth into a system for teams like ${short}.`), `It works from public data on day one${multi}, so there's nothing to set up before you see your own market.`, "I'd love 15 minutes to learn how you find and keep referral partners today. Would next week work?"],
+    followup: [`Following up on my note${lastTouch ? ' ' + when(lastTouch.at) : ''}.`, `The short version: you see your real share of each referral source, which ones are going quiet${multi}, and your liaisons get a plan for the day.`, 'Worth a 15-minute call? Happy to work around your schedule.'],
+    trial: ['Thanks for the time on the call.', "We're picking a few design partners to shape Wellby. Here's a free trial with your market already loaded: app.wellbyinroads.com/signup. I can add your team in a few minutes.", 'Want me to set up a short kickoff with your liaisons?'],
+    checkin: ['Checking in on your Wellby trial.', 'Is your team using the daily plan, and is anything getting in the way? I can load your referral history so your share and trends are your real numbers, not estimates.', 'Would a 15-minute call this week help?'],
+    close: ['Your Wellby trial is wrapping up soon.', `Based on your team size${multi}, I'd suggest the ${src.sites >= 2 ? 'Team' : 'Solo'} plan. I can send the details or walk through them on a quick call.`, 'Which works better for you?'],
+  }[intent] || [PITCH, 'Would you be open to a 15-minute call?'];
+  const subject = { intro: `Referral partners at ${short}`, followup: `Re: referral partners at ${short}`, trial: `Your Wellby design partner trial`, checkin: `How's the Wellby trial going?`, close: `Next step with Wellby` }[intent] || `Wellby for ${short}`;
   return { subject, body: [hi, ...body, `Thank you,\n${sign}`].join('\n\n') };
 }
 
@@ -164,11 +175,11 @@ export default withUser(async (req, res, me) => {
   const voice = activity.filter(a => a.by === me.email && a.kind === 'email' && a.status === 'done' && (a.body || '').length > 80).slice(-3).map(a => clip(a.body, 700));
   const salesSystem = `You write sales outreach from ${senderFull || 'a Wellby founder'} at Wellby to the owner, administrator or business development leader of a home care, home health or hospice agency. They are a prospective customer for Wellby software. They do not send referrals to Wellby, so never thank them for referrals or ask for referrals or patients.
 
-What Wellby does: ${PITCH} Free 14-day trial at app.wellbyinroads.com/signup. Plans: Solo, Team (2 to 5 locations), Enterprise (6 or more).
+What Wellby does: ${PITCH}\n\nThe plays (pick the one or two that fit this agency, never list them all): ${PLAYS.map(([t, d]) => t + ': ' + d).join('; ')}.\n\nThe motion: we are early. The ask is a 15-minute call to learn how they find and keep referral partners today and what hurts most, and to find design partners. Do not pitch a demo. After a call, the offer is a free trial as a design partner at app.wellbyinroads.com/signup. Plans: Solo and Team (per location).
 
-Use only the facts provided: the contact's name and role, the agency's locations and notes, and any past touches or meetings. Fit the purpose of the step (intro, follow-up, demo, trial invite, trial check-in, close). For calls or demos, write a short plan: goal, who, opener, three questions, the offer.
+Use only the facts provided: the contact's name and role, the agency's locations and notes, and any past touches or meetings. Fit the purpose of the step (intro, follow-up, discovery call, design partner invite, trial check-in, close). Wellby is not only for home care and hospice: it fits any post-acute or community care team that grows through referral partners. For calls or demos, write a short plan: goal, who, opener, three questions, the offer.
 
-Rules: under 110 words for emails. One clear, small ask. No hype, no exclamation marks, no invented facts, customers, numbers or results. Avoid stock phrases: "I hope this email finds you well", "reach out", "touch base", "circle back", "synergy", "I wanted to introduce". Reply as JSON: {\"subject\": \"...\", \"body\": \"...\"}.`;
+Rules: under 110 words for emails. One clear, small ask. No hype, no exclamation marks, no invented facts, customers, numbers or results. Never claim Wellby results, since there are no customer results yet. Avoid stock phrases: "I hope this email finds you well", "reach out", "touch base", "circle back", "synergy", "I wanted to introduce". Reply as JSON: {\"subject\": \"...\", \"body\": \"...\"}.`;
   const system = `You write outreach for a ${care.org}'s community liaison to one specific referral source. The reader is a busy case manager, discharge planner, social worker, facility director or office manager who gets generic vendor emails every day and ignores them. Your job is to sound like a real local person who knows this relationship.
 
 Make it personal using only the facts provided:

@@ -42,3 +42,11 @@ table.sp td a[data-open]:hover { text-decoration: underline; }
 .sp-li-d { white-space:pre-wrap; background:var(--bg-2, rgba(118,118,128,.08)); border-radius:8px; padding:8px 10px; margin:6px 0; }
 .chip.sp-lic { background:#E8F0FB; color:#1D4F91; }
 @media (max-width:700px) { .sp-li-tiles { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.sp-plays{border:1px solid var(--line,#e7e2d9);border-radius:12px;padding:10px 12px;margin:0 0 12px}
+.sp-plays-h{font-weight:600;margin-bottom:6px}
+.sp-plays ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.sp-plays li{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:baseline;font-size:13px;padding:3px 0;color:var(--muted,#6b665e)}
+.sp-plays li b{color:var(--ink,#1b1a17);font-weight:600;white-space:nowrap}
+.sp-plays li.lead b{color:var(--accent,#e8743b)}
+.sp-plays li em{font-style:normal;font-size:11px;color:var(--accent,#e8743b)}
