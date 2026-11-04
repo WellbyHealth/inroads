@@ -66,3 +66,4 @@ p,li,dd,summary{text-wrap:pretty}
 .related .post-card h2,.related .post-card h3{font-size:1.1rem;margin:6px 0}
 .related .pc-p{font-size:14.5px;line-height:1.45}
 @media (max-width:480px){.related .pc-p{display:none}.related .pc-b{padding:12px 14px}.related .pc-meta{padding-top:6px}}
+.trust-sec{padding-top:clamp(40px,5vw,72px)}
