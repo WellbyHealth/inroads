@@ -67,3 +67,16 @@ p,li,dd,summary{text-wrap:pretty}
 .related .pc-p{font-size:14.5px;line-height:1.45}
 @media (max-width:480px){.related .pc-p{display:none}.related .pc-b{padding:12px 14px}.related .pc-meta{padding-top:6px}}
 .trust-sec{padding-top:clamp(40px,5vw,72px)}
+
+/* Blog posts: table of contents and labeled illustrative examples */
+.toc{margin:20px 0 4px;padding:18px 22px 20px;border:1px solid var(--line-soft);border-radius:20px;background:#fff}
+.toc h2{margin:0 0 8px!important;font-size:1.05rem!important}
+.toc ol{margin:0;padding-left:1.3em;display:grid;gap:6px;font-size:15.5px;line-height:1.4}
+.toc li{margin:0;max-width:none}
+.toc a{color:var(--ink);text-underline-offset:3px}
+.doc article h2{scroll-margin-top:96px}
+.doc ol{margin:10px 0 0;padding-left:1.35em}
+.ex{margin:22px 0 0;padding:18px 22px 20px;border-radius:20px;background:#EAF2FD;border:1px solid #d4e3f8}
+.ex .ex-h{margin:0 0 8px;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1f4f8a}
+.ex p{margin:10px 0 0;font-size:16px;line-height:1.55}
+.ex ul{margin:10px 0 0}
