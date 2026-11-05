@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Blog build for the Wellby marketing site. Dependency free.
+// Blog build (kept outside tools/ because tools/ is not uploaded to Vercel) for the Wellby marketing site. Dependency free.
 //
-//   node tools/blog.mjs                 build (runs on every Vercel deploy)
-//   node tools/blog.mjs --check         strict validation of every post, including future ones
-//   node tools/blog.mjs --today=2026-12-01   build as if it were that date (testing)
+//   node build/blog.mjs                 build (runs on every Vercel deploy)
+//   node build/blog.mjs --check         strict validation of every post, including future ones
+//   node build/blog.mjs --today=2026-12-01   build as if it were that date (testing)
 //
 // Source posts live in content/blog/posts/*.md. A post is published only when its
 // date is today or earlier (US Pacific time). Unpublished posts never appear in a
@@ -151,7 +151,7 @@ function validate(post, ctx) {
   if ((meta.title || '').length > 70) w.push(`title ${meta.title.length} chars`);
   const all = [meta.title, meta.description, ...(meta.takeaways || []), body].join('\n');
   if (/[–—―−]/.test(all)) e.push('contains an en dash or em dash');
-  if (/\S -- |\S - (?=[A-Z])/.test(body)) w.push('spaced hyphen used like a dash');
+  if (/\w -{1,2} \w/.test(body)) w.push('spaced hyphen used like a dash');
   const low = all.toLowerCase();
   for (const b of BANNED) if (new RegExp(`\\b${b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i').test(low)) e.push(`banned phrase: ${b}`);
   for (const c of CLAIMS) if (low.includes(c)) e.push(`unsupported claim phrase: ${c}`);
