@@ -18,9 +18,6 @@
     rows.forEach((r, k) => { r.classList.toggle('on', k === n); r.classList.toggle('past', k < n); });
     card.dataset.step = n;
     links.forEach((l, k) => l.classList.toggle('on', k < n));
-    // restart the progress bar animation
-    tabs.forEach(t => t.classList.remove('run'));
-    if (!reduce.matches && !paused && !user) { void tabs[n].offsetWidth; tabs[n].classList.add('run'); }
     if (send) { if (n > 1) { send.textContent = send.dataset.done || 'Sent ✓'; send.className = 'hq-chip up td-send'; } else { send.textContent = 'Approve & send'; send.className = 'hq-chip btn td-send'; } }
     const row = rows[n];
     if (!reduce.matches) row.querySelectorAll('.td-count').forEach(c => {
@@ -47,7 +44,7 @@
   });
   rows.forEach((r, k) => r.addEventListener('click', () => { paused = true; go(k, true); }));
   const area = sec || card;
-  area.addEventListener('mouseenter', () => { if (!paused) { paused = 'hover'; clearTimeout(timer); tabs[i].classList.remove('run'); } });
+  area.addEventListener('mouseenter', () => { if (!paused) { paused = 'hover'; clearTimeout(timer); } });
   area.addEventListener('mouseleave', () => { if (paused === 'hover') { paused = false; go(i); } });
   new IntersectionObserver(([e]) => { const was = visible; visible = e.isIntersecting; if (visible && !was) go(0); if (!visible) clearTimeout(timer); }, { threshold: 0.35 }).observe(area);
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(timer); else loop(); });

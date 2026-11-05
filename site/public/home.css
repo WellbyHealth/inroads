@@ -159,3 +159,12 @@
 .td-link i{width:3px}
 .td-link.on i::after{transform:scaleY(1)}
 @media (prefers-reduced-motion:reduce){.td-link i::after{transition:none}}
+
+/* Team's day: no progress bar; active step marked by an accent edge; CTA under the steps */
+.td-steps button[aria-selected="true"]{box-shadow:inset 3px 0 0 #E07A3F}
+.td-cta{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:22px 0 0}
+.td-cta .h2-btn{height:50px;font-size:16px;padding:0 16px 0 18px;gap:10px;border:1.5px solid #000;background:#fff}
+.td-cta span{font-size:14px;color:var(--muted)}
+@media(max-width:760px){.td-cta .h2-btn{flex:0 0 auto}}
+.td-cta-m{display:none}
+@media(max-width:900px){.h2-day .td-cta{display:none}.td-cta-m{display:flex;margin-top:4px}}
