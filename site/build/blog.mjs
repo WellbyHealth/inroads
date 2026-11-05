@@ -27,6 +27,8 @@ const SIGNUP = 'https://app.wellbyinroads.com/signup';
 
 const args = process.argv.slice(2);
 const CHECK = args.includes('--check');
+const onlyArg = (args.find((a) => a.startsWith('--only=')) || '').split('=')[1];
+const ONLY = onlyArg ? onlyArg.split(',') : null;
 const todayArg = (args.find((a) => a.startsWith('--today=')) || '').split('=')[1];
 const TODAY = todayArg || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date());
 
@@ -197,7 +199,7 @@ function loadPosts() {
   if (!fs.existsSync(dir)) return [];
   const ctx = { slugs: new Set(legacy.map((p) => p.slug)), targets: internalTargets() };
   const posts = [];
-  for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.md')).sort()) {
+  for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.md') && (!ONLY || ONLY.some((o) => x.startsWith(o + '-')))).sort()) {
     try {
       const post = parseFront(read(path.join(dir, f)), f);
       post.file = f;
@@ -220,7 +222,7 @@ if (CHECK) {
     if (e.length) bad++;
   }
   const dates = posts.map((p) => p.meta.date).filter(Boolean);
-  for (let i = 1; i < dates.length; i++) {
+  for (let i = 1; !ONLY && i < dates.length; i++) {
     const gap = (new Date(dates[i]) - new Date(dates[i - 1])) / 864e5;
     if (gap !== 3) { console.log(`date gap ${dates[i - 1]} -> ${dates[i]} is ${gap} days`); bad++; }
   }
@@ -238,6 +240,18 @@ const published = posts.filter((p) => {
 });
 const all = [...legacy.map((p) => ({ ...p, kind: 'legacy' })), ...published].sort((a, b) => (a.date === b.date ? (a.kind === 'new' ? -1 : 1) : b.date.localeCompare(a.date)));
 
+// ---------- filter groups (index chips) ----------
+const GROUPS = {
+  'Tracking and data': ['Referral tracking', 'Measurement', 'CRM hygiene'],
+  'Sources and territory': ['Referral sources', 'Territory planning'],
+  'Partners and outreach': ['Discharge planners', 'Outreach', 'Partner retention'],
+  'Team routines': ['Liaison routines', 'Field playbook'],
+  'Intake and conversion': ['Intake speed', 'Conversion'],
+  'Marketing ROI': ['Marketing ROI'],
+  'By specialty': ['Home health', 'Hospice', 'Home care', 'Skilled nursing', 'Rehab and therapy', 'Specialty practices', 'Hospital service lines', 'Palliative care', 'Home infusion', 'Assisted living', 'Behavioral health', 'Wound care'],
+};
+const groupOf = (tag) => Object.keys(GROUPS).find((g) => GROUPS[g].includes(tag)) || tag;
+
 // ---------- shared template pieces ----------
 const shell = read(path.join(PUB, 'blog', legacy[0].slug + '.html'));
 const styleLinks = [...shell.matchAll(/<link rel="stylesheet"[^>]*>/g)].map((m) => m[0]).join('\n');
@@ -249,9 +263,9 @@ const iconLinks = '<link rel="icon" href="/favicon-32.png?v=3" sizes="32x32" typ
 const url = (slug) => `${SITE}/blog/${slug}`;
 const ogImage = (p) => (p.kind === 'legacy' || fs.existsSync(path.join(CONTENT, 'og', `${p.slug}.jpg`)) ? `${SITE}/img/og/${p.slug}.jpg` : `${SITE}/og.jpg`);
 
-function card(p, tag = 'h3', lazy = true) {
+function card(p, tag = 'h3', lazy = true, dataTag = false) {
   const art = `/img/g-art-${p.art}`;
-  return `<li class="post-card"><a href="/blog/${p.slug}"><img src="${art}-900.webp" srcset="${art}-900.webp 900w, ${art}-1600.webp 1600w" sizes="(max-width: 700px) 100vw, 400px" width="1600" height="1200" alt=""${lazy ? ' loading="lazy"' : ''} decoding="async"><span class="pc-b"><span class="pc-tag">${esc(p.tag)}</span><${tag}>${esc(p.title)}</${tag}><span class="pc-p">${esc(p.description)}</span><span class="pc-meta">${longDate(p.date)} · ${p.minutes} min read</span></span></a></li>`;
+  return `<li class="post-card"${dataTag ? ` data-tag="${esc(groupOf(p.tag))}"` : ''}><a href="/blog/${p.slug}"><img src="${art}-900.webp" srcset="${art}-900.webp 900w, ${art}-1600.webp 1600w" sizes="(max-width: 700px) 100vw, 400px" width="1600" height="1200" alt=""${lazy ? ' loading="lazy"' : ''} decoding="async"><span class="pc-b"><span class="pc-tag">${esc(p.tag)}</span><${tag}>${esc(p.title)}</${tag}><span class="pc-p">${esc(p.description)}</span><span class="pc-meta">${longDate(p.date)} · ${p.minutes} min read</span></span></a></li>`;
 }
 
 function related(p) {
@@ -355,8 +369,15 @@ for (const p of published) {
 {
   const f = path.join(blogDir, 'index.html');
   let s = read(f);
-  const grid = all.map((p, i) => card(p, 'h2', i > 2)).join('');
-  s = s.replace(/(<div class="wrap"><ul class="blog-grid">)[\s\S]*?(<\/ul><\/div>\s*<\/main>)/, `$1${grid}$2`);
+  const grid = all.map((p, i) => card(p, 'h2', i > 2, true)).join('');
+  const counts = {};
+  for (const p of all) counts[groupOf(p.tag)] = (counts[groupOf(p.tag)] || 0) + 1;
+  const order = Object.keys(GROUPS);
+  const tags = Object.entries(counts).sort((a, b) => (order.indexOf(a[0]) + 99) % 99 - (order.indexOf(b[0]) + 99) % 99);
+  const bar = tags.length > 3 ? `<div class="tagbar" role="group" aria-label="Filter posts by topic"><button type="button" aria-pressed="true" data-t="">All <span>${all.length}</span></button>${tags.map(([t, n]) => `<button type="button" aria-pressed="false" data-t="${esc(t)}">${esc(t)} <span>${n}</span></button>`).join('')}</div><p class="tag-status" role="status" aria-live="polite"></p>` : '';
+  s = s.replace(/(<div class="wrap">)(?:<div class="tagbar"[\s\S]*?<\/p>)?(<ul class="blog-grid">)[\s\S]*?(<\/ul><\/div>\s*<\/main>)/, `$1${bar}$2${grid}$3`);
+  if (bar && !s.includes('/blog.js')) s = s.replace('</body>', '<script src="/blog.js" defer></script>\n</body>');
+  if (!bar) s = s.replace(/<script src="\/blog\.js[^>]*><\/script>\n?/, '');
   // JSON-LD blogPost list
   s = s.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (m, j) => {
     try {
