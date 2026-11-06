@@ -2,7 +2,7 @@
 @font-face { font-family: Figtree; src: url(/fonts/figtree-latin-wght-normal.woff2) format("woff2"); font-weight: 300 900; font-display: swap; }
 :root {
   --bg: #F9F8F6; --surface: #fff; --ink: #000; --body: #2E2D29; --muted: #6B6A64; --line: #E6E4DD; --line-soft: #EEEDE8;
-  --navy: #0D2747; --navy-2: #16355C; --orange: #EE8B4B; --orange-ink: #A84A14; --magenta: #BA2997; --sky-soft: #E3EEFD;
+  --navy: #0D2747; --navy-2: #16355C; --orange: #C5DEFB; --orange-ink: #2F6DB5; --magenta: #BA2997; --sky-soft: #E3EEFD;
   --pos: #1F7A4D; --pos-soft: #E1F3E8; --err: #C0262D; --stone-2: #F1F2ED;
   --sans: Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
   --shadow: 0 24px 48px -28px rgba(0,0,0,.28), 0 4px 12px -6px rgba(0,0,0,.08);
@@ -79,7 +79,7 @@ input:focus, select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgb
 .plan .dot { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #c9c7bf; margin-top: 2px; }
 .plan.on .dot { border: 6px solid var(--ink); }
 .plan .name { font-weight: 700; font-size: 17px; color: var(--ink); }
-.plan .tag { margin-left: 8px; font-size: 11px; font-weight: 700; color: var(--orange-ink); background: #FDEBD9; padding: 2px 8px; border-radius: 999px; vertical-align: 2px; }
+.plan .tag { margin-left: 8px; font-size: 11px; font-weight: 700; color: var(--orange-ink); background: #E3EEFD; padding: 2px 8px; border-radius: 999px; vertical-align: 2px; }
 .plan .price { font-weight: 750; font-size: 20px; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
 .plan .price small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); }
 .plan .what { grid-column: 2 / 4; font-size: 14px; color: var(--muted); line-height: 1.45; }

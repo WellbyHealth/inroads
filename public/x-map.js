@@ -14,7 +14,7 @@ const COMPETITOR = { home_care: 'Home health agency', home_health: 'Home health 
 const RAMP = {
   count: ['#EEF4FD', '#D3E3F8', '#A9C8EE', '#6F9FDC', '#3F77C2', '#1E4F8F', '#0D2747'],
   density: ['#EEF4FD', '#D3E3F8', '#A9C8EE', '#6F9FDC', '#3F77C2', '#1E4F8F', '#0D2747'],
-  competition: ['#FFF1E6', '#FDD9BD', '#F8B48A', '#EE8B4B', '#D2641F', '#A4460E', '#6E2C06'],
+  competition: ['#F1F6FD', '#D6E6FA', '#B3D0F5', '#8FB8EE', '#5F95DA', '#2F6DB5', '#1B4A82'],
   opportunity: ['#ECF7EE', '#CDEBD3', '#9DD5A9', '#62B678', '#33914F', '#1D6B36', '#0E4422'],
   referrals: ['#F3EEFB', '#DDD0F4', '#BDA5E7', '#9874D6', '#7448BF', '#55309A', '#371D6B'],
 };

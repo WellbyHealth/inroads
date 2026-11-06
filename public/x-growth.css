@@ -3,10 +3,10 @@
 @media (max-width: 720px) { .bar nav a[data-view="territory"] { display: none; } }
 
 /* Opportunity headline (Today, Targets) */
-.oppBanner { display: flex; gap: 16px; align-items: center; margin: 14px 0; padding: 16px 18px; text-decoration: none; color: inherit; background: linear-gradient(120deg, #FFF6EE, #FDEBD9); box-shadow: 0 0 0 .5px rgba(168,74,20,.18); transition: transform .15s; }
+.oppBanner { display: flex; gap: 16px; align-items: center; margin: 14px 0; padding: 16px 18px; text-decoration: none; color: inherit; background: linear-gradient(120deg, #FFF6EE, #E3EEFD); box-shadow: 0 0 0 .5px rgba(168,74,20,.18); transition: transform .15s; }
 .oppBanner:hover { transform: translateY(-1px); }
 .oppBanner img { width: 64px; flex: none; }
-.oppEye { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #A84A14; margin-bottom: 4px; }
+.oppEye { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #2F6DB5; margin-bottom: 4px; }
 .oppMain { font-size: 16px; line-height: 1.4; }
 .oppSub { margin-top: 4px; font-size: 14px; color: var(--muted); }
 .oppSub b { color: #1F7A4D; }
@@ -82,8 +82,8 @@
 .tourDots i.on { background: #fff; }
 .tourBtns { display: flex; gap: 8px; justify-content: flex-end; }
 .tourBtns .ghost { color: #DCE6F3; margin-right: auto; }
-#nav a.tourOn { box-shadow: 0 0 0 2px #EE8B4B; border-radius: 10px; animation: tourPulse 1.6s ease-in-out infinite; }
-@keyframes tourPulse { 50% { box-shadow: 0 0 0 5px rgba(238,139,75,.35); } }
+#nav a.tourOn { box-shadow: 0 0 0 2px #8FB8EE; border-radius: 10px; animation: tourPulse 1.6s ease-in-out infinite; }
+@keyframes tourPulse { 50% { box-shadow: 0 0 0 5px rgba(47,109,181,.35); } }
 @media (max-width: 720px) { #tourCard { right: 16px; left: 16px; width: auto; bottom: calc(76px + env(safe-area-inset-bottom)); } }
 
 /* Print: the Territory snapshot (one page) */

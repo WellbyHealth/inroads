@@ -1,8 +1,8 @@
 @font-face { font-family: Figtree; src: url(/fonts/figtree-latin-wght-normal.woff2) format("woff2"); font-weight: 300 900; font-display: swap; }
 :root {
   --bg: #F9F8F6; --surface: #fff; --stone: #F3F3F1; --stone-2: #F1F2ED; --ink: #000; --body: #2E2D29; --muted: #6B6A64; --line: #E6E4DD; --line-soft: #EEEDE8;
-  --sky: #C5DEFB; --sky-soft: #E3EEFD; --blue-ink: #2F6DB5; --blush: #F9D9EE; --mag-ink: #9C1F7E; --butter: #FCEFA0; --peach: #F8E3D5;
-  --orange: #EE8B4B; --orange-ink: #A84A14; --lime: #CED748; --navy: #0D2747; --navy-2: #16355C;
+  --sky: #C5DEFB; --sky-soft: #E3EEFD; --blue-ink: #2F6DB5; --blush: #F9D9EE; --mag-ink: #9C1F7E; --butter: #FCEFA0; --peach: #E3EEFD;
+  --orange: #C5DEFB; --orange-ink: #2F6DB5; --lime: #CED748; --navy: #0D2747; --navy-2: #16355C;
   --warn: #9A4A00; --warn-soft: #FDEBD3; --pos: #1F7A4D; --pos-soft: #E1F3E8; --err: #C0262D; --err-soft: #FBE4E5;
   --sans: Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
   --ease: cubic-bezier(.23,1,.32,1); --bounce: cubic-bezier(.34,1.56,.64,1);
@@ -55,7 +55,7 @@ main#app { max-width: 1240px; margin: 0 auto; padding: 30px clamp(12px, 3vw, 28p
 .kpi .d { font-size: 13px; font-weight: 600; }
 .kpi img { position: absolute; right: -6px; bottom: -8px; width: 86px; opacity: .95; pointer-events: none; }
 .kpi.c1 { background: var(--sky-soft); border-color: #d6e5f8; } .kpi.c2 { background: var(--pos-soft); border-color: #cfe9da; }
-.kpi.c3 { background: var(--peach); border-color: #f1d3bf; } .kpi.c4 { background: #fdf6cf; border-color: #f2e7a6; }
+.kpi.c3 { background: var(--peach); border-color: #C5DEFB; } .kpi.c4 { background: #fdf6cf; border-color: #f2e7a6; }
 .up { color: var(--pos); } .down { color: var(--err); }
 .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .hero-head { display: flex; align-items: center; gap: 18px; }
@@ -221,7 +221,7 @@ body.mapmode .hdr { position: fixed; left: 0; right: 0; }
 .hcard { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 16px 18px; position: relative; overflow: hidden; }
 .hcard img { width: 76px; margin: -6px -6px 0 0; }
 .hcard .name { font-size: 18px; line-height: 1.25; display: block; margin-top: 4px; }
-.hcard:first-child { background: linear-gradient(160deg, var(--peach), #fff 55%); border-color: #f1d3bf; }
+.hcard:first-child { background: linear-gradient(160deg, var(--peach), #fff 55%); border-color: #C5DEFB; }
 @media (max-width: 960px) {
   .charts3, .hero-cards, .charts2 { grid-template-columns: 1fr; }
   .mpanel { top: auto; bottom: 0; left: 0; right: 0; width: auto; max-height: 45vh; border-radius: 22px 22px 0 0; }

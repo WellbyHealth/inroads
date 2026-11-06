@@ -3,7 +3,7 @@
    black buttons for actions, orange for the one main call to action, black pills for the selected state. */
 
 body { font-family: var(--sans); background: var(--bg); color: var(--body); letter-spacing: -.005em; }
-::selection { background: rgba(238,139,75,.30); }
+::selection { background: rgba(47,109,181,.30); }
 :focus-visible { outline: 3px solid #1c1916; outline-offset: 2px; }
 a { color: var(--blue-ink); text-underline-offset: 3px; }
 
@@ -57,7 +57,7 @@ input:focus, select:focus, textarea:focus { border-color: #000; box-shadow: 0 0 
 /* Plan screens */
 .plan-card { border-radius: 22px; }
 .plan-card.on { box-shadow: 0 0 0 2px #000, var(--shadow-sm); }
-.plan-tag { color: var(--orange-ink); background: #FDEBD9; }
+.plan-tag { color: var(--orange-ink); background: #E3EEFD; }
 
 /* Account avatar and setup steps */
 .meAv, .wizSteps .on b { background: var(--navy, #0D2747); }

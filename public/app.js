@@ -46,7 +46,7 @@ const FITS = {
 FITS.rehab = FITS.snf; FITS.other = FITS.home_health;
 const fitFor = t => (FITS[careType()] || FIT)[t] ?? .4;
 const FIT = { 'Hospital': 1, 'Rehab hospital': .95, 'Skilled nursing': .9, 'LTAC hospital': .85, 'Assisted living': .85, 'Physician: geriatrics': .85, 'Case management': .75, 'Hospice': .65, 'Physician: neurology': .65, 'Home health agency': .6, 'Physician: PM&R': .6, 'Physician: cardiology': .5, 'Physician: internal medicine': .45, 'Physician: family medicine': .4, 'Psychiatric hospital': .35, 'Clinic': .3, 'Other source': .5 };
-const STATUS_COLOR = { Protect: '#C0262D', Grow: '#EE8B4B', Healthy: '#1F7A4D', Open: '#9DB4D3' };
+const STATUS_COLOR = { Protect: '#C0262D', Grow: '#2F6DB5', Healthy: '#1F7A4D', Open: '#9DB4D3' };
 const IMG = n => `/img/${n}.webp`;
 // Source-group palette (validated: lightness, chroma, CVD separation, contrast). Status colors stay reserved for relationship state.
 const GROUP_COLOR = { 'Hospitals': '#2F6DB5', 'Post-acute': '#D9692C', 'Physicians': '#B52E92', 'Other': '#6E9A1F' };
@@ -872,7 +872,7 @@ function viewMap() {
   const labels = L.tileLayer(ESRI + 'Reference/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 19, pane: 'shadowPane' }).addTo(map);
   const dotLayer = L.layerGroup().addTo(map);
   for (const o of S.offices) {
-    L.circle([o.lat, o.lng], { radius: o.radiusMiles * 1609.34, color: '#EE8B4B', weight: 1.5, fill: false, dashArray: '5 5', interactive: false }).addTo(map);
+    L.circle([o.lat, o.lng], { radius: o.radiusMiles * 1609.34, color: '#2F6DB5', weight: 1.5, fill: false, dashArray: '5 5', interactive: false }).addTo(map);
     L.marker([o.lat, o.lng], { icon: L.divIcon({ className: 'opin', html: `<img src="${IMG('g-cl-house-cut')}" alt=""><span>${esc(o.label)}</span>`, iconSize: [44, 44], iconAnchor: [22, 40] }), zIndexOffset: 1000 }).bindTooltip(`${esc(o.label)} office · ${o.radiusMiles} mi`).addTo(map);
   }
   if (!S.pure) planItems(10).filter(s => s.p.lat != null).forEach((s, i) => L.marker([s.p.lat, s.p.lng], { icon: L.divIcon({ className: 'tgt', html: `<span>${i + 1}</span>`, iconSize: [26, 26], iconAnchor: [13, 13] }), zIndexOffset: 900 }).bindTooltip(`<b>#${i + 1} ${esc(s.p.name)}</b><br>${esc(s.p.type)} · score ${s.priority}`).on('click', () => openSource(s.p.id)).addTo(map));
@@ -1224,7 +1224,7 @@ function renderScorecard() {
   const max = Math.max(1, ...vals), W = 560, H = 200, PL = 26, bw = (W - PL) / vals.length;
   const chart = `<svg class="chart" viewBox="0 0 ${W} ${H + 24}" preserveAspectRatio="none" role="img" aria-label="Referrals over time">
     ${[0.5, 1].map(f => `<line x1="0" x2="${W}" y1="${H - H * f * .9}" y2="${H - H * f * .9}" stroke="#eef1f5"/><text x="2" y="${H - H * f * .9 - 3}" font-size="10" fill="#98a2b3">${Math.round(max * f)}</text>`).join('')}
-    ${vals.map((v, i) => `<rect x="${PL + i * bw + bw * .18}" y="${H - H * .9 * v / max}" width="${bw * .64}" height="${H * .9 * v / max}" rx="3" fill="${i === vals.length - 1 ? '#EE8B4B' : '#0D2747'}"><title>${labels[i]}: ${v} referrals${hasAdmits ? `, ${admits[i]} admits` : ''}</title></rect>
+    ${vals.map((v, i) => `<rect x="${PL + i * bw + bw * .18}" y="${H - H * .9 * v / max}" width="${bw * .64}" height="${H * .9 * v / max}" rx="3" fill="${i === vals.length - 1 ? '#8FB8EE' : '#0D2747'}"><title>${labels[i]}: ${v} referrals${hasAdmits ? `, ${admits[i]} admits` : ''}</title></rect>
       ${hasAdmits ? `<rect x="${PL + i * bw + bw * .18}" y="${H - H * .9 * admits[i] / max}" width="${bw * .64}" height="2" fill="#fff" opacity=".8"/>` : ''}
       <text x="${PL + i * bw + bw / 2}" y="${H + 16}" font-size="10" text-anchor="middle" fill="#667085">${labels[i]}</text>
       <text x="${PL + i * bw + bw / 2}" y="${H - H * .9 * v / max - 4}" font-size="10" text-anchor="middle" fill="#344054">${v || ''}</text>`).join('')}</svg>`;

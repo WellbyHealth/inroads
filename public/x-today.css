@@ -15,7 +15,7 @@
 .tsub { font-size: 12px; color: var(--muted); }
 .tspark { display: block; margin: 2px 0 4px; overflow: visible; }
 .tmini { display: flex; gap: 5px; margin-top: 10px; } .tmini i { width: 18px; height: 6px; border-radius: 3px; background: rgba(118,118,128,.25); }
-.tmini i.ok { background: #2E9E62; } .tmini i.sch { background: var(--tint); } .tmini i.miss { background: #EE8B4B; }
+.tmini i.ok { background: #2E9E62; } .tmini i.sch { background: var(--tint); } .tmini i.miss { background: #8FB8EE; }
 .tstages { display: flex; gap: 6px; align-items: flex-end; height: 46px; margin: 2px 0 4px; }
 .tstages > div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; }
 .tstages i { width: 100%; max-width: 22px; border-radius: 4px 4px 0 0; background: rgba(13,39,71,.35); } .tstages i.won { background: #2E9E62; }

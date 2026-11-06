@@ -9,7 +9,7 @@
   --tint: #0D2747; --tint-hover: #16355C; --tint-soft: rgba(13,39,71,.08);
   --blue-ink: #2F6DB5; --pos: #1F7A4D; --pos-soft: #E1F3E8; --err: #C0262D; --err-soft: #FBE4E5;
   --warn: #9A4A00; --warn-soft: #FDEBD3;
-  --orange: #EE8B4B; --orange-ink: #A84A14; --peach: #F8E3D5; --sky-soft: #E3EEFD;
+  --orange: #C5DEFB; --orange-ink: #2F6DB5; --peach: #E3EEFD; --sky-soft: #E3EEFD;
   --sans: Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
   --ease: cubic-bezier(.23,1,.32,1); --bounce: cubic-bezier(.34,1.56,.64,1);
   --shadow: 0 24px 48px -28px rgba(0,0,0,.28), 0 4px 12px -6px rgba(0,0,0,.08);
@@ -79,7 +79,7 @@ main#app { padding-top: 34px; }
 .chip { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 6px; background: var(--stone-2); color: var(--ink); }
 .chip.st-Protect, .chip.st-Grow, .chip.st-Open, .chip.st-Healthy, .chip.st-Followup { background: var(--stone-2); color: var(--ink); padding-left: 7px; }
 .chip[class*="st-"]::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; background: currentColor; }
-.chip.st-Protect::before { background: #FF3B30; } .chip.st-Grow::before { background: #EE8B4B; } .chip.st-Open::before { background: #8A8880; }
+.chip.st-Protect::before { background: #FF3B30; } .chip.st-Grow::before { background: #8FB8EE; } .chip.st-Open::before { background: #8A8880; }
 .chip.st-Healthy::before { background: #2E9E62; } .chip.st-Followup::before { background: #E8C547; }
 
 /* Buttons: one filled tint for the primary action; everything else recedes */

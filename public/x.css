@@ -52,7 +52,7 @@
 .cal-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 12px 2px 0; }
 .lgi { display: inline-flex; align-items: center; gap: 6px; }
 .lgd { display: inline-block; width: 10px; height: 10px; border-radius: 3px; flex: none; }
-.lgd.m-scheduled { background: var(--tint); } .lgd.m-done { background: #2E9E62; } .lgd.ext { background: #BA2997; } .lgd.due { background: #EE8B4B; } .lgd.touch { background: #8A8880; }
+.lgd.m-scheduled { background: var(--tint); } .lgd.m-done { background: #2E9E62; } .lgd.ext { background: #BA2997; } .lgd.due { background: #8FB8EE; } .lgd.touch { background: #8A8880; }
 .cal-all { margin: 0 0 0 auto; display: flex; gap: 6px; align-items: center; font-weight: 500; } .cal-all input { width: auto; }
 
 /* Meeting dialog */

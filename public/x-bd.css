@@ -76,7 +76,7 @@ body.logOpen { overflow: hidden; }
 .stopB { display: grid; gap: 3px; min-width: 0; }
 .stopB .name { font-weight: 600; font-size: 15.5px; }
 .stopWhy { font-size: 14px; color: var(--ink); }
-.stopAsk { color: var(--orange-ink, #A84A14); }
+.stopAsk { color: var(--orange-ink, #2F6DB5); }
 .stopA { display: flex; gap: 6px; }
 .linklike { border: 0; background: none; padding: 0; font: inherit; color: var(--ink); cursor: pointer; text-align: left; }
 .linklike:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -90,7 +90,7 @@ body.logOpen { overflow: hidden; }
 .sheetPage.internal { box-shadow: 0 0 0 2px #000, var(--shadow-sm); }
 .shHead { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
 .shHead h1 { margin: 4px 0 6px; font-size: 30px; }
-.shEye { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--orange-ink, #A84A14); }
+.shEye { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--orange-ink, #2F6DB5); }
 .shMeta { display: grid; gap: 8px; align-content: start; text-align: right; }
 .shMeta div { display: grid; }
 .shBig { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
